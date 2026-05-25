@@ -569,6 +569,22 @@ footer {
     }
 }
 
+/* UTILITIES */
+.menu-cta {
+    text-align: center;
+    margin-top: 3rem;
+}
+
+.link-teal {
+    color: var(--teal-light);
+    text-decoration: none;
+}
+
+.link-orange {
+    color: var(--orange);
+    text-decoration: none;
+}
+
 /* ANIMATIONS */
 .fade-in {
     opacity: 0;
