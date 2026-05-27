@@ -3,6 +3,7 @@
 Sitio web oficial de **Urban Food BQ**, restaurante ubicado en Barranquilla, Colombia. Plataforma informativa y de marketing que dirige a los clientes a realizar pedidos a través del sistema externo [fu.do](https://menu.fu.do/urbanfoodbq).
 
 ## Vista previa
+<img width="1335" height="595" alt="image" src="https://github.com/user-attachments/assets/2cf29158-31e1-4996-bf35-669d31a662b7" />
 
 Diseño oscuro con acentos en naranja (`#fe9100`) y teal (`#00c6b0`), pensado para un público joven y urbano.
 
