@@ -1,0 +1,7 @@
+# MCP credentials (contains API keys)
+.mcp.json
+
+# Editor / OS junk
+.DS_Store
+Thumbs.db
+*.log

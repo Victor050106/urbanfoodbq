@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Urban Food BQ - Parrilla, Pizza, Perros, Hamburguesas y más en Barranquilla</title>
+    <title>URBAN FOOD BQ | El Mejor Sabor Urbano en Barranquilla</title>
     <meta name="description" content="Urban Food BQ - La mejor comida a tu manera. Parrilla, pizzas, perros, hamburguesas, salchipapas, salvajadas y más en Barranquilla. Pide a domicilio o visítanos.">
     <meta property="og:type" content="restaurant">
     <meta property="og:title" content="Urban Food BQ - Parrilla, Pizza, Perros y más en Barranquilla">
@@ -14,240 +14,551 @@
     <meta name="twitter:title" content="Urban Food BQ">
     <meta name="twitter:description" content="La mejor comida a tu manera en Barranquilla.">
     <meta name="twitter:image" content="https://urbanfoodbq.com/banner.jpg">
+    <link rel="icon" type="image/png" href="faviconr.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="icon" type="image/png" href="faviconr.png">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "deep-black": "#000000",
+              "vibrant-orange": "#FF6B00",
+              "fresh-teal": "#1ABC9C",
+              "warm-gold": "#F39C12",
+              "background": "#f9f9f9",
+              "surface": "#f9f9f9",
+              "surface-container": "#eeeeee",
+              "surface-container-low": "#f3f3f3",
+              "surface-container-lowest": "#ffffff",
+              "surface-container-high": "#e8e8e8",
+              "surface-container-highest": "#e2e2e2",
+              "on-background": "#1a1c1c",
+              "on-surface": "#1a1c1c",
+              "secondary": "#5e5e5e",
+              "primary": "#a04100",
+              "primary-container": "#ff6b00"
+            },
+            borderRadius: {
+              DEFAULT: "0.125rem",
+              lg: "0.25rem",
+              xl: "0.5rem",
+              full: "9999px"
+            },
+            spacing: {
+              "container-max": "1280px",
+              "margin-desktop": "64px",
+              "base": "8px",
+              "margin-mobile": "20px",
+              "gutter-mobile": "16px",
+              "gutter-desktop": "24px"
+            },
+            fontFamily: {
+              "display": ["Bebas Neue", "sans-serif"],
+              "body": ["Inter", "sans-serif"]
+            },
+            fontSize: {
+              "display-lg-mobile": ["48px", { lineHeight: "48px", letterSpacing: "0.02em", fontWeight: "400" }],
+              "display-lg": ["80px", { lineHeight: "80px", letterSpacing: "0.02em", fontWeight: "400" }],
+              "headline-lg": ["40px", { lineHeight: "40px", letterSpacing: "0.03em", fontWeight: "400" }],
+              "headline-md": ["24px", { lineHeight: "32px", letterSpacing: "-0.01em", fontWeight: "700" }],
+              "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
+              "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+              "label-bold": ["14px", { lineHeight: "20px", fontWeight: "700" }],
+              "label-sm": ["12px", { lineHeight: "16px", fontWeight: "500" }]
+            }
+          }
+        }
+      }
+    </script>
     <link rel="stylesheet" href="styles.css">
 </head>
-<body>
+<body class="bg-background text-on-background font-body selection:bg-vibrant-orange selection:text-white">
 
-    <nav id="navbar">
-        <a href="#inicio" class="logo"><img src="logor.png" alt="Urban Food"></a>
-        <ul class="nav-links" id="navLinks">
-            <li><a href="#inicio">Inicio</a></li>
-            <li><a href="#menu">Menú</a></li>
-            <li><a href="#horarios">Horarios</a></li>
-            <li><a href="#ubicacion">Ubicación</a></li>
-            <li><a href="https://menu.fu.do/urbanfoodbq" target="_blank" rel="noopener" class="nav-order-btn">Pedir Ahora</a></li>
-        </ul>
-        <button class="menu-toggle" id="menuToggle" aria-label="Menú">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
+    <!-- NAV -->
+    <nav id="navbar" class="fixed top-0 w-full z-50 bg-deep-black border-b border-white/10 transition-shadow">
+        <div class="flex justify-between items-center px-margin-mobile md:px-margin-desktop py-3 max-w-container-max mx-auto">
+            <a href="#inicio" class="flex items-center gap-3 group">
+                <img src="logor.png" alt="Urban Food BQ" class="h-10 md:h-12 w-auto rounded">
+                <span class="font-display text-headline-md text-white tracking-tight hidden sm:block">URBAN FOOD BQ</span>
+            </a>
+            <div class="hidden md:flex items-center gap-8" id="navLinks">
+                <a href="#menu" class="font-body text-label-bold uppercase tracking-wider text-white/80 hover:text-vibrant-orange transition-colors">Menú</a>
+                <a href="#horarios" class="font-body text-label-bold uppercase tracking-wider text-white/80 hover:text-vibrant-orange transition-colors">Horarios</a>
+                <a href="#ubicacion" class="font-body text-label-bold uppercase tracking-wider text-white/80 hover:text-vibrant-orange transition-colors">Sedes</a>
+                <a href="#opiniones" class="font-body text-label-bold uppercase tracking-wider text-white/80 hover:text-vibrant-orange transition-colors">Opiniones</a>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="https://menu.fu.do/urbanfoodbq" target="_blank" rel="noopener" class="hidden sm:inline-block bg-vibrant-orange text-white px-5 py-2.5 rounded-lg font-body text-label-bold uppercase tracking-wider hover:bg-white hover:text-deep-black transition-colors active:scale-95">
+                    Pedir Ahora
+                </a>
+                <button class="md:hidden text-white" id="menuToggle" aria-label="Menú">
+                    <span class="material-symbols-outlined text-3xl">menu</span>
+                </button>
+            </div>
+        </div>
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="md:hidden hidden bg-deep-black border-t border-white/10">
+            <div class="flex flex-col px-margin-mobile py-4 gap-4">
+                <a href="#menu" class="font-body text-label-bold uppercase tracking-wider text-white py-2">Menú</a>
+                <a href="#horarios" class="font-body text-label-bold uppercase tracking-wider text-white py-2">Horarios</a>
+                <a href="#ubicacion" class="font-body text-label-bold uppercase tracking-wider text-white py-2">Sedes</a>
+                <a href="#opiniones" class="font-body text-label-bold uppercase tracking-wider text-white py-2">Opiniones</a>
+                <a href="https://menu.fu.do/urbanfoodbq" target="_blank" rel="noopener" class="bg-vibrant-orange text-white px-5 py-3 rounded-lg font-body text-label-bold uppercase tracking-wider text-center">Pedir Ahora</a>
+            </div>
+        </div>
     </nav>
 
-    <section class="hero" id="inicio">
-        <div class="hero-content">
-            <span class="hero-badge">Barranquilla, Colombia</span>
-            <h1>URBAN <span class="highlight">FOOD BQ</span></h1>
-            <p>Parrilla, pizzas, perros, hamburguesas, salvajadas, salchipapas y mucho más. Pide a domicilio o recoge en el local.</p>
-            <div class="hero-buttons">
-                <a href="https://menu.fu.do/urbanfoodbq" target="_blank" rel="noopener" class="btn btn-primary">
-                    Hacer Pedido
+    <!-- HERO -->
+    <section id="inicio" class="relative min-h-[90vh] flex items-center pt-24 pb-16 overflow-hidden bg-deep-black">
+        <div class="absolute inset-0 z-0">
+            <img src="banner.jpg" alt="Urban Food BQ" class="w-full h-full object-cover opacity-60">
+            <div class="absolute inset-0 bg-gradient-to-t from-deep-black via-deep-black/40 to-deep-black/60"></div>
+        </div>
+        <div class="relative z-10 max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop w-full">
+            <div class="max-w-3xl">
+                <span class="inline-block text-vibrant-orange font-body text-label-bold uppercase tracking-[0.3em] mb-6 border-l-4 border-vibrant-orange pl-4">Barranquilla · Colombia</span>
+                <h1 class="font-display text-display-lg-mobile md:text-display-lg text-white mb-6 uppercase leading-none">
+                    EL MEJOR SABOR <span class="text-vibrant-orange">URBANO</span> EN BARRANQUILLA
+                </h1>
+                <p class="font-body text-body-lg text-white/90 mb-10 max-w-xl border-l-4 border-vibrant-orange pl-6 bg-deep-black/40 backdrop-blur-sm py-4">
+                    Parrilla, pizzas, perros, hamburguesas, salvajadas y mucho más. Pide a domicilio o recoge en el local con la auténtica esencia de la calle.
+                </p>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="https://menu.fu.do/urbanfoodbq" target="_blank" rel="noopener" class="bg-vibrant-orange text-deep-black px-8 py-4 rounded-lg font-display text-headline-md uppercase tracking-wide hover:bg-white transition-all shadow-hard active:translate-x-1 active:translate-y-1 active:shadow-none inline-flex items-center justify-center gap-3">
+                        Hacer Pedido
+                        <span class="material-symbols-outlined">shopping_bag</span>
+                    </a>
+                    <a href="#menu" class="border-2 border-white text-white px-8 py-4 rounded-lg font-display text-headline-md uppercase tracking-wide hover:bg-white hover:text-deep-black transition-all inline-flex items-center justify-center gap-3">
+                        Ver Menú
+                        <span class="material-symbols-outlined">restaurant_menu</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
+            <span class="text-white/40 text-xs font-body uppercase tracking-widest">Deslizar</span>
+            <div class="w-px h-12 bg-gradient-to-b from-vibrant-orange to-transparent"></div>
+        </div>
+    </section>
+
+    <!-- MENU BENTO -->
+    <section id="menu" class="py-24 bg-white">
+        <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
+                <div>
+                    <span class="text-vibrant-orange font-body text-label-bold uppercase tracking-[0.2em] mb-2 block">Nuestro Menú</span>
+                    <h2 class="font-display text-headline-lg text-deep-black uppercase leading-none">Todo lo que tenemos para ti</h2>
+                </div>
+                <div class="h-px flex-grow bg-deep-black/10 mx-8 hidden md:block"></div>
+                <a href="https://menu.fu.do/urbanfoodbq" target="_blank" rel="noopener" class="flex items-center gap-2 text-deep-black font-body text-label-bold uppercase border-b-2 border-deep-black pb-1 hover:text-vibrant-orange hover:border-vibrant-orange transition-all whitespace-nowrap">
+                    Ver Carta Completa
+                    <span class="material-symbols-outlined text-base">arrow_forward</span>
                 </a>
-                <a href="#menu" class="btn btn-secondary">Ver Menú</a>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-gutter-mobile md:gap-gutter-desktop">
+                <article class="group relative aspect-square overflow-hidden bg-surface-container border border-deep-black/5 category-card fade-in">
+                    <img class="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all duration-500 category-image" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAYp6vvKVuwVvm_yUcz0Pdajui2Htqd0fAW-eBsqsNqyBMYg6uHWU8ybaFQBakuZa-_X1UkGF640xwR7tADQbhiQNcgFMtS5fJJn_xdiCQT9Z7uAy9VzJpLx1AEkDaZ_AefIwuSaYm6qf3U0zg-AaglOTt-ymNhSEEDlxl5f6zidcgNPA1RXWQGt3nXvVPwnbkP5cSltNmQRESb0i0Za9qymvMgBGAZNLZiJ6obBo1O7BZRNVry91Fu8FVT4iRiZzixw7bDerAxMpQ" alt="Grill Urban">
+                    <div class="absolute inset-0 bg-gradient-to-t from-deep-black via-transparent to-transparent opacity-80"></div>
+                    <div class="absolute bottom-4 left-4 right-4">
+                        <span class="material-symbols-outlined text-vibrant-orange mb-1" style="font-variation-settings: 'FILL' 1;">restaurant</span>
+                        <h3 class="font-display text-headline-md text-white uppercase leading-none">Grill Urban</h3>
+                        <p class="font-body text-xs text-white/70 mt-1 hidden md:block">Carnes a la parrilla, costillas BBQ y picadas.</p>
+                    </div>
+                </article>
+                <article class="group relative aspect-square overflow-hidden bg-surface-container border border-deep-black/5 category-card fade-in">
+                    <img class="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all duration-500 category-image" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDleeKOOwUhANwhlBJhiNx1zaI5bK-BEpEa50VUCuosnRwFyomLYBRlIm8ePY5LRwOnKdYa-Ql9sNCfohXAcR5GcC2dAqjU05uVtVXHbJfSKRrenoZofrl05RuJ0pk3hNwtxizRTyOg910yEJ36F5NE6TRjhChi_0_QdONPEsDw3CSiGl9XuRgSE7cxoYheyjTjAeeqvHYUofLlbIpjEdxZXABLmA5TqDFjvv_sPtOE5kVf_Yj5UnwJbacLacwTsfsBFwX5PHOG2HU" alt="Perros">
+                    <div class="absolute inset-0 bg-gradient-to-t from-deep-black via-transparent to-transparent opacity-80"></div>
+                    <div class="absolute bottom-4 left-4 right-4">
+                        <span class="material-symbols-outlined text-vibrant-orange mb-1" style="font-variation-settings: 'FILL' 1;">fastfood</span>
+                        <h3 class="font-display text-headline-md text-white uppercase leading-none">Perros</h3>
+                        <p class="font-body text-xs text-white/70 mt-1 hidden md:block">+20 variedades, incluyendo el Perro Salvaje de 40cm.</p>
+                    </div>
+                </article>
+                <article class="group relative aspect-square overflow-hidden bg-surface-container border border-deep-black/5 category-card fade-in">
+                    <img class="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all duration-500 category-image" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAqIYJtN3in9GcaJjYe1XU5OrXi93dFDsnBgam0GRGe7NJZshhENfUv5JYHDGdWlp5ZABofzjXBO9NbguLRcNTQdLIO3CnvPWHkXP49-_WzqWpN5-eLN1rImkFoNsy0Yx_4V9ukkzwadA3uewBa6gzfxvzcTr8og8kvBGM07L9AVAYBrg2c6nDZJWTlsWmaklecHom82WG65ccpezxkv2x8N81D1Y4OZ8sCtfF00Vre5fq2e2dk_QNxprxToQBtCjPZSZFTkeD4yO4" alt="Hamburguesas">
+                    <div class="absolute inset-0 bg-gradient-to-t from-deep-black via-transparent to-transparent opacity-80"></div>
+                    <div class="absolute bottom-4 left-4 right-4">
+                        <span class="material-symbols-outlined text-vibrant-orange mb-1" style="font-variation-settings: 'FILL' 1;">lunch_dining</span>
+                        <h3 class="font-display text-headline-md text-white uppercase leading-none">Burgers</h3>
+                        <p class="font-body text-xs text-white/70 mt-1 hidden md:block">La Coleta, La Patrona con carne angus y La Pechichona.</p>
+                    </div>
+                </article>
+                <article class="group relative aspect-square overflow-hidden bg-surface-container border border-deep-black/5 category-card fade-in">
+                    <img class="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all duration-500 category-image" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBGe3I7lEQHRpByLmDGZsJpf9_JMSVy2xqZDgp4d-o7R3g0SgFycboc2xxQ-BHj7Jt1EHJy7u6SbVs7lKbPvSESFBs9rWkfcU44PcpuqPgBJJBfW3Zcsn03s6_hLWX0GgQUrSqU4CdU_QTCqV8jBcgDNyLHhxiB8R1IC5ydvdseRwL5l0l0FmL4PZUr5kJePF-_oJ73huKzSqdiAbXExA5j7LkxrfwbY09ceIxiZZyRi4n0RienYDynPCMVMHz0j-_Qm6_gjb3_Kxo" alt="Pizzas">
+                    <div class="absolute inset-0 bg-gradient-to-t from-deep-black via-transparent to-transparent opacity-80"></div>
+                    <div class="absolute bottom-4 left-4 right-4">
+                        <span class="material-symbols-outlined text-vibrant-orange mb-1" style="font-variation-settings: 'FILL' 1;">local_pizza</span>
+                        <h3 class="font-display text-headline-md text-white uppercase leading-none">Pizzas</h3>
+                        <p class="font-body text-xs text-white/70 mt-1 hidden md:block">+20 sabores, desde personal hasta XLarge.</p>
+                    </div>
+                </article>
+                <article class="group relative aspect-square overflow-hidden bg-surface-container border border-deep-black/5 category-card fade-in">
+                    <img class="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all duration-500 category-image" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtcU0a9e25mnhW8F3J4PAj8lfvqxTrfWTo2exHa_Cmpy167wbajA4rNVBS9GATHj_Z93-83Rbu58L2RL8jZWfXGbwajmjvxZFfF2kYeSM63epxoH03BgyKLkSRCIo7L36IXWjR98i56uEPS9bThDIkiEKKqQ0znezC4x4LAuHW91Bb3kkXaeuzO0h0FAsr9vrLiScTNiYgw5lMzlnrhDyefbRFGrFo7Cc9ksXg96PSldvoXjcPoIHGL6q0UZX-VP20Tlx0IDrdPm0" alt="Salchipapas">
+                    <div class="absolute inset-0 bg-gradient-to-t from-deep-black via-transparent to-transparent opacity-80"></div>
+                    <div class="absolute bottom-4 left-4 right-4">
+                        <span class="material-symbols-outlined text-vibrant-orange mb-1" style="font-variation-settings: 'FILL' 1;">tapas</span>
+                        <h3 class="font-display text-headline-md text-white uppercase leading-none">Salchipapas</h3>
+                        <p class="font-body text-xs text-white/70 mt-1 hidden md:block">Sencilla, suiza, ranchera y la Golosa gratinada.</p>
+                    </div>
+                </article>
+                <article class="group relative aspect-square overflow-hidden bg-surface-container border border-deep-black/5 category-card fade-in">
+                    <img class="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all duration-500 category-image" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD3RkWiPsRKnaPNn6DQfCx20kHaSFGoBXyItO7zLkYirkdqCBPDujz9224ObH5lgSn9Oi4w_CZUnXYcpeaOBV6kfAQojc9JyRBXHq1f1yXfLBN3kliR4LnQrlnTsAXX2CKNSFCD01vVcPiTnY_JBLQet5jNoMXJOWT1Z75ylJmu2Q5QLyLDA-CsrCj-GgZnd6fVNSrbGabSFmAm5Kia2ucfiZJhLQjqUMQl8cMlF8RygH80yUR9SFvQ-_8BYzWkJqRZNj5fW7q33m0" alt="Sandwich">
+                    <div class="absolute inset-0 bg-gradient-to-t from-deep-black via-transparent to-transparent opacity-80"></div>
+                    <div class="absolute bottom-4 left-4 right-4">
+                        <span class="material-symbols-outlined text-vibrant-orange mb-1" style="font-variation-settings: 'FILL' 1;">lunch_dining</span>
+                        <h3 class="font-display text-headline-md text-white uppercase leading-none">Sandwich</h3>
+                        <p class="font-body text-xs text-white/70 mt-1 hidden md:block">Urban Sandwich de 40cm, Carnívoro, Corroncho y más.</p>
+                    </div>
+                </article>
+                <article class="group relative aspect-square overflow-hidden bg-surface-container border border-deep-black/5 category-card fade-in">
+                    <img class="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all duration-500 category-image" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDvzhQ16b7M6YHwh0Ps9sFKMN2qLjyAMyAsIfgxO4Te20kKUH6esnZjTjrTTlprFsif7lqBj7Uzo0cYr3JJoO9wTjF03agG4mCs_l6H3Q0bsU4RNoF4ZhX7z4wE9zG7cx_e7LJoXvrR_vTJO9l_ISWHUWpQYARklv-zUDtew4pw31ejBVcKc3ILUs2td4g47s6GWYiEjH9WckRPUgSHp-aTw7k6xSdDGEmQj6oGQ3LVIHLQeAiHwInTsIrglSChehBrdpP1NX0GZss" alt="Mazorcas y Desgranados">
+                    <div class="absolute inset-0 bg-gradient-to-t from-deep-black via-transparent to-transparent opacity-80"></div>
+                    <div class="absolute bottom-4 left-4 right-4">
+                        <span class="material-symbols-outlined text-vibrant-orange mb-1" style="font-variation-settings: 'FILL' 1;">skillet</span>
+                        <h3 class="font-display text-headline-md text-white uppercase leading-none">Mazorcas</h3>
+                        <p class="font-body text-xs text-white/70 mt-1 hidden md:block">Desgranados con carne, pollo, chori-buti y más.</p>
+                    </div>
+                </article>
+                <article class="group relative aspect-square overflow-hidden bg-surface-container border border-deep-black/5 category-card fade-in">
+                    <img class="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all duration-500 category-image" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZOYp9OZDajCYhFwbKdymMHW6V9xKjb-kg2apuOklxgBw4AEx_BM3-_GTi_EJQHcQA67gVAKy_MT1mzpLZakDrMTwFIwVueBKRZaeK1ScEFVUpwLLH5tUm0P3zXNAAoTZ0tG5s2uvdjn6izrNfw0W7VvdnDIhoBHdifnHH3XRdYN0-PPfCBRaSn0BmMP5Gzv9cS2r6maQ1_zYdvg9O3B4qYTQkj3DA_UxK6btWOMWyKWMrC507xAURCyNspXGGyfgGZpwL4aCo5P8" alt="Salvajadas">
+                    <div class="absolute inset-0 bg-gradient-to-t from-deep-black via-transparent to-transparent opacity-80"></div>
+                    <div class="absolute bottom-4 left-4 right-4">
+                        <span class="material-symbols-outlined text-vibrant-orange mb-1" style="font-variation-settings: 'FILL' 1;">groups</span>
+                        <h3 class="font-display text-headline-md text-white uppercase leading-none">Salvajadas</h3>
+                        <p class="font-body text-xs text-white/70 mt-1 hidden md:block">Para compartir de 2 a 7 personas.</p>
+                    </div>
+                </article>
+                <article class="group relative aspect-square overflow-hidden bg-surface-container border border-deep-black/5 category-card fade-in">
+                    <img class="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all duration-500 category-image" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD7HLEaCDbXYCI2Ai9NbwTWmJduoWYcUtQ7IGP33PHrL7OmcwW4ZooI48Z9lu_4V_NpDoOSTCqWINIWSWb-xnDIMLQO7V30D8bSVf_KRedqAzXi7rXALyTGRJc5Z7Yf5esplQDfyGYZq7FFhb79QoFiGkdL6QFhyaktqGMjkcbMFxk7FpLdTTNNR3hAIOYhU83btA6hZ1r-eQOdlPeEOR2klamc7uUHqEX5oLcbGKrkO1MYN_RXNkLOO5xpSaxbh2hQgZZYGqPJlEo" alt="Taco Pizza y Pinchos">
+                    <div class="absolute inset-0 bg-gradient-to-t from-deep-black via-transparent to-transparent opacity-80"></div>
+                    <div class="absolute bottom-4 left-4 right-4">
+                        <span class="material-symbols-outlined text-vibrant-orange mb-1" style="font-variation-settings: 'FILL' 1;">layers</span>
+                        <h3 class="font-display text-headline-md text-white uppercase leading-none">Taco Pizza</h3>
+                        <p class="font-body text-xs text-white/70 mt-1 hidden md:block">Y pinchos de carne, pollo, chori-buti y Urban gratinado.</p>
+                    </div>
+                </article>
+                <article class="group relative aspect-square overflow-hidden bg-surface-container border border-deep-black/5 category-card fade-in">
+                    <img class="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all duration-500 category-image" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD860T-IZ3YXwjQ2hzGpdK-9opSCinTrE6-zrayAb4AkRqKSKudqDM3qody9sJ308PNE3ZfIi3jkMQo52epGjabOOiG-fXgPFImkjfijlYKXt7Z-Jq3EiIHoOUdHGVHqUrIhcnh-NhOoNPlncghMePRfeWcGeCFkKC_1yT6qCULv626HM9CSHpFq-RBuU3ur35whllie-XIpD54TfyIJU6--2vCEWJY8egrtvuxyLL-dS3wulog3zynGfsY26ME5WRD1qIWdeY3h3Q" alt="Menú Infantil">
+                    <div class="absolute inset-0 bg-gradient-to-t from-deep-black via-transparent to-transparent opacity-80"></div>
+                    <div class="absolute bottom-4 left-4 right-4">
+                        <span class="material-symbols-outlined text-vibrant-orange mb-1" style="font-variation-settings: 'FILL' 1;">child_care</span>
+                        <h3 class="font-display text-headline-md text-white uppercase leading-none">Infantil</h3>
+                        <p class="font-body text-xs text-white/70 mt-1 hidden md:block">Nuggets, mini pizzas y vaqueritos.</p>
+                    </div>
+                </article>
+                <article class="group relative aspect-square overflow-hidden bg-deep-black border border-deep-black/5 category-card fade-in flex flex-col items-center justify-center text-center p-6">
+                    <span class="material-symbols-outlined text-vibrant-orange text-5xl mb-3" style="font-variation-settings: 'FILL' 1;">local_bar</span>
+                    <h3 class="font-display text-headline-md text-white uppercase leading-none">Bebidas</h3>
+                    <p class="font-body text-xs text-white/70 mt-2">Jugos naturales, frappés, cervezas y gaseosas.</p>
+                </article>
+                <article class="group relative aspect-square overflow-hidden bg-vibrant-orange border border-deep-black/5 category-card fade-in flex flex-col items-center justify-center text-center p-6">
+                    <span class="material-symbols-outlined text-deep-black text-5xl mb-3" style="font-variation-settings: 'FILL' 1;">add_circle</span>
+                    <h3 class="font-display text-headline-md text-deep-black uppercase leading-none">Adicionales</h3>
+                    <p class="font-body text-xs text-deep-black/80 mt-2">Papa francesa, patacón, aros y salsas de la casa.</p>
+                </article>
             </div>
         </div>
     </section>
 
-    <section class="about" id="menu">
-        <div class="section-header">
-            <p class="section-tag">Nuestro Menú</p>
-            <h2>TODO LO QUE TENEMOS PARA TI</h2>
-        </div>
-        <div class="about-grid menu-grid">
-            <div class="about-card fade-in">
-                <span class="about-icon">🥩</span>
-                <h3>Grill Urban</h3>
-                <p>Carnes asadas a la parrilla, pechuga, lomo de cerdo, costillas BBQ, parrilladas mixtas y nuestras famosas picadas Urban.</p>
-            </div>
-            <div class="about-card fade-in">
-                <span class="about-icon">🌭</span>
-                <h3>Perros</h3>
-                <p>Más de 20 variedades: desde el sencillo hasta el Perro Salvaje de 40cm, pasando por el Suizo, Cazador, Estrato 8 y más.</p>
-            </div>
-            <div class="about-card fade-in">
-                <span class="about-icon">🍔</span>
-                <h3>Hamburguesas</h3>
-                <p>La Coleta, La Patrona con carne angus, la Pechichona con doble carne, y nuestras clásicas sencillas y especiales.</p>
-            </div>
-            <div class="about-card fade-in">
-                <span class="about-icon">🍕</span>
-                <h3>Pizzas</h3>
-                <p>Desde personal hasta XLarge. Más de 20 sabores: Hawaiana, Capricciosa, Carnavale, Amore, la Quesuda y la Pizzaperro.</p>
-            </div>
-            <div class="about-card fade-in">
-                <span class="about-icon">🍟</span>
-                <h3>Salchipapas</h3>
-                <p>Sencilla, suiza, ranchera, especial, La Golosa gratinada... todas con nuestra chimichurri, salsa tártara y piña.</p>
-            </div>
-            <div class="about-card fade-in">
-                <span class="about-icon">🥪</span>
-                <h3>Sandwich</h3>
-                <p>Urban Sandwich de 40cm, Carnívoro, Corroncho, Callejero y más, todos en pan de finas hierbas.</p>
-            </div>
-            <div class="about-card fade-in">
-                <span class="about-icon">🌽</span>
-                <h3>Mazorcas & Desgranados</h3>
-                <p>Mazorcas y desgranados con bollo en todas las combinaciones: carne, pollo, chori-buti, suiza, ranchera y la Urban gratinada.</p>
-            </div>
-            <div class="about-card fade-in">
-                <span class="about-icon">🔥</span>
-                <h3>Salvajadas</h3>
-                <p>Para compartir de 2 a 7 personas. La Corroncha, La Del Barrio, Sin Mente y la Urban Salvaje con costillas BBQ.</p>
-            </div>
-            <div class="about-card fade-in">
-                <span class="about-icon">🌮</span>
-                <h3>Taco Pizza & Pinchos</h3>
-                <p>Taco pizza en masa crocante horneada con queso mozzarella. Pinchos de carne, pollo, chori-buti y el Urban gratinado.</p>
-            </div>
-            <div class="about-card fade-in">
-                <span class="about-icon">🧒</span>
-                <h3>Menú Infantil</h3>
-                <p>Nuggets, mini pizzas, salchipapa mini, salchipollo y vaqueritos de carne o pechuga para los más pequeños.</p>
-            </div>
-            <div class="about-card fade-in">
-                <span class="about-icon">🍹</span>
-                <h3>Bebidas & Frappés</h3>
-                <p>Jugos naturales, frappés de cereza y coco, gaseosas, cervezas, Hit, Gatorade, Fuze Tea y más.</p>
-            </div>
-            <div class="about-card fade-in">
-                <span class="about-icon">➕</span>
-                <h3>Adicionales</h3>
-                <p>Papa francesa, patacón, yuca frita, aros de cebolla, ensalada, bollo, gratinado, tocineta y nuestras salsas de la casa.</p>
-            </div>
-        </div>
-        <div class="menu-cta">
-            <a href="https://menu.fu.do/urbanfoodbq" target="_blank" rel="noopener" class="btn btn-primary">
-                Ver Menú Completo y Pedir
-            </a>
-        </div>
-    </section>
-
-    <section class="schedule" id="horarios">
-        <div class="section-header">
-            <p class="section-tag">Horarios de Atención</p>
-            <h2>¿CUÁNDO NOS VISITAS?</h2>
-        </div>
-        <div class="schedule-container">
-            <div class="schedule-table">
-                <div class="schedule-row" data-day="1">
-                    <span class="schedule-day">Lunes</span>
-                    <span class="schedule-time">4:00 PM – 12:45 AM</span>
+    <!-- HORARIOS + INFO -->
+    <section id="horarios" class="py-24 bg-deep-black text-white overflow-hidden relative">
+        <div class="absolute top-0 right-0 w-1/3 h-full bg-vibrant-orange/10 -skew-x-12 translate-x-1/2 pointer-events-none"></div>
+        <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop flex flex-col lg:flex-row gap-16 lg:gap-20 items-center">
+            <div class="lg:w-1/2 relative w-full">
+                <div class="absolute -top-12 -left-2 md:-left-12 font-display text-[120px] text-white/5 select-none leading-none pointer-events-none">OPEN</div>
+                <span class="text-vibrant-orange font-body text-label-bold uppercase tracking-[0.2em] mb-4 block relative">Horarios de Atención</span>
+                <h2 class="font-display text-headline-lg mb-8 uppercase leading-none relative">¿Cuándo nos visitas?</h2>
+                <div id="scheduleList" class="space-y-3 font-body text-body-md text-white/80 relative">
+                    <!-- Filled by script.js -->
                 </div>
-                <div class="schedule-row" data-day="2">
-                    <span class="schedule-day">Martes</span>
-                    <span class="schedule-time">4:00 PM – 12:45 AM</span>
-                </div>
-                <div class="schedule-row" data-day="3">
-                    <span class="schedule-day">Miércoles</span>
-                    <span class="schedule-time">4:00 PM – 12:45 AM</span>
-                </div>
-                <div class="schedule-row" data-day="4">
-                    <span class="schedule-day">Jueves</span>
-                    <span class="schedule-time">4:00 PM – 12:45 AM</span>
-                </div>
-                <div class="schedule-row" data-day="5">
-                    <span class="schedule-day">Viernes</span>
-                    <span class="schedule-time">4:00 PM – 1:00 AM</span>
-                </div>
-                <div class="schedule-row" data-day="6">
-                    <span class="schedule-day">Sábado</span>
-                    <span class="schedule-time">4:00 PM – 2:00 AM</span>
-                </div>
-                <div class="schedule-row" data-day="0">
-                    <span class="schedule-day">Domingo</span>
-                    <span class="schedule-time">4:00 PM – 12:30 AM</span>
-                </div>
+                <p class="text-vibrant-orange font-body text-label-bold pt-6 relative">* También abrimos en días festivos</p>
             </div>
-            <p class="schedule-note">* También abrimos en días festivos</p>
-        </div>
-    </section>
-
-    <section class="location" id="ubicacion">
-        <div class="section-header">
-            <p class="section-tag">Encuéntranos</p>
-            <h2>NUESTRA UBICACIÓN</h2>
-        </div>
-        <div class="location-grid">
-            <div class="location-info fade-in">
-                <div class="location-item">
-                    <div class="location-item-icon">📍</div>
-                    <div>
-                        <h3>Dirección</h3>
-                        <p>Calle 53D # 19-06<br>Barranquilla, Colombia</p>
-                    </div>
+            <div class="lg:w-1/2 grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
+                <div class="bg-white/5 p-8 border-l-4 border-vibrant-orange backdrop-blur-md fade-in">
+                    <span class="material-symbols-outlined text-vibrant-orange text-4xl mb-4" style="font-variation-settings: 'FILL' 1;">timer</span>
+                    <h4 class="font-display text-headline-md uppercase mb-2 leading-none">Servicio Rápido</h4>
+                    <p class="text-white/60 text-sm">Tu comida urbana lista en tiempo récord, caliente y deliciosa.</p>
                 </div>
-                <div class="location-item">
-                    <div class="location-item-icon">🕐</div>
-                    <div>
-                        <h3>Horario Hoy</h3>
-                        <p id="todaySchedule">Cargando...</p>
-                    </div>
+                <div class="bg-white/5 p-8 border-l-4 border-white/20 backdrop-blur-md sm:translate-y-8 fade-in">
+                    <span class="material-symbols-outlined text-white text-4xl mb-4" style="font-variation-settings: 'FILL' 1;">delivery_dining</span>
+                    <h4 class="font-display text-headline-md uppercase mb-2 leading-none">Domicilio</h4>
+                    <p class="text-white/60 text-sm">Llegamos a cada rincón de Barranquilla y Soledad con el sabor Urban.</p>
                 </div>
-                <div class="location-item">
-                    <div class="location-item-icon">📞</div>
-                    <div>
-                        <h3>Teléfono / WhatsApp</h3>
-                        <p><a href="https://wa.me/573024017935" target="_blank" rel="noopener" class="link-teal">+57 302 401 7935</a></p>
-                    </div>
-                </div>
-                <div class="location-item">
-                    <div class="location-item-icon">✉️</div>
-                    <div>
-                        <h3>Correo</h3>
-                        <p><a href="mailto:urbanfoodbq@gmail.com" class="link-orange">urbanfoodbq@gmail.com</a></p>
-                    </div>
-                </div>
-                <div class="location-item">
-                    <div class="location-item-icon">📱</div>
-                    <div>
-                        <h3>Pedidos Online</h3>
-                        <p><a href="https://menu.fu.do/urbanfoodbq" target="_blank" rel="noopener" class="link-orange">menu.fu.do/urbanfoodbq</a></p>
-                    </div>
-                </div>
-            </div>
-            <div class="map-container fade-in">
-                <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3916.8!2d-75.555!3d10.985!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sCalle+53D+%23+19-06%2C+Barranquilla!5e0!3m2!1ses!2sco!4v1"
-                    allowfullscreen=""
-                    loading="lazy"
-                    referrerpolicy="no-referrer-when-downgrade"
-                    title="Ubicación de Urban Food BQ">
-                </iframe>
             </div>
         </div>
     </section>
 
-    <section class="cta">
-        <div class="cta-content">
-            <h2>¿LISTO PARA ORDENAR?</h2>
-            <p>Haz tu pedido online y disfruta del mejor sabor urbano</p>
-            <a href="https://menu.fu.do/urbanfoodbq" target="_blank" rel="noopener" class="btn btn-white">
+    <!-- UBICACIÓN -->
+    <section id="ubicacion" class="py-24 bg-white">
+        <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+            <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+                <div>
+                    <span class="text-vibrant-orange font-body text-label-bold uppercase tracking-[0.2em] mb-4 block">Encuéntranos</span>
+                    <h2 class="font-display text-headline-lg text-deep-black mb-8 uppercase leading-none">Nuestras Sedes</h2>
+
+                    <!-- Sede Selector -->
+                    <div class="flex flex-col sm:flex-row gap-3 mb-10">
+                        <button class="loc-btn flex-1 py-3 px-4 font-body text-label-bold uppercase tracking-wider rounded-lg border-2 border-deep-black bg-deep-black text-white transition-all" data-loc="principal">Sede Principal</button>
+                        <button class="loc-btn flex-1 py-3 px-4 font-body text-label-bold uppercase tracking-wider rounded-lg border-2 border-deep-black bg-transparent text-deep-black hover:bg-deep-black/5 transition-all" data-loc="hipodromo">Sede Hipódromo</button>
+                    </div>
+
+                    <!-- Principal -->
+                    <div class="loc-content space-y-6 active" data-loc-content="principal">
+                        <div class="flex gap-5">
+                            <div class="flex-shrink-0 w-12 h-12 bg-deep-black flex items-center justify-center rounded-lg">
+                                <span class="material-symbols-outlined text-vibrant-orange">location_on</span>
+                            </div>
+                            <div>
+                                <h3 class="font-display text-headline-md uppercase text-deep-black mb-1 leading-none">Dirección</h3>
+                                <p class="font-body text-body-md text-secondary">Calle 53D # 19-06<br>Barranquilla, Colombia</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-5">
+                            <div class="flex-shrink-0 w-12 h-12 bg-vibrant-orange flex items-center justify-center rounded-lg">
+                                <span class="material-symbols-outlined text-deep-black">call</span>
+                            </div>
+                            <div>
+                                <h3 class="font-display text-headline-md uppercase text-deep-black mb-1 leading-none">WhatsApp / Teléfono</h3>
+                                <a class="font-body text-body-md text-secondary hover:text-vibrant-orange transition-colors" href="https://wa.me/573024017935" target="_blank" rel="noopener">+57 302 401 7935</a>
+                            </div>
+                        </div>
+                        <div class="flex gap-5">
+                            <div class="flex-shrink-0 w-12 h-12 bg-deep-black flex items-center justify-center rounded-lg">
+                                <span class="material-symbols-outlined text-vibrant-orange">mail</span>
+                            </div>
+                            <div>
+                                <h3 class="font-display text-headline-md uppercase text-deep-black mb-1 leading-none">Correo</h3>
+                                <a class="font-body text-body-md text-secondary hover:text-vibrant-orange transition-colors" href="mailto:urbanfoodbq@gmail.com">urbanfoodbq@gmail.com</a>
+                            </div>
+                        </div>
+                        <div class="flex gap-5">
+                            <div class="flex-shrink-0 w-12 h-12 bg-deep-black flex items-center justify-center rounded-lg">
+                                <span class="material-symbols-outlined text-vibrant-orange">schedule</span>
+                            </div>
+                            <div>
+                                <h3 class="font-display text-headline-md uppercase text-deep-black mb-1 leading-none">Horario Hoy</h3>
+                                <p class="font-body text-body-md text-secondary" data-today-schedule>Cargando...</p>
+                            </div>
+                        </div>
+                        <div class="pt-2">
+                            <a href="https://www.google.com/maps?q=Calle+53D+%23+19-06,+Barranquilla" target="_blank" rel="noopener" class="bg-deep-black text-white px-6 py-3 font-body text-label-bold rounded-lg uppercase tracking-wider inline-flex items-center gap-3 hover:bg-vibrant-orange transition-all">
+                                Obtener Direcciones
+                                <span class="material-symbols-outlined">navigation</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Hipódromo -->
+                    <div class="loc-content space-y-6 hidden" data-loc-content="hipodromo">
+                        <div class="flex gap-5">
+                            <div class="flex-shrink-0 w-12 h-12 bg-deep-black flex items-center justify-center rounded-lg">
+                                <span class="material-symbols-outlined text-vibrant-orange">location_on</span>
+                            </div>
+                            <div>
+                                <h3 class="font-display text-headline-md uppercase text-deep-black mb-1 leading-none">Dirección</h3>
+                                <p class="font-body text-body-md text-secondary">Cra. 28A # 26-4<br>Soledad, Atlántico</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-5">
+                            <div class="flex-shrink-0 w-12 h-12 bg-vibrant-orange flex items-center justify-center rounded-lg">
+                                <span class="material-symbols-outlined text-deep-black">call</span>
+                            </div>
+                            <div>
+                                <h3 class="font-display text-headline-md uppercase text-deep-black mb-1 leading-none">WhatsApp / Teléfono</h3>
+                                <a class="font-body text-body-md text-secondary hover:text-vibrant-orange transition-colors" href="https://wa.me/573024017935" target="_blank" rel="noopener">+57 302 401 7935</a>
+                            </div>
+                        </div>
+                        <div class="flex gap-5">
+                            <div class="flex-shrink-0 w-12 h-12 bg-deep-black flex items-center justify-center rounded-lg">
+                                <span class="material-symbols-outlined text-vibrant-orange">mail</span>
+                            </div>
+                            <div>
+                                <h3 class="font-display text-headline-md uppercase text-deep-black mb-1 leading-none">Correo</h3>
+                                <a class="font-body text-body-md text-secondary hover:text-vibrant-orange transition-colors" href="mailto:urbanfoodbq@gmail.com">urbanfoodbq@gmail.com</a>
+                            </div>
+                        </div>
+                        <div class="flex gap-5">
+                            <div class="flex-shrink-0 w-12 h-12 bg-deep-black flex items-center justify-center rounded-lg">
+                                <span class="material-symbols-outlined text-vibrant-orange">schedule</span>
+                            </div>
+                            <div>
+                                <h3 class="font-display text-headline-md uppercase text-deep-black mb-1 leading-none">Horario Hoy</h3>
+                                <p class="font-body text-body-md text-secondary" data-today-schedule>Cargando...</p>
+                            </div>
+                        </div>
+                        <div class="pt-2">
+                            <a href="https://maps.app.goo.gl/tWd4qZ7oF9eRbFBU7" target="_blank" rel="noopener" class="bg-deep-black text-white px-6 py-3 font-body text-label-bold rounded-lg uppercase tracking-wider inline-flex items-center gap-3 hover:bg-vibrant-orange transition-all">
+                                Obtener Direcciones
+                                <span class="material-symbols-outlined">navigation</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mapa -->
+                <div class="relative h-[400px] lg:h-[600px] bg-surface-container rounded-lg overflow-hidden border border-deep-black/10">
+                    <iframe class="map-frame active" data-loc-map="principal"
+                        src="https://www.google.com/maps?q=Calle+53D+%23+19-06,+Barranquilla&output=embed"
+                        width="100%" height="100%" style="border:0; filter: grayscale(1) contrast(1.15);"
+                        loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"
+                        title="Urban Food BQ - Sede Principal"></iframe>
+                    <iframe class="map-frame hidden" data-loc-map="hipodromo"
+                        src="https://www.google.com/maps?q=Cra.+28a+%23+26-4,+Soledad,+Atl%C3%A1ntico&output=embed"
+                        width="100%" height="100%" style="border:0; filter: grayscale(1) contrast(1.15);"
+                        loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"
+                        title="Urban Food BQ - Sede Hipódromo"></iframe>
+                    <div class="absolute bottom-4 left-4 z-20 bg-vibrant-orange text-white py-1 px-3 rounded font-body text-label-bold text-xs uppercase tracking-widest shadow-lg" id="activeLocationLabel">
+                        Sede Principal
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- OPINIONES -->
+    <section id="opiniones" class="py-24 bg-surface-container-low">
+        <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+            <div class="text-center mb-16">
+                <span class="text-vibrant-orange font-body text-label-bold uppercase tracking-[0.2em] mb-4 block">Experiencias</span>
+                <h2 class="font-display text-headline-lg text-deep-black uppercase leading-none">Opiniones de Clientes</h2>
+            </div>
+            <div id="reviewsGrid" class="grid md:grid-cols-3 gap-8 mb-12">
+                <!-- Filled by script.js -->
+            </div>
+            <div class="text-center">
+                <button id="openReviewModal" class="bg-deep-black text-white px-10 py-4 rounded-lg font-display text-headline-md uppercase tracking-wider hover:bg-vibrant-orange transition-all shadow-hard active:translate-x-1 active:translate-y-1 active:shadow-none">
+                    Dejar un comentario
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- COMMENT MODAL -->
+    <div id="reviewModal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-deep-black/80 hidden">
+        <div class="bg-white max-w-md w-full rounded-lg overflow-hidden shadow-2xl relative">
+            <button id="closeReviewModal" class="absolute top-4 right-4 text-deep-black hover:text-vibrant-orange" aria-label="Cerrar">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+            <div class="p-8">
+                <h3 class="font-display text-headline-md text-deep-black uppercase mb-6 text-center leading-none">Tu opinión nos importa</h3>
+                <form id="reviewForm" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-body text-label-bold uppercase mb-1 text-deep-black">Nombre</label>
+                        <input name="name" required class="w-full border-2 border-surface-container-highest rounded-lg p-3 focus:border-vibrant-orange outline-none transition-colors" placeholder="Tu nombre completo" type="text">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-body text-label-bold uppercase mb-1 text-deep-black">Calificación</label>
+                        <div class="flex gap-2 text-vibrant-orange" id="ratingStars" data-rating="5">
+                            <span class="material-symbols-outlined cursor-pointer hover:scale-110 transition-transform" style="font-variation-settings: 'FILL' 1;" data-star="1">star</span>
+                            <span class="material-symbols-outlined cursor-pointer hover:scale-110 transition-transform" style="font-variation-settings: 'FILL' 1;" data-star="2">star</span>
+                            <span class="material-symbols-outlined cursor-pointer hover:scale-110 transition-transform" style="font-variation-settings: 'FILL' 1;" data-star="3">star</span>
+                            <span class="material-symbols-outlined cursor-pointer hover:scale-110 transition-transform" style="font-variation-settings: 'FILL' 1;" data-star="4">star</span>
+                            <span class="material-symbols-outlined cursor-pointer hover:scale-110 transition-transform" style="font-variation-settings: 'FILL' 1;" data-star="5">star</span>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-body text-label-bold uppercase mb-1 text-deep-black">Comentario</label>
+                        <textarea name="comment" required class="w-full border-2 border-surface-container-highest rounded-lg p-3 focus:border-vibrant-orange outline-none transition-colors" placeholder="¿Qué te pareció tu experiencia?" rows="4"></textarea>
+                    </div>
+                    <button class="w-full bg-vibrant-orange text-white py-4 rounded-lg font-display text-headline-md uppercase tracking-wider hover:bg-deep-black transition-all" type="submit">
+                        Enviar Comentario
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTA FINAL -->
+    <section class="py-24 bg-deep-black relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10 pointer-events-none">
+            <div class="grid grid-cols-12 gap-4 h-full">
+                <div class="border-r border-white h-full"></div>
+                <div class="border-r border-white h-full"></div>
+                <div class="border-r border-white h-full"></div>
+                <div class="border-r border-white h-full"></div>
+                <div class="border-r border-white h-full"></div>
+                <div class="border-r border-white h-full"></div>
+                <div class="border-r border-white h-full"></div>
+                <div class="border-r border-white h-full"></div>
+                <div class="border-r border-white h-full"></div>
+                <div class="border-r border-white h-full"></div>
+                <div class="border-r border-white h-full"></div>
+                <div class="border-r border-white h-full"></div>
+            </div>
+        </div>
+        <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop text-center relative z-10">
+            <h2 class="font-display text-display-lg-mobile md:text-display-lg text-white mb-6 uppercase leading-none">¿LISTO PARA ORDENAR?</h2>
+            <p class="font-body text-body-lg text-white/60 mb-12 max-w-2xl mx-auto">Haz tu pedido online y disfruta del mejor sabor urbano directamente en tu puerta o recógelo en nuestro local.</p>
+            <a class="inline-flex items-center gap-3 bg-vibrant-orange text-white px-12 py-5 rounded-lg font-display text-headline-md uppercase tracking-wider hover:bg-white hover:text-deep-black transition-all transform hover:-translate-y-1 active:scale-95 shadow-hard" href="https://menu.fu.do/urbanfoodbq" target="_blank" rel="noopener">
                 Pedir Ahora
+                <span class="material-symbols-outlined">arrow_forward</span>
             </a>
         </div>
     </section>
 
-    <footer>
-        <div class="footer-logo"><img src="logor.png" alt="Urban Food"></div>
-        <div class="footer-socials">
-            <a href="https://wa.me/573024017935" target="_blank" rel="noopener" aria-label="WhatsApp">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-            </a>
-            <a href="https://www.facebook.com/profile.php?id=100090055810195" target="_blank" rel="noopener" aria-label="Facebook">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-            </a>
-            <a href="https://www.instagram.com/urbanfood_bq" target="_blank" rel="noopener" aria-label="Instagram">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
-            </a>
+    <!-- FOOTER -->
+    <footer class="bg-deep-black border-t border-white/20 w-full py-12">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-gutter-desktop px-margin-mobile md:px-margin-desktop max-w-container-max mx-auto">
+            <div class="md:col-span-1">
+                <div class="flex items-center gap-3 mb-4">
+                    <img src="logor.png" alt="Urban Food BQ" class="h-12 w-auto rounded">
+                </div>
+                <span class="font-display text-headline-md text-vibrant-orange block mb-2 leading-none">URBAN FOOD BQ</span>
+                <p class="font-body text-body-md text-white/60 leading-relaxed mb-6">URBAN KINETIC DINING. Lo mejor de la calle con la calidad que te mereces.</p>
+                <div class="flex gap-4">
+                    <a class="text-white/60 hover:text-vibrant-orange transition-colors" href="https://wa.me/573024017935" target="_blank" rel="noopener" aria-label="WhatsApp">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                    </a>
+                    <a class="text-white/60 hover:text-vibrant-orange transition-colors" href="https://www.facebook.com/profile.php?id=100090055810195" target="_blank" rel="noopener" aria-label="Facebook">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                    </a>
+                    <a class="text-white/60 hover:text-vibrant-orange transition-colors" href="https://www.instagram.com/urbanfood_bq" target="_blank" rel="noopener" aria-label="Instagram">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                    </a>
+                </div>
+            </div>
+            <div>
+                <h4 class="font-body text-label-bold text-white uppercase mb-6 tracking-widest">Navegación</h4>
+                <ul class="space-y-3">
+                    <li><a class="font-body text-body-md text-white/60 hover:text-vibrant-orange transition-colors" href="#inicio">Inicio</a></li>
+                    <li><a class="font-body text-body-md text-white/60 hover:text-vibrant-orange transition-colors" href="#menu">Menú</a></li>
+                    <li><a class="font-body text-body-md text-white/60 hover:text-vibrant-orange transition-colors" href="#horarios">Horarios</a></li>
+                    <li><a class="font-body text-body-md text-white/60 hover:text-vibrant-orange transition-colors" href="#ubicacion">Sedes</a></li>
+                    <li><a class="font-body text-body-md text-vibrant-orange hover:text-white transition-colors" href="https://menu.fu.do/urbanfoodbq" target="_blank" rel="noopener">Pedir Online</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-body text-label-bold text-white uppercase mb-6 tracking-widest">Sedes</h4>
+                <ul class="space-y-4 font-body text-body-md text-white/60">
+                    <li>
+                        <span class="block text-white font-bold mb-1">Principal</span>
+                        Calle 53D # 19-06<br>Barranquilla
+                    </li>
+                    <li>
+                        <span class="block text-white font-bold mb-1">Hipódromo</span>
+                        Cra. 28A # 26-4<br>Soledad, Atlántico
+                    </li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-body text-label-bold text-white uppercase mb-6 tracking-widest">Contacto</h4>
+                <ul class="space-y-3 font-body text-body-md text-white/60">
+                    <li class="flex items-center gap-2"><span class="material-symbols-outlined text-vibrant-orange text-base">call</span><a href="https://wa.me/573024017935" target="_blank" rel="noopener" class="hover:text-white transition-colors">+57 302 401 7935</a></li>
+                    <li class="flex items-center gap-2"><span class="material-symbols-outlined text-vibrant-orange text-base">mail</span><a href="mailto:urbanfoodbq@gmail.com" class="hover:text-white transition-colors">urbanfoodbq@gmail.com</a></li>
+                    <li class="flex items-center gap-2"><span class="material-symbols-outlined text-vibrant-orange text-base">link</span><a href="https://menu.fu.do/urbanfoodbq" target="_blank" rel="noopener" class="hover:text-white transition-colors">menu.fu.do/urbanfoodbq</a></li>
+                </ul>
+            </div>
         </div>
-        <p class="footer-copy">&copy; 2025 Urban Food BQ. Todos los derechos reservados.</p>
+        <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop mt-12 pt-6 border-t border-white/5">
+            <p class="font-body text-body-md text-white/40 text-center">&copy; 2025 URBAN FOOD BQ. URBAN KINETIC DINING. Todos los derechos reservados.</p>
+        </div>
     </footer>
 
     <script src="script.js"></script>
-
 </body>
 </html>
