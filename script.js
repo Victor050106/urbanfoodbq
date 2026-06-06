@@ -77,29 +77,62 @@ document.querySelectorAll('.loc-btn').forEach(btn => {
 });
 
 // ============ Reviews ============
+// URL del web app de Google Apps Script (ver apps-script/Code.gs para setup).
+// Cuando esté vacía, se muestran las reseñas por defecto y el formulario no envía.
+const REVIEWS_API_URL = '';
+
 const DEFAULT_REVIEWS = [
-    { name: 'Ricardo Méndez',  rating: 5, comment: 'La mejor hamburguesa urbana que he probado en Barranquilla. El sabor a parrilla es auténtico y las porciones son gigantes.', when: 'Hace 2 días' },
-    { name: 'Laura Ortiz',     rating: 5, comment: 'Las salchipapas son otro nivel. La mezcla de salsas y la calidad de la carne marcan la diferencia. Súper recomendado.', when: 'Hace 1 semana' },
-    { name: 'Juan Camilo',     rating: 5, comment: 'Excelente servicio al cliente y la comida llegó caliente a pesar de ser domicilio. Urban Food nunca falla.', when: 'Hace 3 días' }
+    { name: 'Ricardo Méndez', rating: 5, comment: 'La mejor hamburguesa urbana que he probado en Barranquilla. El sabor a parrilla es auténtico y las porciones son gigantes.', when: 'Hace 2 días' },
+    { name: 'Laura Ortiz',    rating: 5, comment: 'Las salchipapas son otro nivel. La mezcla de salsas y la calidad de la carne marcan la diferencia. Súper recomendado.', when: 'Hace 1 semana' },
+    { name: 'Juan Camilo',    rating: 5, comment: 'Excelente servicio al cliente y la comida llegó caliente a pesar de ser domicilio. Urban Food nunca falla.', when: 'Hace 3 días' }
 ];
 
-const REVIEWS_KEY = 'urbanfood_reviews_v1';
+function relativeTime(ts) {
+    if (!ts) return 'Recién';
+    const d = new Date(ts);
+    if (isNaN(d.getTime())) return 'Recién';
+    const diff = Math.max(0, (Date.now() - d.getTime()) / 1000);
+    if (diff < 60) return 'Recién';
+    if (diff < 3600) return `Hace ${Math.floor(diff / 60)} min`;
+    if (diff < 86400) return `Hace ${Math.floor(diff / 3600)} h`;
+    if (diff < 86400 * 7) return `Hace ${Math.floor(diff / 86400)} días`;
+    if (diff < 86400 * 30) return `Hace ${Math.floor(diff / 86400 / 7)} sem`;
+    if (diff < 86400 * 365) return `Hace ${Math.floor(diff / 86400 / 30)} meses`;
+    return `Hace ${Math.floor(diff / 86400 / 365)} años`;
+}
 
-function loadReviews() {
+async function fetchRemoteReviews() {
+    if (!REVIEWS_API_URL) return null;
     try {
-        const stored = JSON.parse(localStorage.getItem(REVIEWS_KEY) || '[]');
-        return [...stored, ...DEFAULT_REVIEWS];
+        const res = await fetch(REVIEWS_API_URL, { method: 'GET', cache: 'no-store' });
+        if (!res.ok) return null;
+        const data = await res.json();
+        if (!Array.isArray(data.reviews)) return null;
+        return data.reviews.map(r => ({
+            name: r.name,
+            rating: r.rating,
+            comment: r.comment,
+            when: r.timestamp ? relativeTime(r.timestamp) : 'Recién'
+        }));
     } catch {
-        return DEFAULT_REVIEWS;
+        return null;
     }
 }
 
-function saveReview(review) {
+async function postRemoteReview(review) {
+    if (!REVIEWS_API_URL) return false;
     try {
-        const stored = JSON.parse(localStorage.getItem(REVIEWS_KEY) || '[]');
-        stored.unshift(review);
-        localStorage.setItem(REVIEWS_KEY, JSON.stringify(stored.slice(0, 20)));
-    } catch (e) {}
+        const res = await fetch(REVIEWS_API_URL, {
+            method: 'POST',
+            // text/plain evita preflight CORS con Apps Script
+            body: JSON.stringify(review)
+        });
+        if (!res.ok) return false;
+        const data = await res.json();
+        return !!data.ok;
+    } catch {
+        return false;
+    }
 }
 
 function escapeHtml(s) {
@@ -108,11 +141,11 @@ function escapeHtml(s) {
     }[c]));
 }
 
-function renderReviews() {
+function renderReviews(reviews) {
     const grid = document.getElementById('reviewsGrid');
     if (!grid) return;
-    const reviews = loadReviews().slice(0, 6);
-    grid.innerHTML = reviews.map(r => {
+    const items = (reviews && reviews.length ? reviews : DEFAULT_REVIEWS).slice(0, 6);
+    grid.innerHTML = items.map(r => {
         const initial = (r.name || '?').trim().charAt(0).toUpperCase();
         const stars = Array.from({ length: 5 }, (_, i) => `
             <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' ${i < r.rating ? 1 : 0};">star</span>
@@ -133,7 +166,17 @@ function renderReviews() {
     }).join('');
 }
 
-renderReviews();
+// Estado + render inicial con defaults; luego intentamos traer las reales
+let cachedReviews = DEFAULT_REVIEWS;
+renderReviews(cachedReviews);
+
+(async () => {
+    const remote = await fetchRemoteReviews();
+    if (remote && remote.length) {
+        cachedReviews = remote;
+        renderReviews(cachedReviews);
+    }
+})();
 
 // ============ Review modal ============
 const reviewModal = document.getElementById('reviewModal');
@@ -173,7 +216,7 @@ ratingStars?.querySelectorAll('[data-star]').forEach(s => {
     s.addEventListener('click', () => paintStars(parseInt(s.dataset.star, 10)));
 });
 
-reviewForm?.addEventListener('submit', (e) => {
+reviewForm?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const data = new FormData(reviewForm);
     const review = {
@@ -183,11 +226,28 @@ reviewForm?.addEventListener('submit', (e) => {
         when: 'Recién'
     };
     if (!review.name || !review.comment) return;
-    saveReview(review);
-    renderReviews();
+
+    const submitBtn = reviewForm.querySelector('button[type=submit]');
+    const originalText = submitBtn?.textContent;
+    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Enviando...'; }
+
+    // Optimista: mostramos el comentario de una
+    cachedReviews = [review, ...cachedReviews];
+    renderReviews(cachedReviews);
+
+    const ok = await postRemoteReview(review);
+
+    if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = originalText; }
     reviewForm.reset();
     paintStars(5);
     closeModal();
+
+    if (!ok && REVIEWS_API_URL) {
+        // Si falla, revertimos y avisamos
+        cachedReviews = cachedReviews.slice(1);
+        renderReviews(cachedReviews);
+        alert('No pudimos guardar tu comentario. Inténtalo de nuevo en un momento.');
+    }
 });
 
 // ============ Fade-in observer ============
