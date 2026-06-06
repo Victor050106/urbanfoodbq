@@ -79,7 +79,7 @@ document.querySelectorAll('.loc-btn').forEach(btn => {
 // ============ Reviews ============
 // URL del web app de Google Apps Script (ver apps-script/Code.gs para setup).
 // Cuando esté vacía, se muestran las reseñas por defecto y el formulario no envía.
-const REVIEWS_API_URL = '';
+const REVIEWS_API_URL = 'https://script.google.com/macros/s/AKfycbxbmTJiBV-pWqsm_qhVen_fDoe3rDWV-iuq2ccQZrf7zDI3E5XtT0rFDhOVpEd9BcKlTw/exec';
 
 const DEFAULT_REVIEWS = [
     { name: 'Ricardo Méndez', rating: 5, comment: 'La mejor hamburguesa urbana que he probado en Barranquilla. El sabor a parrilla es auténtico y las porciones son gigantes.', when: 'Hace 2 días' },
