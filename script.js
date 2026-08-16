@@ -31,18 +31,81 @@ const mobileMenu = document.getElementById('mobileMenu');
 if (menuToggle && mobileMenu) {
     menuToggle.addEventListener('click', () => {
         mobileMenu.classList.toggle('hidden');
+        updateNavbar();
     });
     mobileMenu.querySelectorAll('a').forEach(a => {
-        a.addEventListener('click', () => mobileMenu.classList.add('hidden'));
+        a.addEventListener('click', () => {
+            mobileMenu.classList.add('hidden');
+            updateNavbar();
+        });
     });
 }
 
-// ============ Navbar scroll shadow ============
+// ============ Navbar auto-oculto ============
+// Sobre la portada el navbar se esconde para no tapar la imagen de fondo.
+// Reaparece cuando: el puntero se acerca al borde superior, se sube con el
+// scroll, se abre el menú móvil, o se navega con el teclado (Tab).
 const navbar = document.getElementById('navbar');
-window.addEventListener('scroll', () => {
+const heroSection = document.getElementById('inicio');
+const TOP_HOVER_ZONE = 90; // px desde el borde superior que revelan el navbar
+
+let pointerNearTop = false;
+let navHasFocus = false;
+let lastScrollY = window.scrollY;
+
+function heroLimit() {
+    // Punto a partir del cual ya no estamos viendo la portada
+    return heroSection ? Math.max(0, heroSection.offsetHeight - 120) : 0;
+}
+
+function updateNavbar() {
     if (!navbar) return;
-    navbar.classList.toggle('scrolled', window.scrollY > 40);
+    const y = window.scrollY;
+    const menuOpen = mobileMenu && !mobileMenu.classList.contains('hidden');
+
+    navbar.classList.toggle('scrolled', y > 40);
+
+    let hide;
+    if (menuOpen || pointerNearTop || navHasFocus) {
+        hide = false;                  // se está usando: nunca esconder
+    } else if (y < heroLimit()) {
+        hide = true;                   // sobre la portada: fuera de vista
+    } else if (y > lastScrollY + 5) {
+        hide = true;                   // bajando
+    } else if (y < lastScrollY - 5) {
+        hide = false;                  // subiendo
+    } else {
+        hide = navbar.classList.contains('nav-hidden'); // sin cambio
+    }
+
+    navbar.classList.toggle('nav-hidden', hide);
+    if (Math.abs(y - lastScrollY) > 5) lastScrollY = y;
+}
+
+window.addEventListener('scroll', updateNavbar, { passive: true });
+window.addEventListener('resize', updateNavbar);
+
+document.addEventListener('mousemove', (e) => {
+    const near = e.clientY <= TOP_HOVER_ZONE;
+    if (near !== pointerNearTop) {
+        pointerNearTop = near;
+        updateNavbar();
+    }
 });
+document.addEventListener('mouseleave', () => {
+    if (pointerNearTop) {
+        pointerNearTop = false;
+        updateNavbar();
+    }
+});
+
+// Accesibilidad: si alguien llega al navbar con Tab, tiene que poder verlo.
+if (navbar) {
+    navbar.addEventListener('focusin', () => { navHasFocus = true; updateNavbar(); });
+    navbar.addEventListener('focusout', () => { navHasFocus = false; updateNavbar(); });
+}
+
+updateNavbar();
 
 // ============ Location switcher ============
 const LOC_LABELS = {
