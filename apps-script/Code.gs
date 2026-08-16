@@ -1,28 +1,13 @@
 /**
  * Urban Food BQ – Comentarios (Google Apps Script)
  *
- * SETUP (una sola vez):
- *  1. Crea una hoja de cálculo nueva en Google Drive llamada "Urban Food BQ - Comentarios".
- *  2. Renombra la primera hoja (pestaña) a "Comentarios".
- *  3. En la fila 1, escribe las columnas en este orden: timestamp | name | rating | comment | approved
- *  4. Menú: Extensiones > Apps Script. Pega TODO este archivo en el editor (reemplaza Code.gs).
- *  5. Guarda (Ctrl+S). Ponle nombre al proyecto, p.ej. "Urban Food Comentarios".
- *  6. Menú: Implementar > Nueva implementación.
- *      - Tipo: Aplicación web
- *      - Descripción: "API comentarios v1"
- *      - Ejecutar como: Yo (tu correo)
- *      - Quién tiene acceso: Cualquier usuario
- *      - Implementar > Autoriza permisos (review > advanced > go to project > allow)
- *  7. Copia la URL del web app (termina en /exec) y pásamela.
- *
- * Para actualizar el código después: Implementar > Administrar implementaciones > lápiz > Nueva versión.
- *
  * MODERACIÓN:
  *  Los comentarios nuevos NO se publican automáticamente. Llegan a la hoja con la
  *  columna "approved" vacía. Para que un comentario se vea en la página, marca
  *  la casilla "approved" de esa fila (o escribe TRUE) en la hoja de cálculo.
- *  Así ningún comentario ofensivo o de spam queda visible sin que alguien del
- *  restaurante lo revise primero.
+ *
+ * Para actualizar este código después:
+ *  Implementar > Administrar implementaciones > lápiz > Nueva versión.
  */
 
 const SHEET_NAME = 'Comentarios';
@@ -54,8 +39,8 @@ function doPost(e) {
       return jsonResponse({ ok: false, error: 'Faltan datos' });
     }
 
-    // Se guarda sin aprobar (approved queda vacío). No se publica hasta que
-    // alguien del restaurante marque la casilla "approved" en la hoja.
+    // Se guarda sin aprobar. No se publica hasta que alguien del restaurante
+    // marque la casilla "approved" en la hoja.
     const sheet = getSheet();
     sheet.appendRow([new Date(), name, rating, comment, false]);
 
