@@ -78,14 +78,15 @@ document.querySelectorAll('.loc-btn').forEach(btn => {
 
 // ============ Reviews ============
 // URL del web app de Google Apps Script (ver apps-script/Code.gs para setup).
-// Cuando esté vacía, se muestran las reseñas por defecto y el formulario no envía.
+// Si está vacía, la sección queda sin opiniones y el formulario no envía.
 const REVIEWS_API_URL = 'https://script.google.com/macros/s/AKfycbxbmTJiBV-pWqsm_qhVen_fDoe3rDWV-iuq2ccQZrf7zDI3E5XtT0rFDhOVpEd9BcKlTw/exec';
 
-const DEFAULT_REVIEWS = [
-    { name: 'Ricardo Méndez', rating: 5, comment: 'La mejor hamburguesa urbana que he probado en Barranquilla. El sabor a parrilla es auténtico y las porciones son gigantes.', when: 'Hace 2 días' },
-    { name: 'Laura Ortiz',    rating: 5, comment: 'Las salchipapas son otro nivel. La mezcla de salsas y la calidad de la carne marcan la diferencia. Súper recomendado.', when: 'Hace 1 semana' },
-    { name: 'Juan Camilo',    rating: 5, comment: 'Excelente servicio al cliente y la comida llegó caliente a pesar de ser domicilio. Urban Food nunca falla.', when: 'Hace 3 días' }
-];
+// Solo se muestran opiniones reales aprobadas desde la hoja de cálculo.
+// No hay testimonios de ejemplo: si no hay ninguno aprobado, se invita a opinar.
+
+function plural(n, singular, plural_) {
+    return `Hace ${n} ${n === 1 ? singular : plural_}`;
+}
 
 function relativeTime(ts) {
     if (!ts) return 'Recién';
@@ -95,10 +96,10 @@ function relativeTime(ts) {
     if (diff < 60) return 'Recién';
     if (diff < 3600) return `Hace ${Math.floor(diff / 60)} min`;
     if (diff < 86400) return `Hace ${Math.floor(diff / 3600)} h`;
-    if (diff < 86400 * 7) return `Hace ${Math.floor(diff / 86400)} días`;
+    if (diff < 86400 * 7) return plural(Math.floor(diff / 86400), 'día', 'días');
     if (diff < 86400 * 30) return `Hace ${Math.floor(diff / 86400 / 7)} sem`;
-    if (diff < 86400 * 365) return `Hace ${Math.floor(diff / 86400 / 30)} meses`;
-    return `Hace ${Math.floor(diff / 86400 / 365)} años`;
+    if (diff < 86400 * 365) return plural(Math.floor(diff / 86400 / 30), 'mes', 'meses');
+    return plural(Math.floor(diff / 86400 / 365), 'año', 'años');
 }
 
 async function fetchRemoteReviews() {
@@ -141,10 +142,31 @@ function escapeHtml(s) {
     }[c]));
 }
 
-function renderReviews(reviews) {
+// Mensaje que ocupa el ancho completo de la grilla (cargando / sin opiniones aún)
+function gridMessage(text) {
+    return `
+        <div class="md:col-span-3 text-center py-12">
+            <span class="material-symbols-outlined text-secondary/30 text-5xl mb-3 block">rate_review</span>
+            <p class="font-body text-body-md text-secondary/70">${escapeHtml(text)}</p>
+        </div>
+    `;
+}
+
+function renderReviews(reviews, state) {
     const grid = document.getElementById('reviewsGrid');
     if (!grid) return;
-    const items = (reviews && reviews.length ? reviews : DEFAULT_REVIEWS).slice(0, 6);
+
+    const items = (reviews || []).slice(0, 6);
+
+    if (!items.length) {
+        grid.innerHTML = gridMessage(
+            state === 'loading'
+                ? 'Cargando opiniones...'
+                : 'Aún no hay opiniones publicadas. ¡Sé el primero en contarnos tu experiencia!'
+        );
+        return;
+    }
+
     grid.innerHTML = items.map(r => {
         const initial = (r.name || '?').trim().charAt(0).toUpperCase();
         const stars = Array.from({ length: 5 }, (_, i) => `
@@ -166,16 +188,14 @@ function renderReviews(reviews) {
     }).join('');
 }
 
-// Estado + render inicial con defaults; luego intentamos traer las reales
-let cachedReviews = DEFAULT_REVIEWS;
-renderReviews(cachedReviews);
+// Estado inicial vacío: solo se muestran opiniones reales aprobadas.
+let cachedReviews = [];
+renderReviews(cachedReviews, 'loading');
 
 (async () => {
     const remote = await fetchRemoteReviews();
-    if (remote && remote.length) {
-        cachedReviews = remote;
-        renderReviews(cachedReviews);
-    }
+    cachedReviews = remote || [];
+    renderReviews(cachedReviews, 'ready');
 })();
 
 // ============ Review modal ============
@@ -245,7 +265,7 @@ reviewForm?.addEventListener('submit', async (e) => {
     // Nota: el comentario queda "pendiente de aprobación" en el backend.
     // Solo lo ve quien lo escribió (en su propia sesión) hasta que se apruebe.
     cachedReviews = [{ ...review, when: 'Pendiente de aprobación' }, ...cachedReviews];
-    renderReviews(cachedReviews);
+    renderReviews(cachedReviews, 'ready');
 
     const ok = await postRemoteReview(review);
 
@@ -257,7 +277,7 @@ reviewForm?.addEventListener('submit', async (e) => {
     if (!ok && REVIEWS_API_URL) {
         // Si falla, revertimos y avisamos
         cachedReviews = cachedReviews.slice(1);
-        renderReviews(cachedReviews);
+        renderReviews(cachedReviews, 'ready');
         alert('No pudimos guardar tu comentario. Inténtalo de nuevo en un momento.');
     }
 });
