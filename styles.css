@@ -7,7 +7,20 @@ body {
     font-family: 'Inter', sans-serif;
     -webkit-font-smoothing: antialiased;
 }
-
+#navbar {
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+#navbar:hover {
+  opacity: 1;
+}
+#mobileMenu {
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+#mobileMenu :hover {
+  opacity: 1;
+}   
 .material-symbols-outlined {
     font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
     display: inline-block;
