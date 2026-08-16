@@ -7,7 +7,20 @@ body {
     font-family: 'Inter', sans-serif;
     -webkit-font-smoothing: antialiased;
 }
-
+#navbar {
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+#navbar:hover {
+  opacity: 1;
+}
+#mobileMenu {
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+#mobileMenu :hover {
+  opacity: 1;
+}   
 .material-symbols-outlined {
     font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
     display: inline-block;
@@ -27,23 +40,6 @@ body {
 /* Navbar scroll state */
 #navbar.scrolled {
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
-}
-
-/* Navbar auto-oculto: se desliza fuera de la vista para dejar ver la portada */
-#navbar {
-    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-                box-shadow 0.3s ease;
-    will-change: transform;
-}
-#navbar.nav-hidden {
-    transform: translateY(-100%);
-}
-
-/* Respetar la preferencia de "menos movimiento" del sistema */
-@media (prefers-reduced-motion: reduce) {
-    #navbar {
-        transition: none;
-    }
 }
 
 /* Location tab content visibility */
