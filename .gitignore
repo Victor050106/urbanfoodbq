@@ -5,3 +5,10 @@
 .DS_Store
 Thumbs.db
 *.log
+
+# Documentos comerciales internos - NO deben subirse (repo publico)
+Propuesta_Comercial_Urban_Food_BQ.docx
+PASOS-PARA-VICTOR.md
+
+# Temporal
+_to_delete/

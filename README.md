@@ -39,6 +39,35 @@ Urban Food/
 - **Sección de ubicación** con datos de contacto y mapa de Google embebido
 - **Animaciones de scroll** (Intersection Observer) y efecto pulsante en el CTA
 - **Integración con WhatsApp** para contacto directo
+- **Sección de opiniones** con formulario de comentarios y moderación previa (ver más abajo)
+
+## Comentarios y moderación
+
+Los comentarios que dejan los clientes se guardan en una hoja de Google Sheets a través de
+un Google Apps Script (ver `apps-script/Code.gs`).
+
+**Ningún comentario se publica automáticamente.** Cada comentario nuevo llega a la hoja con
+la columna `approved` sin marcar. Para que aparezca en la página:
+
+1. Abre la hoja de cálculo "Urban Food BQ - Comentarios".
+2. Busca la fila del comentario nuevo (los más recientes quedan al final).
+3. Marca la casilla de la columna **approved** de esa fila.
+
+El comentario aparecerá en la web la próxima vez que alguien cargue la página. Si un
+comentario es spam u ofensivo, simplemente déjalo sin marcar (o borra la fila).
+
+### Protecciones incluidas
+
+- **Moderación previa obligatoria** — nada se publica sin aprobación manual.
+- **Campo trampa anti-bots (honeypot)** — un campo oculto en el formulario que las personas
+  no ven pero los bots suelen rellenar. Si llega lleno, el envío se descarta en silencio,
+  tanto en el navegador como en el servidor.
+- **Escapado de HTML** — el nombre y el comentario se escapan antes de mostrarse, para que
+  nadie pueda inyectar código en la página.
+- **Límites de longitud** — nombre máx. 60 caracteres, comentario máx. 500.
+
+> Después de modificar `apps-script/Code.gs` hay que volver a desplegar el script:
+> Implementar > Administrar implementaciones > (lápiz) > Versión: Nueva versión > Implementar.
 
 ## Correr localmente
 

@@ -465,6 +465,11 @@
             <div class="p-8">
                 <h3 class="font-display text-headline-md text-deep-black uppercase mb-6 text-center leading-none">Tu opinión nos importa</h3>
                 <form id="reviewForm" class="space-y-4">
+                    <!-- Campo trampa anti-bots: invisible para personas, los bots suelen rellenarlo. No borrar. -->
+                    <div style="position:absolute;left:-9999px;top:-9999px;" aria-hidden="true">
+                        <label for="website">Dejar en blanco</label>
+                        <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+                    </div>
                     <div>
                         <label class="block text-xs font-body text-label-bold uppercase mb-1 text-deep-black">Nombre</label>
                         <input name="name" required class="w-full border-2 border-surface-container-highest rounded-lg p-3 focus:border-vibrant-orange outline-none transition-colors" placeholder="Tu nombre completo" type="text">
@@ -486,6 +491,7 @@
                     <button class="w-full bg-vibrant-orange text-white py-4 rounded-lg font-display text-headline-md uppercase tracking-wider hover:bg-deep-black transition-all" type="submit">
                         Enviar Comentario
                     </button>
+                    <p class="text-xs text-secondary/70 text-center pt-1">Tu comentario se publicará luego de una breve revisión.</p>
                 </form>
             </div>
         </div>

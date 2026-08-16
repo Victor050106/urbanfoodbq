@@ -219,10 +219,21 @@ ratingStars?.querySelectorAll('[data-star]').forEach(s => {
 reviewForm?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const data = new FormData(reviewForm);
+
+    // Campo trampa: si viene lleno, es un bot. Fingimos éxito y no enviamos nada.
+    const honeypot = (data.get('website') || '').toString().trim();
+    if (honeypot) {
+        reviewForm.reset();
+        paintStars(5);
+        closeModal();
+        return;
+    }
+
     const review = {
         name: (data.get('name') || '').toString().trim(),
         comment: (data.get('comment') || '').toString().trim(),
         rating: parseInt(ratingStars?.dataset.rating || '5', 10),
+        website: honeypot, // se reenvía vacío; el backend también lo valida
         when: 'Recién'
     };
     if (!review.name || !review.comment) return;
@@ -231,8 +242,9 @@ reviewForm?.addEventListener('submit', async (e) => {
     const originalText = submitBtn?.textContent;
     if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Enviando...'; }
 
-    // Optimista: mostramos el comentario de una
-    cachedReviews = [review, ...cachedReviews];
+    // Nota: el comentario queda "pendiente de aprobación" en el backend.
+    // Solo lo ve quien lo escribió (en su propia sesión) hasta que se apruebe.
+    cachedReviews = [{ ...review, when: 'Pendiente de aprobación' }, ...cachedReviews];
     renderReviews(cachedReviews);
 
     const ok = await postRemoteReview(review);

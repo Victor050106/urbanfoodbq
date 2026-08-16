@@ -4,7 +4,7 @@
  * SETUP (una sola vez):
  *  1. Crea una hoja de cálculo nueva en Google Drive llamada "Urban Food BQ - Comentarios".
  *  2. Renombra la primera hoja (pestaña) a "Comentarios".
- *  3. En la fila 1, escribe las columnas en este orden: timestamp | name | rating | comment
+ *  3. En la fila 1, escribe las columnas en este orden: timestamp | name | rating | comment | approved
  *  4. Menú: Extensiones > Apps Script. Pega TODO este archivo en el editor (reemplaza Code.gs).
  *  5. Guarda (Ctrl+S). Ponle nombre al proyecto, p.ej. "Urban Food Comentarios".
  *  6. Menú: Implementar > Nueva implementación.
@@ -16,6 +16,13 @@
  *  7. Copia la URL del web app (termina en /exec) y pásamela.
  *
  * Para actualizar el código después: Implementar > Administrar implementaciones > lápiz > Nueva versión.
+ *
+ * MODERACIÓN:
+ *  Los comentarios nuevos NO se publican automáticamente. Llegan a la hoja con la
+ *  columna "approved" vacía. Para que un comentario se vea en la página, marca
+ *  la casilla "approved" de esa fila (o escribe TRUE) en la hoja de cálculo.
+ *  Así ningún comentario ofensivo o de spam queda visible sin que alguien del
+ *  restaurante lo revise primero.
  */
 
 const SHEET_NAME = 'Comentarios';
@@ -32,6 +39,13 @@ function doPost(e) {
     const raw = e.postData && e.postData.contents ? e.postData.contents : '{}';
     const data = JSON.parse(raw);
 
+    // Campo trampa anti-bots: si viene lleno, es un envío automatizado. Se ignora
+    // en silencio (respondemos "ok" para no darle pistas al bot de que fue detectado).
+    const honeypot = String(data.website || '').trim();
+    if (honeypot) {
+      return jsonResponse({ ok: true });
+    }
+
     const name = String(data.name || '').trim().slice(0, MAX_NAME);
     const comment = String(data.comment || '').trim().slice(0, MAX_COMMENT);
     const rating = clamp(parseInt(data.rating, 10) || 5, 1, 5);
@@ -40,8 +54,10 @@ function doPost(e) {
       return jsonResponse({ ok: false, error: 'Faltan datos' });
     }
 
+    // Se guarda sin aprobar (approved queda vacío). No se publica hasta que
+    // alguien del restaurante marque la casilla "approved" en la hoja.
     const sheet = getSheet();
-    sheet.appendRow([new Date(), name, rating, comment]);
+    sheet.appendRow([new Date(), name, rating, comment, false]);
 
     return jsonResponse({ ok: true, review: { timestamp: new Date().toISOString(), name, rating, comment } });
   } catch (err) {
@@ -54,14 +70,16 @@ function readReviews() {
   const values = sheet.getDataRange().getValues();
   if (values.length < 2) return { reviews: [] };
 
-  const reviews = values.slice(1).map(function (row) {
-    return {
-      timestamp: row[0] instanceof Date ? row[0].toISOString() : String(row[0] || ''),
-      name: String(row[1] || ''),
-      rating: clamp(parseInt(row[2], 10) || 5, 1, 5),
-      comment: String(row[3] || '')
-    };
-  }).filter(function (r) { return r.name && r.comment; })
+  const reviews = values.slice(1)
+    .filter(function (row) { return row[4] === true || String(row[4]).toUpperCase() === 'TRUE'; })
+    .map(function (row) {
+      return {
+        timestamp: row[0] instanceof Date ? row[0].toISOString() : String(row[0] || ''),
+        name: String(row[1] || ''),
+        rating: clamp(parseInt(row[2], 10) || 5, 1, 5),
+        comment: String(row[3] || '')
+      };
+    }).filter(function (r) { return r.name && r.comment; })
     .reverse()
     .slice(0, MAX_REVIEWS);
 
@@ -73,7 +91,8 @@ function getSheet() {
   let sheet = ss.getSheetByName(SHEET_NAME);
   if (!sheet) {
     sheet = ss.insertSheet(SHEET_NAME);
-    sheet.appendRow(['timestamp', 'name', 'rating', 'comment']);
+    sheet.appendRow(['timestamp', 'name', 'rating', 'comment', 'approved']);
+    sheet.getRange(2, 5, sheet.getMaxRows() - 1, 1).insertCheckboxes();
   }
   return sheet;
 }
