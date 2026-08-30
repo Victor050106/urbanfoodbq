@@ -14,6 +14,15 @@ body {
     vertical-align: middle;
 }
 
+/* Los navegadores le ponen cursor "flecha" a los <button>; en un sitio así
+   conviene que todo lo clicable se sienta clicable. */
+button:not(:disabled),
+[role="radio"],
+label[for],
+summary {
+    cursor: pointer;
+}
+
 /* Hard urban shadow (graphic / print aesthetic) */
 .shadow-hard {
     box-shadow: 6px 6px 0px 0px #000000;
@@ -37,19 +46,60 @@ body {
     display: block;
 }
 
-/* Map frame visibility */
+/* Map frame visibility.
+   display:none a propósito, no visibility:hidden. Un iframe con visibility:hidden
+   sigue ocupando layout, así que cuenta como "visible" para loading="lazy" y el
+   mapa de la sede que nadie está mirando se descarga igual (otro embed de Google
+   Maps completo). Con display:none solo se carga el de la sede activa.
+   El precio es que no hay fundido entre mapas: tampoco lo había antes, porque
+   display:none cancela la transición de opacidad. */
 .map-frame {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
-    transition: opacity 0.4s ease;
-    opacity: 0;
-    pointer-events: none;
+    display: none;
 }
 .map-frame.active {
-    opacity: 1;
-    pointer-events: auto;
+    display: block;
+}
+
+/* Badge "Abierto ahora / Cerrado".
+   En CSS plano y no con clases de Tailwind aplicadas desde JS: el CDN de Tailwind
+   las genera en caliente mirando el DOM, pero un build real solo mira el código
+   fuente. Como estas clases solo existirían dentro de script.js, al migrar a un
+   CSS compilado el badge se quedaría sin estilos. */
+.open-badge {
+    border-radius: 9999px;
+    padding: 6px 12px;
+    font-size: 12px;
+    line-height: 16px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+.open-badge .open-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 9999px;
+}
+.open-badge.is-open {
+    background: rgba(26, 188, 156, 0.15);
+    color: #1ABC9C;
+}
+.open-badge.is-open .open-dot {
+    background: #1ABC9C;
+    animation: open-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+.open-badge.is-closed {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.75);
+}
+.open-badge.is-closed .open-dot {
+    background: rgba(255, 255, 255, 0.4);
+}
+@keyframes open-pulse {
+    50% { opacity: 0.4; }
 }
 
 /* Schedule row "today" highlight */
@@ -85,5 +135,27 @@ textarea:focus-visible {
 @media (max-width: 640px) {
     .shadow-hard {
         box-shadow: 4px 4px 0px 0px #000000;
+    }
+}
+
+/* Respetar a quien pidió menos movimiento en su sistema */
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+    .fade-in {
+        opacity: 1;
+        transform: none;
+    }
+    .category-card:hover .category-image {
+        transform: none;
     }
 }

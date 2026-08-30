@@ -5,18 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>URBAN FOOD BQ | El Mejor Sabor Urbano en Barranquilla</title>
     <meta name="description" content="Urban Food BQ - La mejor comida a tu manera. Parrilla, pizzas, perros, hamburguesas, salchipapas, salvajadas y más en Barranquilla. Pide a domicilio o visítanos.">
+    <link rel="canonical" href="https://urbanfoodbq.com/">
+    <meta name="theme-color" content="#000000">
     <meta property="og:type" content="restaurant">
+    <meta property="og:site_name" content="Urban Food BQ">
+    <meta property="og:locale" content="es_CO">
     <meta property="og:title" content="Urban Food BQ - Parrilla, Pizza, Perros y más en Barranquilla">
     <meta property="og:description" content="La mejor comida a tu manera. Parrilla, pizzas, perros, hamburguesas, salchipapas, salvajadas y más en Barranquilla. ¡Pide a domicilio ahora!">
-    <meta property="og:image" content="https://urbanfoodbq.com/banner.jpg">
-    <meta property="og:url" content="https://urbanfoodbq.com">
+    <meta property="og:image" content="https://urbanfoodbq.com/img/og-cover.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Urban Food BQ - La mejor comida a tu manera">
+    <meta property="og:url" content="https://urbanfoodbq.com/">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Urban Food BQ">
     <meta name="twitter:description" content="La mejor comida a tu manera en Barranquilla.">
-    <meta name="twitter:image" content="https://urbanfoodbq.com/banner.jpg">
+    <meta name="twitter:image" content="https://urbanfoodbq.com/img/og-cover.jpg">
     <link rel="icon" type="image/png" href="faviconr.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- La mascota solo se pinta en lg+ (ver el hero). Sin este media, cada visitante
+         de celular descargaba 113 KB en alta prioridad que nunca se muestran. -->
+    <link rel="preload" as="image" href="img/mascota.webp" media="(min-width: 1024px)" fetchpriority="high">
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
@@ -76,6 +86,70 @@
       }
     </script>
     <link rel="stylesheet" href="styles.css">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Restaurant",
+          "@id": "https://urbanfoodbq.com/#principal",
+          "name": "Urban Food BQ",
+          "url": "https://urbanfoodbq.com/",
+          "image": "https://urbanfoodbq.com/img/og-cover.jpg",
+          "logo": "https://urbanfoodbq.com/logor.png",
+          "description": "Parrilla, pizzas, perros, hamburguesas, salchipapas y salvajadas en Barranquilla.",
+          "servesCuisine": ["Comida rápida", "Parrilla", "Pizza"],
+          "priceRange": "$$",
+          "telephone": "+573024017935",
+          "email": "urbanfoodbq@gmail.com",
+          "hasMenu": "https://menu.fu.do/urbanfoodbq",
+          "acceptsReservations": "False",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Calle 53D # 19-06",
+            "addressLocality": "Barranquilla",
+            "addressRegion": "Atlántico",
+            "addressCountry": "CO"
+          },
+          "sameAs": [
+            "https://www.facebook.com/profile.php?id=100090055810195",
+            "https://www.instagram.com/urbanfood_bq"
+          ],
+          "openingHoursSpecification": [
+            { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday"], "opens": "16:00", "closes": "00:45" },
+            { "@type": "OpeningHoursSpecification", "dayOfWeek": "Friday", "opens": "16:00", "closes": "01:00" },
+            { "@type": "OpeningHoursSpecification", "dayOfWeek": "Saturday", "opens": "16:00", "closes": "02:00" },
+            { "@type": "OpeningHoursSpecification", "dayOfWeek": "Sunday", "opens": "16:00", "closes": "00:30" }
+          ]
+        },
+        {
+          "@type": "Restaurant",
+          "@id": "https://urbanfoodbq.com/#hipodromo",
+          "name": "Urban Food BQ - Sede Hipódromo",
+          "url": "https://urbanfoodbq.com/",
+          "image": "https://urbanfoodbq.com/img/og-cover.jpg",
+          "servesCuisine": ["Comida rápida", "Parrilla", "Pizza"],
+          "priceRange": "$$",
+          "telephone": "+573024017935",
+          "email": "urbanfoodbq@gmail.com",
+          "hasMenu": "https://menu.fu.do/urbanfoodbq",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "Cra. 28A # 26-4",
+            "addressLocality": "Soledad",
+            "addressRegion": "Atlántico",
+            "addressCountry": "CO"
+          },
+          "openingHoursSpecification": [
+            { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday"], "opens": "16:00", "closes": "00:45" },
+            { "@type": "OpeningHoursSpecification", "dayOfWeek": "Friday", "opens": "16:00", "closes": "01:00" },
+            { "@type": "OpeningHoursSpecification", "dayOfWeek": "Saturday", "opens": "16:00", "closes": "02:00" },
+            { "@type": "OpeningHoursSpecification", "dayOfWeek": "Sunday", "opens": "16:00", "closes": "00:30" }
+          ]
+        }
+      ]
+    }
+    </script>
 </head>
 <body class="bg-background text-on-background font-body selection:bg-vibrant-orange selection:text-white">
 
@@ -96,8 +170,9 @@
                 <a href="https://menu.fu.do/urbanfoodbq" target="_blank" rel="noopener" class="hidden sm:inline-block bg-vibrant-orange text-white px-5 py-2.5 rounded-lg font-body text-label-bold uppercase tracking-wider hover:bg-white hover:text-deep-black transition-colors active:scale-95">
                     Pedir Ahora
                 </a>
-                <button class="md:hidden text-white" id="menuToggle" aria-label="Menú">
-                    <span class="material-symbols-outlined text-3xl">menu</span>
+                <button class="md:hidden text-white w-11 h-11 inline-flex items-center justify-center -mr-2" id="menuToggle"
+                        aria-label="Abrir menú" aria-expanded="false" aria-controls="mobileMenu">
+                    <span class="material-symbols-outlined text-3xl" data-menu-icon>menu</span>
                 </button>
             </div>
         </div>
@@ -114,33 +189,48 @@
     </nav>
 
     <!-- HERO -->
-    <section id="inicio" class="relative min-h-[90vh] flex items-center pt-24 pb-16 overflow-hidden bg-deep-black">
-        <div class="absolute inset-0 z-0">
-            <img src="banner.svg" alt="Urban Food BQ" class="w-full h-full object-cover opacity-60">
-            <div class="absolute inset-0 bg-gradient-to-t from-deep-black via-deep-black/40 to-deep-black/60"></div>
+    <section id="inicio" class="relative min-h-[88svh] flex items-center pt-28 pb-16 overflow-hidden bg-deep-black">
+        <!-- Textura de doodles de marca (decorativa, no compite con el titular) -->
+        <div class="absolute inset-0 z-0" aria-hidden="true">
+            <img src="img/hero-pattern.webp" alt="" class="w-full h-full object-cover opacity-[0.28]" fetchpriority="high" decoding="async" width="1920" height="1080">
+            <div class="absolute inset-0 bg-gradient-to-r from-deep-black via-deep-black/85 to-deep-black/30"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-deep-black via-transparent to-deep-black/70"></div>
         </div>
         <div class="relative z-10 max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop w-full">
-            <div class="max-w-3xl">
-                <span class="inline-block text-vibrant-orange font-body text-label-bold uppercase tracking-[0.3em] mb-6 border-l-4 border-vibrant-orange pl-4">Barranquilla · Colombia</span>
-                <h1 class="font-display text-display-lg-mobile md:text-display-lg text-white mb-6 uppercase leading-none">
-                    EL MEJOR SABOR <span class="text-vibrant-orange">URBANO</span> EN BARRANQUILLA
-                </h1>
-                <p class="font-body text-body-lg text-white/90 mb-10 max-w-xl border-l-4 border-vibrant-orange pl-6 bg-deep-black/40 backdrop-blur-sm py-4">
-                    Parrilla, pizzas, perros, hamburguesas, salvajadas y mucho más. Pide a domicilio o recoge en el local con la auténtica esencia de la calle.
-                </p>
-                <div class="flex flex-col sm:flex-row gap-4">
-                    <a href="https://menu.fu.do/urbanfoodbq" target="_blank" rel="noopener" class="bg-vibrant-orange text-deep-black px-8 py-4 rounded-lg font-display text-headline-md uppercase tracking-wide hover:bg-white transition-all shadow-hard active:translate-x-1 active:translate-y-1 active:shadow-none inline-flex items-center justify-center gap-3">
-                        Hacer Pedido
-                        <span class="material-symbols-outlined">shopping_bag</span>
-                    </a>
-                    <a href="#menu" class="border-2 border-white text-white px-8 py-4 rounded-lg font-display text-headline-md uppercase tracking-wide hover:bg-white hover:text-deep-black transition-all inline-flex items-center justify-center gap-3">
-                        Ver Menú
-                        <span class="material-symbols-outlined">restaurant_menu</span>
-                    </a>
+            <div class="grid lg:grid-cols-[1.15fr_0.85fr] gap-8 items-center">
+                <div>
+                    <div class="flex flex-wrap items-center gap-3 mb-6">
+                        <span class="inline-block text-vibrant-orange font-body text-label-bold uppercase tracking-[0.3em] border-l-4 border-vibrant-orange pl-4">Barranquilla · Colombia</span>
+                        <!-- Estado en vivo: lo calcula script.js -->
+                        <span id="openBadge" class="open-badge hidden items-center gap-2 font-body">
+                            <span class="open-dot" data-dot></span>
+                            <span data-openText></span>
+                        </span>
+                    </div>
+                    <h1 class="font-display text-display-lg-mobile md:text-display-lg text-white mb-6 uppercase leading-none">
+                        EL MEJOR SABOR <span class="text-vibrant-orange">URBANO</span> EN BARRANQUILLA
+                    </h1>
+                    <p class="font-body text-body-lg text-white/90 mb-10 max-w-xl border-l-4 border-vibrant-orange pl-6 py-1">
+                        Parrilla, pizzas, perros, hamburguesas, salvajadas y mucho más. Pide a domicilio o recoge en el local con la auténtica esencia de la calle.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <a href="https://menu.fu.do/urbanfoodbq" target="_blank" rel="noopener" class="bg-vibrant-orange text-deep-black px-8 py-4 rounded-lg font-display text-headline-md uppercase tracking-wide hover:bg-white transition-all shadow-hard active:translate-x-1 active:translate-y-1 active:shadow-none inline-flex items-center justify-center gap-3">
+                            Hacer Pedido
+                            <span class="material-symbols-outlined">shopping_bag</span>
+                        </a>
+                        <a href="#menu" class="border-2 border-white text-white px-8 py-4 rounded-lg font-display text-headline-md uppercase tracking-wide hover:bg-white hover:text-deep-black transition-all inline-flex items-center justify-center gap-3">
+                            Ver Menú
+                            <span class="material-symbols-outlined">restaurant_menu</span>
+                        </a>
+                    </div>
+                </div>
+                <!-- Mascota de marca: ahora es protagonista, no textura de fondo -->
+                <div class="hidden lg:block relative">
+                    <img src="img/mascota.webp" alt="Mascota de Urban Food BQ" class="w-full max-w-[420px] mx-auto drop-shadow-2xl" width="605" height="1000" fetchpriority="high" decoding="async">
                 </div>
             </div>
         </div>
-        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
+        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex-col items-center gap-2 hidden md:flex" aria-hidden="true">
             <span class="text-white/40 text-xs font-body uppercase tracking-widest">Deslizar</span>
             <div class="w-px h-12 bg-gradient-to-b from-vibrant-orange to-transparent"></div>
         </div>
@@ -292,8 +382,8 @@
 
                     <!-- Sede Selector -->
                     <div class="flex flex-col sm:flex-row gap-3 mb-10">
-                        <button class="loc-btn flex-1 py-3 px-4 font-body text-label-bold uppercase tracking-wider rounded-lg border-2 border-deep-black bg-deep-black text-white transition-all" data-loc="principal">Sede Principal</button>
-                        <button class="loc-btn flex-1 py-3 px-4 font-body text-label-bold uppercase tracking-wider rounded-lg border-2 border-deep-black bg-transparent text-deep-black hover:bg-deep-black/5 transition-all" data-loc="hipodromo">Sede Hipódromo</button>
+                        <button type="button" aria-pressed="true" class="loc-btn flex-1 py-3 px-4 font-body text-label-bold uppercase tracking-wider rounded-lg border-2 border-deep-black bg-deep-black text-white transition-all" data-loc="principal">Sede Principal</button>
+                        <button type="button" aria-pressed="false" class="loc-btn flex-1 py-3 px-4 font-body text-label-bold uppercase tracking-wider rounded-lg border-2 border-deep-black bg-transparent text-deep-black hover:bg-deep-black/5 transition-all" data-loc="hipodromo">Sede Hipódromo</button>
                     </div>
 
                     <!-- Principal -->
@@ -414,7 +504,7 @@
                         width="100%" height="100%" style="border:0; filter: grayscale(1) contrast(1.15);"
                         loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"
                         title="Urban Food BQ - Sede Principal"></iframe>
-                    <iframe class="map-frame hidden" data-loc-map="hipodromo"
+                    <iframe class="map-frame" data-loc-map="hipodromo"
                         src="https://www.google.com/maps?q=Cra.+28a+%23+26-4,+Soledad,+Atl%C3%A1ntico&output=embed"
                         width="100%" height="100%" style="border:0; filter: grayscale(1) contrast(1.15);"
                         loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"
@@ -446,13 +536,14 @@
     </section>
 
     <!-- COMMENT MODAL -->
-    <div id="reviewModal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-deep-black/80 hidden">
-        <div class="bg-white max-w-md w-full rounded-lg overflow-hidden shadow-2xl relative">
-            <button id="closeReviewModal" class="absolute top-4 right-4 text-deep-black hover:text-vibrant-orange" aria-label="Cerrar">
+    <div id="reviewModal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-deep-black/80 hidden"
+         role="dialog" aria-modal="true" aria-labelledby="reviewModalTitle">
+        <div class="bg-white max-w-md w-full rounded-lg overflow-x-hidden overflow-y-auto shadow-2xl relative max-h-[90svh]">
+            <button id="closeReviewModal" class="absolute top-3 right-3 w-11 h-11 inline-flex items-center justify-center text-deep-black hover:text-vibrant-orange" aria-label="Cerrar">
                 <span class="material-symbols-outlined">close</span>
             </button>
             <div class="p-8">
-                <h3 class="font-display text-headline-md text-deep-black uppercase mb-6 text-center leading-none">Tu opinión nos importa</h3>
+                <h3 id="reviewModalTitle" class="font-display text-headline-md text-deep-black uppercase mb-6 text-center leading-none">Tu opinión nos importa</h3>
                 <form id="reviewForm" class="space-y-4">
                     <!-- Campo trampa anti-bots: invisible para personas, los bots suelen rellenarlo. No borrar. -->
                     <div style="position:absolute;left:-9999px;top:-9999px;" aria-hidden="true">
@@ -460,27 +551,28 @@
                         <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
                     </div>
                     <div>
-                        <label class="block text-xs font-body text-label-bold uppercase mb-1 text-deep-black">Nombre</label>
-                        <input name="name" required class="w-full border-2 border-surface-container-highest rounded-lg p-3 focus:border-vibrant-orange outline-none transition-colors" placeholder="Tu nombre completo" type="text">
+                        <label for="reviewName" class="block text-xs font-body text-label-bold uppercase mb-1 text-deep-black">Nombre</label>
+                        <input id="reviewName" name="name" required maxlength="60" autocomplete="name" class="w-full border-2 border-surface-container-highest rounded-lg p-3 focus:border-vibrant-orange outline-none transition-colors" placeholder="Tu nombre completo" type="text">
                     </div>
-                    <div>
-                        <label class="block text-xs font-body text-label-bold uppercase mb-1 text-deep-black">Calificación</label>
-                        <div class="flex gap-2 text-vibrant-orange" id="ratingStars" data-rating="5">
-                            <span class="material-symbols-outlined cursor-pointer hover:scale-110 transition-transform" style="font-variation-settings: 'FILL' 1;" data-star="1">star</span>
-                            <span class="material-symbols-outlined cursor-pointer hover:scale-110 transition-transform" style="font-variation-settings: 'FILL' 1;" data-star="2">star</span>
-                            <span class="material-symbols-outlined cursor-pointer hover:scale-110 transition-transform" style="font-variation-settings: 'FILL' 1;" data-star="3">star</span>
-                            <span class="material-symbols-outlined cursor-pointer hover:scale-110 transition-transform" style="font-variation-settings: 'FILL' 1;" data-star="4">star</span>
-                            <span class="material-symbols-outlined cursor-pointer hover:scale-110 transition-transform" style="font-variation-settings: 'FILL' 1;" data-star="5">star</span>
+                    <fieldset>
+                        <legend class="block text-xs font-body text-label-bold uppercase mb-1 text-deep-black">Calificación</legend>
+                        <div class="flex gap-1 text-vibrant-orange" id="ratingStars" role="radiogroup" aria-label="Calificación en estrellas" data-rating="5">
+                            <button type="button" role="radio" aria-checked="false" aria-label="1 estrella"  data-star="1" class="w-11 h-11 inline-flex items-center justify-center rounded-lg cursor-pointer hover:bg-vibrant-orange/10 transition-colors"><span class="material-symbols-outlined pointer-events-none">star</span></button>
+                            <button type="button" role="radio" aria-checked="false" aria-label="2 estrellas" data-star="2" class="w-11 h-11 inline-flex items-center justify-center rounded-lg cursor-pointer hover:bg-vibrant-orange/10 transition-colors"><span class="material-symbols-outlined pointer-events-none">star</span></button>
+                            <button type="button" role="radio" aria-checked="false" aria-label="3 estrellas" data-star="3" class="w-11 h-11 inline-flex items-center justify-center rounded-lg cursor-pointer hover:bg-vibrant-orange/10 transition-colors"><span class="material-symbols-outlined pointer-events-none">star</span></button>
+                            <button type="button" role="radio" aria-checked="false" aria-label="4 estrellas" data-star="4" class="w-11 h-11 inline-flex items-center justify-center rounded-lg cursor-pointer hover:bg-vibrant-orange/10 transition-colors"><span class="material-symbols-outlined pointer-events-none">star</span></button>
+                            <button type="button" role="radio" aria-checked="true"  aria-label="5 estrellas" data-star="5" class="w-11 h-11 inline-flex items-center justify-center rounded-lg cursor-pointer hover:bg-vibrant-orange/10 transition-colors"><span class="material-symbols-outlined pointer-events-none">star</span></button>
                         </div>
-                    </div>
+                    </fieldset>
                     <div>
-                        <label class="block text-xs font-body text-label-bold uppercase mb-1 text-deep-black">Comentario</label>
-                        <textarea name="comment" required class="w-full border-2 border-surface-container-highest rounded-lg p-3 focus:border-vibrant-orange outline-none transition-colors" placeholder="¿Qué te pareció tu experiencia?" rows="4"></textarea>
+                        <label for="reviewComment" class="block text-xs font-body text-label-bold uppercase mb-1 text-deep-black">Comentario</label>
+                        <textarea id="reviewComment" name="comment" required maxlength="500" class="w-full border-2 border-surface-container-highest rounded-lg p-3 focus:border-vibrant-orange outline-none transition-colors" placeholder="¿Qué te pareció tu experiencia?" rows="4"></textarea>
                     </div>
-                    <button class="w-full bg-vibrant-orange text-white py-4 rounded-lg font-display text-headline-md uppercase tracking-wider hover:bg-deep-black transition-all" type="submit">
+                    <p id="reviewError" class="hidden text-sm font-body text-red-700 bg-red-50 border border-red-200 rounded-lg p-3" role="alert"></p>
+                    <button class="w-full bg-vibrant-orange text-white py-4 rounded-lg font-display text-headline-md uppercase tracking-wider hover:bg-deep-black transition-all disabled:opacity-60 disabled:cursor-not-allowed" type="submit">
                         Enviar Comentario
                     </button>
-                    <p class="text-xs text-secondary/70 text-center pt-1">Tu comentario se publicará luego de una breve revisión.</p>
+                    <p class="text-xs text-secondary text-center pt-1">Tu comentario se publicará luego de una breve revisión.</p>
                 </form>
             </div>
         </div>
@@ -568,9 +660,17 @@
             </div>
         </div>
         <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop mt-12 pt-6 border-t border-white/5">
-            <p class="font-body text-body-md text-white/40 text-center">&copy; 2025 URBAN FOOD BQ. URBAN KINETIC DINING. Todos los derechos reservados.</p>
+            <p class="font-body text-body-md text-white/50 text-center">&copy; <span data-year>2026</span> URBAN FOOD BQ. URBAN KINETIC DINING. Todos los derechos reservados.</p>
         </div>
     </footer>
+
+    <!-- WhatsApp flotante -->
+    <a href="https://wa.me/573024017935?text=%C2%A1Hola%20Urban%20Food%20BQ!%20Quiero%20hacer%20un%20pedido."
+       target="_blank" rel="noopener"
+       class="fixed bottom-5 right-5 z-40 w-14 h-14 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-lg hover:scale-105 active:scale-95 transition-transform"
+       aria-label="Escribir por WhatsApp a Urban Food BQ">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+    </a>
 
     <script src="script.js"></script>
 </body>

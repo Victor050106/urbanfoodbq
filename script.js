@@ -1,48 +1,132 @@
 // ============ Horarios ============
+// openMin / closeMin en minutos desde medianoche. closeMin > 1440 = cierra de madrugada.
 const SCHEDULE = [
-    { day: 0, label: 'Domingo',   short: 'Dom', time: '4:00 PM – 12:30 AM' },
-    { day: 1, label: 'Lunes',     short: 'Lun', time: '4:00 PM – 12:45 AM' },
-    { day: 2, label: 'Martes',    short: 'Mar', time: '4:00 PM – 12:45 AM' },
-    { day: 3, label: 'Miércoles', short: 'Mié', time: '4:00 PM – 12:45 AM' },
-    { day: 4, label: 'Jueves',    short: 'Jue', time: '4:00 PM – 12:45 AM' },
-    { day: 5, label: 'Viernes',   short: 'Vie', time: '4:00 PM – 1:00 AM'  },
-    { day: 6, label: 'Sábado',    short: 'Sáb', time: '4:00 PM – 2:00 AM'  }
+    { day: 0, label: 'Domingo',   short: 'Dom', time: '4:00 PM – 12:30 AM', openMin: 960, closeMin: 1470 },
+    { day: 1, label: 'Lunes',     short: 'Lun', time: '4:00 PM – 12:45 AM', openMin: 960, closeMin: 1485 },
+    { day: 2, label: 'Martes',    short: 'Mar', time: '4:00 PM – 12:45 AM', openMin: 960, closeMin: 1485 },
+    { day: 3, label: 'Miércoles', short: 'Mié', time: '4:00 PM – 12:45 AM', openMin: 960, closeMin: 1485 },
+    { day: 4, label: 'Jueves',    short: 'Jue', time: '4:00 PM – 12:45 AM', openMin: 960, closeMin: 1485 },
+    { day: 5, label: 'Viernes',   short: 'Vie', time: '4:00 PM – 1:00 AM',  openMin: 960, closeMin: 1500 },
+    { day: 6, label: 'Sábado',    short: 'Sáb', time: '4:00 PM – 2:00 AM',  openMin: 960, closeMin: 1560 }
 ];
 
-const todayIdx = new Date().getDay();
-const scheduleList = document.getElementById('scheduleList');
-if (scheduleList) {
-    scheduleList.innerHTML = SCHEDULE
-        .slice(1).concat(SCHEDULE[0])
-        .map(s => `
-            <div class="schedule-row flex justify-between items-center border-b border-white/10 pb-2 ${s.day === todayIdx ? 'today' : ''}">
-                <span>${s.label}</span>
-                <span class="schedule-time font-bold text-white">${s.time}</span>
-            </div>
-        `).join('');
+const TZ = 'America/Bogota';
+
+// Hora del restaurante, no la del visitante: si alguien abre la página desde
+// otro país el estado "abierto/cerrado" tiene que seguir siendo el de Barranquilla.
+function nowInBogota() {
+    try {
+        const p = new Intl.DateTimeFormat('en-US', {
+            timeZone: TZ, weekday: 'short', hour: '2-digit', minute: '2-digit', hour12: false
+        }).formatToParts(new Date());
+        const get = t => p.find(x => x.type === t)?.value;
+        const days = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 };
+        const day = days[get('weekday')];
+        const hour = parseInt(get('hour'), 10) % 24;
+        const min = parseInt(get('minute'), 10);
+        if (day === undefined || isNaN(hour) || isNaN(min)) throw new Error('tz');
+        return { day, minutes: hour * 60 + min };
+    } catch {
+        const d = new Date();
+        return { day: d.getDay(), minutes: d.getHours() * 60 + d.getMinutes() };
+    }
 }
 
-const todaySchedule = SCHEDULE.find(s => s.day === todayIdx)?.time || '';
-document.querySelectorAll('[data-today-schedule]').forEach(el => el.textContent = todaySchedule);
+function isOpenNow({ day, minutes }) {
+    const today = SCHEDULE[day];
+    if (today && minutes >= today.openMin && minutes < Math.min(today.closeMin, 1440)) return true;
+    // Turno de ayer que se extiende pasada la medianoche (ej. sábado hasta las 2 AM)
+    const yest = SCHEDULE[(day + 6) % 7];
+    if (yest && yest.closeMin > 1440 && minutes < yest.closeMin - 1440) return true;
+    return false;
+}
+
+const scheduleList = document.getElementById('scheduleList');
+let paintedDay = null;
+
+// Se repinta cuando cambia el día, no solo al cargar: la cocina cierra a las
+// 12:45 / 2:00 AM, así que es normal tener la página abierta cruzando la
+// medianoche. Si esto no se recalculara, el badge diría "Abierto" mientras la
+// lista seguiría resaltando el día anterior.
+function paintSchedule(day) {
+    if (day === paintedDay) return;
+    paintedDay = day;
+
+    if (scheduleList) {
+        scheduleList.innerHTML = SCHEDULE
+            .slice(1).concat(SCHEDULE[0])
+            .map(s => `
+                <div class="schedule-row flex justify-between items-center border-b border-white/10 pb-2 ${s.day === day ? 'today' : ''}">
+                    <span>${s.label}</span>
+                    <span class="schedule-time font-bold text-white">${s.time}</span>
+                </div>
+            `).join('');
+    }
+
+    const todaySchedule = SCHEDULE.find(s => s.day === day)?.time || '';
+    document.querySelectorAll('[data-today-schedule]').forEach(el => el.textContent = todaySchedule);
+}
+
+// ============ Badge "Abierto ahora / Cerrado" ============
+function paintOpenBadge() {
+    const badge = document.getElementById('openBadge');
+    if (!badge) return;
+    const open = isOpenNow(nowInBogota());
+    const dot = badge.querySelector('[data-dot]');
+    const txt = badge.querySelector('[data-openText]');
+
+    badge.classList.remove('hidden');
+    badge.classList.add('inline-flex');
+    badge.classList.toggle('is-open', open);
+    badge.classList.toggle('is-closed', !open);
+    if (dot) dot.hidden = false;
+    if (txt) txt.textContent = open ? 'Abierto ahora' : 'Cerrado · Abrimos 4:00 PM';
+}
+
+function tick() {
+    paintSchedule(nowInBogota().day);
+    paintOpenBadge();
+}
+tick();
+setInterval(tick, 60000);
+
+// ============ Año del footer ============
+document.querySelectorAll('[data-year]').forEach(el => {
+    el.textContent = new Date().getFullYear();
+});
 
 // ============ Mobile nav ============
 const menuToggle = document.getElementById('menuToggle');
 const mobileMenu = document.getElementById('mobileMenu');
 if (menuToggle && mobileMenu) {
+    const icon = menuToggle.querySelector('[data-menu-icon]');
+    const setMenu = (open) => {
+        mobileMenu.classList.toggle('hidden', !open);
+        menuToggle.setAttribute('aria-expanded', String(open));
+        menuToggle.setAttribute('aria-label', open ? 'Cerrar menú' : 'Abrir menú');
+        if (icon) icon.textContent = open ? 'close' : 'menu';
+    };
     menuToggle.addEventListener('click', () => {
-        mobileMenu.classList.toggle('hidden');
+        setMenu(mobileMenu.classList.contains('hidden'));
     });
     mobileMenu.querySelectorAll('a').forEach(a => {
-        a.addEventListener('click', () => mobileMenu.classList.add('hidden'));
+        a.addEventListener('click', () => setMenu(false));
     });
 }
 
 // ============ Navbar scroll shadow ============
 const navbar = document.getElementById('navbar');
-window.addEventListener('scroll', () => {
-    if (!navbar) return;
-    navbar.classList.toggle('scrolled', window.scrollY > 40);
-});
+if (navbar) {
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => {
+            navbar.classList.toggle('scrolled', window.scrollY > 40);
+            ticking = false;
+        });
+    }, { passive: true });
+}
 
 // ============ Location switcher ============
 const LOC_LABELS = {
@@ -61,15 +145,15 @@ document.querySelectorAll('.loc-btn').forEach(btn => {
             b.classList.toggle('text-white', isActive);
             b.classList.toggle('bg-transparent', !isActive);
             b.classList.toggle('text-deep-black', !isActive);
+            b.setAttribute('aria-pressed', String(isActive));
         });
         // Content
         document.querySelectorAll('.loc-content').forEach(c => {
             c.classList.toggle('active', c.dataset.locContent === loc);
         });
-        // Map
+        // Map (la visibilidad la maneja .map-frame/.active en styles.css)
         document.querySelectorAll('.map-frame').forEach(f => {
             f.classList.toggle('active', f.dataset.locMap === loc);
-            f.classList.toggle('hidden', f.dataset.locMap !== loc);
         });
         // Label
         if (activeLocLabel) activeLocLabel.textContent = LOC_LABELS[loc] || '';
@@ -146,8 +230,8 @@ function escapeHtml(s) {
 function gridMessage(text) {
     return `
         <div class="md:col-span-3 text-center py-12">
-            <span class="material-symbols-outlined text-secondary/30 text-5xl mb-3 block">rate_review</span>
-            <p class="font-body text-body-md text-secondary/70">${escapeHtml(text)}</p>
+            <span class="material-symbols-outlined text-secondary/50 text-5xl mb-3 block">rate_review</span>
+            <p class="font-body text-body-md text-secondary">${escapeHtml(text)}</p>
         </div>
     `;
 }
@@ -180,7 +264,7 @@ function renderReviews(reviews, state) {
                     <div class="w-10 h-10 bg-deep-black rounded-full flex items-center justify-center text-white font-bold">${escapeHtml(initial)}</div>
                     <div>
                         <h4 class="font-body text-label-bold text-deep-black">${escapeHtml(r.name)}</h4>
-                        <span class="text-xs text-secondary/60">${escapeHtml(r.when || 'Recién')}</span>
+                        <span class="text-xs text-secondary">${escapeHtml(r.when || 'Recién')}</span>
                     </div>
                 </div>
             </article>
@@ -205,13 +289,34 @@ const closeModalBtn = document.getElementById('closeReviewModal');
 const reviewForm = document.getElementById('reviewForm');
 const ratingStars = document.getElementById('ratingStars');
 
+const reviewError = document.getElementById('reviewError');
+let lastFocused = null;
+
+function isModalOpen() {
+    return reviewModal && !reviewModal.classList.contains('hidden');
+}
+
+function showError(msg) {
+    if (!reviewError) return;
+    reviewError.textContent = msg;
+    reviewError.classList.toggle('hidden', !msg);
+}
+
 function openModal() {
-    reviewModal?.classList.remove('hidden');
+    if (!reviewModal) return;
+    lastFocused = document.activeElement;
+    reviewModal.classList.remove('hidden');
     document.body.style.overflow = 'hidden';
+    showError('');
+    document.getElementById('reviewName')?.focus();
 }
 function closeModal() {
-    reviewModal?.classList.add('hidden');
+    if (!isModalOpen()) return;
+    reviewModal.classList.add('hidden');
     document.body.style.overflow = '';
+    showError('');
+    // Devolver el foco a donde estaba antes de abrir
+    if (lastFocused instanceof HTMLElement) lastFocused.focus();
 }
 
 openModalBtn?.addEventListener('click', openModal);
@@ -219,8 +324,32 @@ closeModalBtn?.addEventListener('click', closeModal);
 reviewModal?.addEventListener('click', (e) => {
     if (e.target === reviewModal) closeModal();
 });
+
+const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
 document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeModal();
+    if (!isModalOpen()) return;
+    if (e.key === 'Escape') { closeModal(); return; }
+    // Mantener el foco dentro del modal mientras está abierto
+    if (e.key === 'Tab') {
+        const items = [...reviewModal.querySelectorAll(FOCUSABLE)].filter(el => el.offsetParent !== null);
+        if (!items.length) return;
+        const first = items[0];
+        const last = items[items.length - 1];
+        // Al hacer clic en el título o en el relleno del panel el foco se va al
+        // <body>: sin esto, el siguiente Tab seguía el orden del documento y se
+        // escapaba a la navbar que está detrás del modal.
+        if (!reviewModal.contains(document.activeElement)) {
+            e.preventDefault();
+            first.focus();
+            return;
+        }
+        if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault(); last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault(); first.focus();
+        }
+    }
 });
 
 function paintStars(rating) {
@@ -228,13 +357,32 @@ function paintStars(rating) {
     ratingStars.dataset.rating = rating;
     ratingStars.querySelectorAll('[data-star]').forEach(s => {
         const v = parseInt(s.dataset.star, 10);
-        s.style.fontVariationSettings = v <= rating ? "'FILL' 1" : "'FILL' 0";
+        const on = v <= rating;
+        const icon = s.querySelector('.material-symbols-outlined') || s;
+        icon.style.fontVariationSettings = on ? "'FILL' 1" : "'FILL' 0";
+        s.setAttribute('aria-checked', String(v === rating));
+        // Solo la estrella seleccionada queda en el orden de tabulación (patrón radiogroup)
+        s.tabIndex = v === rating ? 0 : -1;
     });
 }
 
-ratingStars?.querySelectorAll('[data-star]').forEach(s => {
+const starBtns = [...(ratingStars?.querySelectorAll('[data-star]') || [])];
+starBtns.forEach(s => {
     s.addEventListener('click', () => paintStars(parseInt(s.dataset.star, 10)));
+    s.addEventListener('keydown', (e) => {
+        const cur = parseInt(ratingStars.dataset.rating || '5', 10);
+        let next = null;
+        if (e.key === 'ArrowRight' || e.key === 'ArrowUp') next = Math.min(5, cur + 1);
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') next = Math.max(1, cur - 1);
+        if (e.key === 'Home') next = 1;
+        if (e.key === 'End') next = 5;
+        if (next === null) return;
+        e.preventDefault();
+        paintStars(next);
+        starBtns.find(b => parseInt(b.dataset.star, 10) === next)?.focus();
+    });
 });
+paintStars(5);
 
 reviewForm?.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -256,30 +404,36 @@ reviewForm?.addEventListener('submit', async (e) => {
         website: honeypot, // se reenvía vacío; el backend también lo valida
         when: 'Recién'
     };
-    if (!review.name || !review.comment) return;
+    if (!review.name || !review.comment) {
+        showError('Escribe tu nombre y tu comentario antes de enviar.');
+        return;
+    }
 
     const submitBtn = reviewForm.querySelector('button[type=submit]');
     const originalText = submitBtn?.textContent;
     if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Enviando...'; }
+    showError('');
 
-    // Nota: el comentario queda "pendiente de aprobación" en el backend.
-    // Solo lo ve quien lo escribió (en su propia sesión) hasta que se apruebe.
-    cachedReviews = [{ ...review, when: 'Pendiente de aprobación' }, ...cachedReviews];
-    renderReviews(cachedReviews, 'ready');
-
+    // Se envía primero y solo se pinta si el backend confirma. Antes se pintaba
+    // de forma optimista y al revertir con slice(1) se podía borrar una opinión
+    // real si la carga inicial terminaba en medio del envío.
     const ok = await postRemoteReview(review);
 
     if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = originalText; }
+
+    if (!ok) {
+        showError('No pudimos guardar tu comentario. Inténtalo de nuevo en un momento.');
+        return;
+    }
+
+    // Queda "pendiente de aprobación": solo lo ve quien lo escribió, en su
+    // propia sesión, hasta que alguien lo apruebe en la hoja de cálculo.
+    cachedReviews = [{ ...review, when: 'Pendiente de aprobación' }, ...cachedReviews];
+    renderReviews(cachedReviews, 'ready');
+
     reviewForm.reset();
     paintStars(5);
     closeModal();
-
-    if (!ok && REVIEWS_API_URL) {
-        // Si falla, revertimos y avisamos
-        cachedReviews = cachedReviews.slice(1);
-        renderReviews(cachedReviews, 'ready');
-        alert('No pudimos guardar tu comentario. Inténtalo de nuevo en un momento.');
-    }
 });
 
 // ============ Fade-in observer ============

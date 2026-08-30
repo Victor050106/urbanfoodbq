@@ -81,7 +81,10 @@ function readReviews() {
     .filter(function (row) { return row[4] === true || String(row[4]).toUpperCase() === 'TRUE'; })
     .map(function (row) {
       return {
-        timestamp: row[0] instanceof Date ? row[0].toISOString() : String(row[0] || ''),
+        // Siempre ISO-8601. Antes, si la celda no llegaba como Date, se enviaba
+        // algo como "Sat Aug 15 2026 22:42:17 GMT-0500 (hora estándar de Colombia)":
+        // Chrome lo perdona, pero Safari no lo parsea y la fecha salía como "Recién".
+        timestamp: toIso(row[0]),
         name: String(row[1] || ''),
         rating: clamp(parseInt(row[2], 10) || 5, 1, 5),
         comment: String(row[3] || '')
@@ -121,6 +124,18 @@ function getSheet() {
 
 function clamp(n, lo, hi) {
   return Math.max(lo, Math.min(hi, n));
+}
+
+/** Normaliza cualquier valor de celda a una cadena ISO-8601 (o '' si no hay fecha). */
+function toIso(v) {
+  if (v instanceof Date && !isNaN(v.getTime())) return v.toISOString();
+  if (!v) return '';
+  // Si la columna quedó formateada como número, la celda llega como number.
+  // new Date(46000) es una fecha VÁLIDA (1970) y el comentario saldría como
+  // "Hace 56 años", así que se descarta en vez de inventar una fecha.
+  if (typeof v === 'number') return '';
+  var d = new Date(v);
+  return isNaN(d.getTime()) ? '' : d.toISOString();
 }
 
 function jsonResponse(obj) {
