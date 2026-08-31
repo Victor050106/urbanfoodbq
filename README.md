@@ -107,7 +107,7 @@ Luego abre [http://localhost:3000](http://localhost:3000) en tu navegador.
 | Campo     | Dato                                         |
 |-----------|----------------------------------------------|
 | Dirección | Calle 53D # 19-06, Barranquilla, Colombia    |
-| Teléfono  | +57 302 401 7935                             |
+| Teléfono  | +57 312 755 7694                             |
 | Correo    | urbanfoodbq@gmail.com                        |
 | Pedidos   | [menu.fu.do/urbanfoodbq](https://menu.fu.do/urbanfoodbq) |
 
