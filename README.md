@@ -1,6 +1,13 @@
-# Urban Food BQ
+# Urban Food
 
-Sitio web oficial de **Urban Food BQ**, restaurante ubicado en Barranquilla, Colombia. Plataforma informativa y de marketing que dirige a los clientes a realizar pedidos a través del sistema externo [fu.do](https://menu.fu.do/urbanfoodbq).
+Sitio web oficial de **Urban Food**, restaurante con dos sedes en Barranquilla y Soledad,
+Colombia. Plataforma informativa y de marketing que dirige a los clientes a realizar pedidos
+a través del sistema externo [fu.do](https://fu.do), que maneja **una carta por sede**:
+
+| Sede | Dirección | Carta / pedidos |
+|------|-----------|-----------------|
+| El Carmen | Calle 53D # 19-06, Barranquilla | [menu.fu.do/urbanfoodbq](https://menu.fu.do/urbanfoodbq) |
+| Hipódromo | Cra. 29 # 26-04, Soledad | [menu.fu.do/urbanfoodsl](https://menu.fu.do/urbanfoodsl) |
 
 ## Vista previa
 <img width="1335" height="595" alt="image" src="https://github.com/user-attachments/assets/2cf29158-31e1-4996-bf35-669d31a662b7" />
@@ -17,34 +24,43 @@ joven y urbano.
 - Google Maps (mapas embebidos, uno por sede)
 - Datos estructurados JSON-LD (`Restaurant`) para resultados enriquecidos en Google
 - WhatsApp, Facebook e Instagram (integración de redes sociales)
-- [fu.do](https://menu.fu.do/urbanfoodbq) — plataforma de pedidos en línea
+- [fu.do](https://fu.do) — plataforma de pedidos en línea (un menú por sede)
 
 ## Estructura del proyecto
 
 ```
 Urban Food/
 ├── index.html            # Documento principal con todas las secciones + JSON-LD
-├── styles.css            # Estilos que complementan a Tailwind
-├── script.js             # Horarios, estado abierto/cerrado, sedes, opiniones, modal
 ├── robots.txt            # Indexación
 ├── sitemap.xml           # Mapa del sitio
-├── img/
-│   ├── hero-pattern.webp # Textura de doodles del hero (~128 KB)
-│   ├── mascota.webp      # Mascota de marca con transparencia (~113 KB)
-│   ├── og-cover.jpg      # Imagen 1200x630 para WhatsApp / Facebook / X
-│   └── menu/             # 7 fotos de categorías, 800x800
-├── banner.svg            # Arte original del banner (3,7 MB). NO lo usa el sitio:
-│                         # es la fuente de la que salieron las imágenes de img/
-├── logo.png              # Logo blanco (modo oscuro)
-├── logor.png             # Logo naranja (variante)
-├── favicon.png           # Favicon estándar
-└── faviconr.png          # Favicon variante
+├── assets/               # Todo lo que el sitio carga en el navegador
+│   ├── css/styles.css    # Estilos que complementan a Tailwind
+│   ├── js/script.js      # Sedes, horarios, estado abierto/cerrado, opiniones, modales
+│   ├── img/
+│   │   ├── hero-pattern.webp # Textura de doodles del hero (~128 KB)
+│   │   ├── mascota.webp      # Mascota de marca con transparencia (~113 KB)
+│   │   ├── og-cover.jpg      # Imagen 1200x630 para WhatsApp / Facebook / X
+│   │   └── menu/             # 7 fotos de categorías, 800x800
+│   └── brand/            # logo.png, logor.png, favicon.png, faviconr.png
+├── apps-script/
+│   └── Code.gs           # Backend de comentarios (Google Apps Script)
+├── docs/                 # Documentos internos, NO se suben al repo
+│   ├── PASOS-PARA-VICTOR.md
+│   └── Propuesta_Comercial_Urban_Food_BQ.docx
+└── _source/              # Fuentes de diseño: el sitio NO las carga
+    ├── banner.svg        # Arte original del banner (3,7 MB)
+    ├── PersonajeUrbanFood.ai
+    └── menuurban/        # Fotos originales de cámara (8-12 MB c/u)
 ```
 
+> Regla simple: lo que el navegador descarga vive en `assets/`; lo que solo usamos nosotros
+> vive en `docs/` o `_source/` y está en el `.gitignore` (salvo `banner.svg`, que sí se
+> versiona por ser la fuente del arte del sitio).
+
 > **Sobre las imágenes del hero:** el `banner.svg` original pesaba 3,7 MB (18 PNG incrustados)
-> y se cargaba entero antes de que se viera nada. Se descompuso en `img/hero-pattern.webp` +
-> `img/mascota.webp` (~240 KB entre las dos). Si algún día se rehace el arte, hay que volver a
-> exportar esas dos piezas: el sitio ya no lee `banner.svg`.
+> y se cargaba entero antes de que se viera nada. Se descompuso en `assets/img/hero-pattern.webp` +
+> `assets/img/mascota.webp` (~240 KB entre las dos). Si algún día se rehace el arte, hay que
+> volver a exportar esas dos piezas: el sitio ya no lee `banner.svg`.
 
 ## Funcionalidades
 
@@ -55,7 +71,10 @@ Urban Food/
   (el sábado cierra a las 2 AM del domingo)
 - **Sección de menú** con 12 categorías (Grill, Perros, Hamburguesas, Pizzas, Salchipapas, Sandwiches, Mazorcas, Salvajadas, Taco Pizza & Pinchos, Menú Infantil, Bebidas & Frappés, Adicionales)
 - **Horario dinámico**: detecta el día actual y resalta sus horas automáticamente
-- **Selector de sedes** (Principal / Hipódromo) con datos de contacto y mapa por sede
+- **Selector de sedes** (El Carmen / Hipódromo) con datos de contacto y mapa por sede
+- **Selector de sede al pedir**: los botones de pedido y de carta abren un modal que pregunta
+  a qué sede va el pedido, porque cada una tiene su propio menú en fu.do. Los dos links viven
+  en el objeto `SEDES` al inicio de `assets/js/script.js`: ahí se cambian, no en el HTML
 - **Animaciones de scroll** (Intersection Observer), desactivadas si el sistema pide
   `prefers-reduced-motion`
 - **Botón flotante de WhatsApp** con mensaje de pedido preescrito
@@ -72,7 +91,7 @@ un Google Apps Script (ver `apps-script/Code.gs`).
 **Ningún comentario se publica automáticamente.** Cada comentario nuevo llega a la hoja con
 la columna `approved` sin marcar. Para que aparezca en la página:
 
-1. Abre la hoja de cálculo "Urban Food BQ - Comentarios".
+1. Abre la hoja de cálculo de comentarios en Google Drive.
 2. Busca la fila del comentario nuevo (los más recientes quedan al final).
 3. Marca la casilla de la columna **approved** de esa fila.
 
@@ -106,11 +125,13 @@ Luego abre [http://localhost:3000](http://localhost:3000) en tu navegador.
 
 | Campo     | Dato                                         |
 |-----------|----------------------------------------------|
-| Dirección | Calle 53D # 19-06, Barranquilla, Colombia    |
+| Sede El Carmen | Calle 53D # 19-06, Barranquilla, Colombia |
+| Sede Hipódromo  | Cra. 29 # 26-04, Soledad, Atlántico       |
 | Teléfono  | +57 312 755 7694                             |
 | Correo    | urbanfoodbq@gmail.com                        |
-| Pedidos   | [menu.fu.do/urbanfoodbq](https://menu.fu.do/urbanfoodbq) |
+| Pedidos El Carmen | [menu.fu.do/urbanfoodbq](https://menu.fu.do/urbanfoodbq) |
+| Pedidos Hipódromo  | [menu.fu.do/urbanfoodsl](https://menu.fu.do/urbanfoodsl) |
 
 ## Licencia
 
-© Urban Food BQ. Todos los derechos reservados.
+© Urban Food. Todos los derechos reservados.

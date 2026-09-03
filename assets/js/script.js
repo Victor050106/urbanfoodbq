@@ -128,11 +128,22 @@ if (navbar) {
     }, { passive: true });
 }
 
-// ============ Location switcher ============
-const LOC_LABELS = {
-    principal: 'Sede Principal',
-    hipodromo: 'Sede Hipódromo'
+// ============ Sedes ============
+// Cada sede tiene su propio menú en fu.do. Si algún día cambia un link o se
+// abre otra sede, se toca solo este objeto: de aquí salen los botones de pedido,
+// el selector de sede y la etiqueta del mapa.
+const SEDES = {
+    carmen: {
+        label: 'Sede El Carmen',
+        order: 'https://menu.fu.do/urbanfoodbq'
+    },
+    hipodromo: {
+        label: 'Sede Hipódromo',
+        order: 'https://menu.fu.do/urbanfoodsl'
+    }
 };
+
+// ============ Location switcher ============
 const activeLocLabel = document.getElementById('activeLocationLabel');
 
 document.querySelectorAll('.loc-btn').forEach(btn => {
@@ -156,8 +167,104 @@ document.querySelectorAll('.loc-btn').forEach(btn => {
             f.classList.toggle('active', f.dataset.locMap === loc);
         });
         // Label
-        if (activeLocLabel) activeLocLabel.textContent = LOC_LABELS[loc] || '';
+        if (activeLocLabel) activeLocLabel.textContent = SEDES[loc]?.label || '';
     });
+});
+
+// ============ Modales ============
+const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+// Mantiene el foco dentro del modal abierto. Lo usan el selector de sede y el
+// formulario de opiniones.
+function trapFocus(modal, e) {
+    const items = [...modal.querySelectorAll(FOCUSABLE)].filter(el => el.offsetParent !== null);
+    if (!items.length) return;
+    const first = items[0];
+    const last = items[items.length - 1];
+    // Al hacer clic en el título o en el relleno del panel el foco se va al
+    // <body>: sin esto, el siguiente Tab seguía el orden del documento y se
+    // escapaba a la navbar que está detrás del modal.
+    if (!modal.contains(document.activeElement)) {
+        e.preventDefault();
+        first.focus();
+        return;
+    }
+    if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault(); last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault(); first.focus();
+    }
+}
+
+// ============ Selector de sede ============
+// Los botones de "pedir" y "ver carta" son <a> con el link de El Carmen dentro:
+// si el JS no carga siguen llevando a una carta real. Cuando sí carga, el clic
+// se intercepta y se pregunta primero por la sede.
+const SEDE_PICKER_COPY = {
+    pedido: {
+        title: '¿En qué sede quieres pedir?',
+        hint: 'Cada sede tiene su propia carta y su propio domicilio.'
+    },
+    carta: {
+        title: '¿Qué carta quieres ver?',
+        hint: 'Cada sede maneja su propia carta en fu.do.'
+    }
+};
+
+const sedeModal = document.getElementById('sedeModal');
+const sedeModalTitle = document.getElementById('sedeModalTitle');
+const sedeModalHint = document.getElementById('sedeModalHint');
+let lastFocusedBeforeSede = null;
+
+// El HTML trae los links escritos como respaldo; aquí se reescriben desde SEDES
+// para que exista un solo lugar donde cambiarlos.
+Object.entries(SEDES).forEach(([key, sede]) => {
+    const link = sedeModal?.querySelector(`[data-sede-link="${key}"]`);
+    if (link) link.href = sede.order;
+});
+
+function isSedeModalOpen() {
+    return !!sedeModal && !sedeModal.classList.contains('hidden');
+}
+
+function openSedeModal(mode) {
+    if (!sedeModal) return;
+    const copy = SEDE_PICKER_COPY[mode] || SEDE_PICKER_COPY.pedido;
+    if (sedeModalTitle) sedeModalTitle.textContent = copy.title;
+    if (sedeModalHint) sedeModalHint.textContent = copy.hint;
+    lastFocusedBeforeSede = document.activeElement;
+    sedeModal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    sedeModal.querySelector('[data-sede-link]')?.focus();
+}
+
+function closeSedeModal() {
+    if (!isSedeModalOpen()) return;
+    sedeModal.classList.add('hidden');
+    document.body.style.overflow = '';
+    if (lastFocusedBeforeSede instanceof HTMLElement) lastFocusedBeforeSede.focus();
+}
+
+document.querySelectorAll('[data-sede-picker]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        openSedeModal(btn.dataset.sedePicker);
+    });
+});
+
+document.getElementById('closeSedeModal')?.addEventListener('click', closeSedeModal);
+sedeModal?.addEventListener('click', (e) => {
+    if (e.target === sedeModal) closeSedeModal();
+});
+// La carta se abre en otra pestaña: al volver, el modal no debe seguir encima.
+sedeModal?.querySelectorAll('[data-sede-link]').forEach(a => {
+    a.addEventListener('click', closeSedeModal);
+});
+
+document.addEventListener('keydown', (e) => {
+    if (!isSedeModalOpen()) return;
+    if (e.key === 'Escape') { closeSedeModal(); return; }
+    if (e.key === 'Tab') trapFocus(sedeModal, e);
 });
 
 // ============ Reviews ============
@@ -325,31 +432,10 @@ reviewModal?.addEventListener('click', (e) => {
     if (e.target === reviewModal) closeModal();
 });
 
-const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
-
 document.addEventListener('keydown', (e) => {
     if (!isModalOpen()) return;
     if (e.key === 'Escape') { closeModal(); return; }
-    // Mantener el foco dentro del modal mientras está abierto
-    if (e.key === 'Tab') {
-        const items = [...reviewModal.querySelectorAll(FOCUSABLE)].filter(el => el.offsetParent !== null);
-        if (!items.length) return;
-        const first = items[0];
-        const last = items[items.length - 1];
-        // Al hacer clic en el título o en el relleno del panel el foco se va al
-        // <body>: sin esto, el siguiente Tab seguía el orden del documento y se
-        // escapaba a la navbar que está detrás del modal.
-        if (!reviewModal.contains(document.activeElement)) {
-            e.preventDefault();
-            first.focus();
-            return;
-        }
-        if (e.shiftKey && document.activeElement === first) {
-            e.preventDefault(); last.focus();
-        } else if (!e.shiftKey && document.activeElement === last) {
-            e.preventDefault(); first.focus();
-        }
-    }
+    if (e.key === 'Tab') trapFocus(reviewModal, e);
 });
 
 function paintStars(rating) {
