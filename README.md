@@ -72,9 +72,13 @@ Urban Food/
 - **Sección de menú** con 12 categorías (Grill, Perros, Hamburguesas, Pizzas, Salchipapas, Sandwiches, Mazorcas, Salvajadas, Taco Pizza & Pinchos, Menú Infantil, Bebidas & Frappés, Adicionales)
 - **Horario dinámico**: detecta el día actual y resalta sus horas automáticamente
 - **Selector de sedes** (El Carmen / Hipódromo) con datos de contacto y mapa por sede
-- **Selector de sede al pedir**: los botones de pedido y de carta abren un modal que pregunta
-  a qué sede va el pedido, porque cada una tiene su propio menú en fu.do. Los dos links viven
-  en el objeto `SEDES` al inicio de `assets/js/script.js`: ahí se cambian, no en el HTML
+- **Selector de sede**: los botones de pedido, de carta y de WhatsApp abren un modal que
+  pregunta a qué sede va la acción, porque cada una tiene su propio menú en fu.do y su propio
+  número. Los links salen del objeto `SEDES` al inicio de `assets/js/script.js`: ahí se
+  cambian, no en el HTML. Los botones siguen siendo `<a>` con el destino de El Carmen dentro,
+  así que sin JavaScript llevan igual a un sitio válido
+- **Contacto por sede**: dirección, teléfono y correo propios de cada sede, tanto en la
+  sección **Sedes** como en el pie de página
 - **Animaciones de scroll** (Intersection Observer), desactivadas si el sistema pide
   `prefers-reduced-motion`
 - **Botón flotante de WhatsApp** con mensaje de pedido preescrito
@@ -123,14 +127,24 @@ Luego abre [http://localhost:3000](http://localhost:3000) en tu navegador.
 
 ## Información de contacto del restaurante
 
-| Campo     | Dato                                         |
-|-----------|----------------------------------------------|
-| Sede El Carmen | Calle 53D # 19-06, Barranquilla, Colombia |
-| Sede Hipódromo  | Cra. 29 # 26-04, Soledad, Atlántico       |
-| Teléfono  | +57 312 755 7694                             |
-| Correo    | urbanfoodbq@gmail.com                        |
-| Pedidos El Carmen | [menu.fu.do/urbanfoodbq](https://menu.fu.do/urbanfoodbq) |
-| Pedidos Hipódromo  | [menu.fu.do/urbanfoodsl](https://menu.fu.do/urbanfoodsl) |
+Cada sede atiende su propio teléfono, su propio correo y su propia carta.
+
+| Dato | Sede El Carmen | Sede Hipódromo |
+|------|----------------|----------------|
+| Dirección | Calle 53D # 19-06, Barranquilla | Cra. 29 # 26-04, Soledad, Atlántico |
+| Teléfono / WhatsApp | +57 312 755 7694 | ⚠️ +57 300 000 0000 (provisional) |
+| Correo | urbanfoodbq@gmail.com | ⚠️ hipodromo@urbanfoodbq.com (provisional) |
+| Pedidos | [menu.fu.do/urbanfoodbq](https://menu.fu.do/urbanfoodbq) | [menu.fu.do/urbanfoodsl](https://menu.fu.do/urbanfoodsl) |
+
+> ⚠️ **El teléfono y el correo de Hipódromo son de relleno**, a la espera de los reales.
+> El número `+57 300 000 0000` no corresponde a ninguna línea activa, justamente para que
+> nadie termine llamando a un desconocido. Cuando lleguen los datos verdaderos hay que
+> cambiarlos en cuatro sitios (los cuatro están marcados con `TODO`):
+>
+> 1. `index.html` — ficha de la sede en la sección **Sedes**
+> 2. `index.html` — ficha de la sede en el **pie de página**
+> 3. `index.html` — bloque **JSON-LD** de la cabecera
+> 4. `assets/js/script.js` — objeto `SEDES` (de ahí sale el enlace de WhatsApp del selector)
 
 ## Licencia
 

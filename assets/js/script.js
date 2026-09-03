@@ -135,13 +135,24 @@ if (navbar) {
 const SEDES = {
     carmen: {
         label: 'Sede El Carmen',
-        order: 'https://menu.fu.do/urbanfoodbq'
+        order: 'https://menu.fu.do/urbanfoodbq',
+        phone: '573127557694'
     },
     hipodromo: {
         label: 'Sede Hipódromo',
-        order: 'https://menu.fu.do/urbanfoodsl'
+        order: 'https://menu.fu.do/urbanfoodsl',
+        // TODO: numero provisional. Reemplazar por el real de Hipodromo aqui y
+        // en index.html (ficha de la sede, pie de pagina y JSON-LD).
+        phone: '573000000000'
     }
 };
+
+const WA_TEXT = encodeURIComponent('¡Hola Urban Food! Quiero hacer un pedido.');
+
+// Enlace de WhatsApp de una sede, con el mensaje de pedido ya escrito.
+function waLink(sede) {
+    return `https://wa.me/${sede.phone}?text=${WA_TEXT}`;
+}
 
 // ============ Location switcher ============
 const activeLocLabel = document.getElementById('activeLocationLabel');
@@ -203,25 +214,29 @@ function trapFocus(modal, e) {
 const SEDE_PICKER_COPY = {
     pedido: {
         title: '¿En qué sede quieres pedir?',
-        hint: 'Cada sede tiene su propia carta y su propio domicilio.'
+        hint: 'Cada sede tiene su propia carta y su propio domicilio.',
+        href: sede => sede.order,
+        foot: 'Se abre la carta de fu.do en una pestaña nueva.'
     },
     carta: {
         title: '¿Qué carta quieres ver?',
-        hint: 'Cada sede maneja su propia carta en fu.do.'
+        hint: 'Cada sede maneja su propia carta en fu.do.',
+        href: sede => sede.order,
+        foot: 'Se abre la carta de fu.do en una pestaña nueva.'
+    },
+    whatsapp: {
+        title: '¿A qué sede le escribes?',
+        hint: 'Cada sede atiende su propio WhatsApp.',
+        href: waLink,
+        foot: 'Se abre WhatsApp con el mensaje ya escrito.'
     }
 };
 
 const sedeModal = document.getElementById('sedeModal');
 const sedeModalTitle = document.getElementById('sedeModalTitle');
 const sedeModalHint = document.getElementById('sedeModalHint');
+const sedeModalFoot = document.getElementById('sedeModalFoot');
 let lastFocusedBeforeSede = null;
-
-// El HTML trae los links escritos como respaldo; aquí se reescriben desde SEDES
-// para que exista un solo lugar donde cambiarlos.
-Object.entries(SEDES).forEach(([key, sede]) => {
-    const link = sedeModal?.querySelector(`[data-sede-link="${key}"]`);
-    if (link) link.href = sede.order;
-});
 
 function isSedeModalOpen() {
     return !!sedeModal && !sedeModal.classList.contains('hidden');
@@ -232,6 +247,12 @@ function openSedeModal(mode) {
     const copy = SEDE_PICKER_COPY[mode] || SEDE_PICKER_COPY.pedido;
     if (sedeModalTitle) sedeModalTitle.textContent = copy.title;
     if (sedeModalHint) sedeModalHint.textContent = copy.hint;
+    if (sedeModalFoot) sedeModalFoot.textContent = copy.foot;
+    // El destino depende de para qué se abrió: la carta de la sede o su WhatsApp.
+    Object.entries(SEDES).forEach(([key, sede]) => {
+        const link = sedeModal.querySelector(`[data-sede-link="${key}"]`);
+        if (link) link.href = copy.href(sede);
+    });
     lastFocusedBeforeSede = document.activeElement;
     sedeModal.classList.remove('hidden');
     document.body.style.overflow = 'hidden';

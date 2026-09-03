@@ -130,8 +130,8 @@
           "image": "https://urbanfoodbq.com/assets/img/og-cover.jpg",
           "servesCuisine": ["Comida rápida", "Parrilla", "Pizza"],
           "priceRange": "$$",
-          "telephone": "+573127557694",
-          "email": "urbanfoodbq@gmail.com",
+          "telephone": "+573000000000",
+          "email": "hipodromo@urbanfoodbq.com",
           "hasMenu": "https://menu.fu.do/urbanfoodsl",
           "address": {
             "@type": "PostalAddress",
@@ -526,8 +526,10 @@
                                 <span class="material-symbols-outlined text-deep-black">call</span>
                             </div>
                             <div>
+                                <!-- TODO: telefono y correo provisionales de Hipodromo. Al cambiarlos, tocar
+                                     tambien el pie de pagina, el JSON-LD y SEDES en assets/js/script.js. -->
                                 <h3 class="font-display text-headline-md uppercase text-deep-black mb-1 leading-none">WhatsApp / Teléfono</h3>
-                                <a class="font-body text-body-md text-secondary hover:text-vibrant-orange transition-colors" href="https://wa.me/573127557694" target="_blank" rel="noopener">+57 312 755 7694</a>
+                                <a class="font-body text-body-md text-secondary hover:text-vibrant-orange transition-colors" href="https://wa.me/573000000000" target="_blank" rel="noopener">+57 300 000 0000</a>
                             </div>
                         </div>
                         <div class="flex gap-5">
@@ -536,7 +538,7 @@
                             </div>
                             <div>
                                 <h3 class="font-display text-headline-md uppercase text-deep-black mb-1 leading-none">Correo</h3>
-                                <a class="font-body text-body-md text-secondary hover:text-vibrant-orange transition-colors" href="mailto:urbanfoodbq@gmail.com">urbanfoodbq@gmail.com</a>
+                                <a class="font-body text-body-md text-secondary hover:text-vibrant-orange transition-colors" href="mailto:hipodromo@urbanfoodbq.com">hipodromo@urbanfoodbq.com</a>
                             </div>
                         </div>
                         <div class="flex gap-5">
@@ -683,7 +685,7 @@
                         <span class="material-symbols-outlined ml-auto text-deep-black group-hover:text-vibrant-orange transition-colors" aria-hidden="true">arrow_forward</span>
                     </a>
                 </div>
-                <p class="font-body text-xs text-secondary text-center pt-5">Se abre la carta de fu.do en una pesta&ntilde;a nueva.</p>
+                <p id="sedeModalFoot" class="font-body text-xs text-secondary text-center pt-5">Se abre la carta de fu.do en una pesta&ntilde;a nueva.</p>
             </div>
         </div>
     </div>
@@ -739,7 +741,7 @@
                         <span class="font-body text-label-sm uppercase tracking-[0.25em] text-white/45">Barranquilla &middot; Colombia</span>
                     </div>
                     <div class="flex gap-3">
-                    <a class="w-11 h-11 rounded-full border border-white/20 text-white/70 inline-flex items-center justify-center hover:bg-vibrant-orange hover:border-vibrant-orange hover:text-deep-black transition-colors" href="https://wa.me/573127557694" target="_blank" rel="noopener" aria-label="WhatsApp">
+                    <a class="w-11 h-11 rounded-full border border-white/20 text-white/70 inline-flex items-center justify-center hover:bg-vibrant-orange hover:border-vibrant-orange hover:text-deep-black transition-colors" href="https://wa.me/573127557694" target="_blank" rel="noopener" data-sede-picker="whatsapp" aria-haspopup="dialog" aria-label="WhatsApp">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
                     </a>
                     <a class="w-11 h-11 rounded-full border border-white/20 text-white/70 inline-flex items-center justify-center hover:bg-vibrant-orange hover:border-vibrant-orange hover:text-deep-black transition-colors" href="https://www.facebook.com/profile.php?id=100090055810195" target="_blank" rel="noopener" aria-label="Facebook">
@@ -766,60 +768,79 @@
                     </ul>
                 </div>
 
-                <!-- SEDES -->
-                <div class="lg:col-span-3">
+                <!-- SEDES Y CONTACTO -->
+                <!-- Cada sede es una ficha con su direccion, su telefono y su correo:
+                     antes habia una sola columna de contacto para las dos y el cliente
+                     no sabia a quien le estaba escribiendo. -->
+                <div class="sm:col-span-2 lg:col-span-6">
                     <h4 class="font-display text-headline-md text-white uppercase tracking-wide mb-5 flex items-center gap-3 leading-none">
-                        <span class="w-5 h-0.5 bg-vibrant-orange flex-shrink-0" aria-hidden="true"></span>Sedes
+                        <span class="w-5 h-0.5 bg-vibrant-orange flex-shrink-0" aria-hidden="true"></span>Sedes y contacto
                     </h4>
-                    <ul class="space-y-6 font-body text-body-md">
-                        <li class="border-l-2 border-vibrant-orange pl-4">
-                            <span class="block font-display text-headline-md text-white uppercase leading-none mb-1">El Carmen</span>
-                            <p class="text-white/60 leading-relaxed">Calle 53D # 19-06<br>Barranquilla</p>
-                            <a class="inline-flex items-center gap-1 mt-2 py-1 text-label-bold uppercase tracking-wider text-vibrant-orange hover:text-white transition-colors" href="https://www.google.com/maps?q=Calle+53D+%23+19-06,+Barranquilla" target="_blank" rel="noopener">
-                                C&oacute;mo llegar
-                                <span class="material-symbols-outlined text-sm" aria-hidden="true">north_east</span>
-                            </a>
-                        </li>
-                        <li class="border-l-2 border-fresh-teal pl-4">
-                            <span class="block font-display text-headline-md text-white uppercase leading-none mb-1">Hip&oacute;dromo</span>
-                            <p class="text-white/60 leading-relaxed">Cra. 29 # 26-04<br>Soledad, Atl&aacute;ntico</p>
-                            <a class="inline-flex items-center gap-1 mt-2 py-1 text-label-bold uppercase tracking-wider text-vibrant-orange hover:text-white transition-colors" href="https://www.google.com/maps?q=Cra.+29+%23+26-04,+Soledad,+Atl%C3%A1ntico" target="_blank" rel="noopener">
-                                C&oacute;mo llegar
-                                <span class="material-symbols-outlined text-sm" aria-hidden="true">north_east</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- CONTACTO -->
-                <div class="lg:col-span-3">
-                    <h4 class="font-display text-headline-md text-white uppercase tracking-wide mb-5 flex items-center gap-3 leading-none">
-                        <span class="w-5 h-0.5 bg-vibrant-orange flex-shrink-0" aria-hidden="true"></span>Contacto
-                    </h4>
-                    <ul class="space-y-2 font-body text-body-md">
-                        <li>
-                            <a class="group flex items-center gap-3 py-1.5 text-white/60 hover:text-white transition-colors" href="https://wa.me/573127557694" target="_blank" rel="noopener">
-                                <span class="material-symbols-outlined text-vibrant-orange text-lg flex-shrink-0" aria-hidden="true">call</span>
-                                <span class="group-hover:underline underline-offset-4">+57 312 755 7694</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a class="group flex items-center gap-3 py-1.5 text-white/60 hover:text-white transition-colors" href="mailto:urbanfoodbq@gmail.com">
-                                <span class="material-symbols-outlined text-vibrant-orange text-lg flex-shrink-0" aria-hidden="true">mail</span>
-                                <span class="group-hover:underline underline-offset-4 break-all">urbanfoodbq@gmail.com</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a class="group flex items-center gap-3 py-1.5 text-white/60 hover:text-white transition-colors" href="#horarios">
-                                <span class="material-symbols-outlined text-vibrant-orange text-lg flex-shrink-0" aria-hidden="true">schedule</span>
-                                <span class="group-hover:underline underline-offset-4">Ver horarios de atenci&oacute;n</span>
-                            </a>
-                        </li>
-                    </ul>
-                    <a data-sede-picker="pedido" aria-haspopup="dialog" class="mt-6 inline-flex items-center justify-center gap-2 bg-vibrant-orange text-deep-black px-6 py-3 rounded-full font-display text-headline-md uppercase tracking-wide hover:bg-white transition-colors" href="https://menu.fu.do/urbanfoodbq" target="_blank" rel="noopener">
-                        Pedir online
-                        <span class="material-symbols-outlined" aria-hidden="true">shopping_bag</span>
-                    </a>
+                    <div class="grid sm:grid-cols-2 gap-x-8 gap-y-8">
+                        <!-- El Carmen -->
+                        <div class="border-l-2 border-vibrant-orange pl-4">
+                            <span class="block font-display text-headline-md text-white uppercase leading-none mb-2">El Carmen</span>
+                            <p class="font-body text-body-md text-white/60 leading-relaxed mb-2">Calle 53D # 19-06<br>Barranquilla</p>
+                            <ul class="font-body text-body-md">
+                                <li>
+                                    <a class="group flex items-center gap-3 py-1.5 text-white/60 hover:text-white transition-colors" href="https://wa.me/573127557694" target="_blank" rel="noopener">
+                                        <span class="material-symbols-outlined text-vibrant-orange text-lg flex-shrink-0" aria-hidden="true">call</span>
+                                        <span class="group-hover:underline underline-offset-4">+57 312 755 7694</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="group flex items-center gap-3 py-1.5 text-white/60 hover:text-white transition-colors" href="mailto:urbanfoodbq@gmail.com">
+                                        <span class="material-symbols-outlined text-vibrant-orange text-lg flex-shrink-0" aria-hidden="true">mail</span>
+                                        <span class="group-hover:underline underline-offset-4 break-all">urbanfoodbq@gmail.com</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="inline-flex items-center gap-1 mt-1 py-1 font-body text-label-bold uppercase tracking-wider text-vibrant-orange hover:text-white transition-colors" href="https://www.google.com/maps?q=Calle+53D+%23+19-06,+Barranquilla" target="_blank" rel="noopener">
+                                        C&oacute;mo llegar
+                                        <span class="material-symbols-outlined text-sm" aria-hidden="true">north_east</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <!-- Hipodromo -->
+                        <div class="border-l-2 border-fresh-teal pl-4">
+                            <span class="block font-display text-headline-md text-white uppercase leading-none mb-2">Hip&oacute;dromo</span>
+                            <p class="font-body text-body-md text-white/60 leading-relaxed mb-2">Cra. 29 # 26-04<br>Soledad, Atl&aacute;ntico</p>
+                            <!-- TODO: telefono y correo provisionales. Cuando lleguen los
+                                 reales hay que cambiarlos aqui, en la ficha de la seccion
+                                 Sedes, en el JSON-LD y en SEDES (assets/js/script.js). -->
+                            <ul class="font-body text-body-md">
+                                <li>
+                                    <a class="group flex items-center gap-3 py-1.5 text-white/60 hover:text-white transition-colors" href="https://wa.me/573000000000" target="_blank" rel="noopener">
+                                        <span class="material-symbols-outlined text-fresh-teal text-lg flex-shrink-0" aria-hidden="true">call</span>
+                                        <span class="group-hover:underline underline-offset-4">+57 300 000 0000</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="group flex items-center gap-3 py-1.5 text-white/60 hover:text-white transition-colors" href="mailto:hipodromo@urbanfoodbq.com">
+                                        <span class="material-symbols-outlined text-fresh-teal text-lg flex-shrink-0" aria-hidden="true">mail</span>
+                                        <span class="group-hover:underline underline-offset-4 break-all">hipodromo@urbanfoodbq.com</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="inline-flex items-center gap-1 mt-1 py-1 font-body text-label-bold uppercase tracking-wider text-fresh-teal hover:text-white transition-colors" href="https://www.google.com/maps?q=Cra.+29+%23+26-04,+Soledad,+Atl%C3%A1ntico" target="_blank" rel="noopener">
+                                        C&oacute;mo llegar
+                                        <span class="material-symbols-outlined text-sm" aria-hidden="true">north_east</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-x-6 gap-y-3 mt-8">
+                        <a data-sede-picker="pedido" aria-haspopup="dialog" class="inline-flex items-center justify-center gap-2 bg-vibrant-orange text-deep-black px-6 py-3 rounded-full font-display text-headline-md uppercase tracking-wide hover:bg-white transition-colors" href="https://menu.fu.do/urbanfoodbq" target="_blank" rel="noopener">
+                            Pedir online
+                            <span class="material-symbols-outlined" aria-hidden="true">shopping_bag</span>
+                        </a>
+                        <a class="group inline-flex items-center gap-3 py-1.5 font-body text-body-md text-white/60 hover:text-white transition-colors" href="#horarios">
+                            <span class="material-symbols-outlined text-vibrant-orange text-lg flex-shrink-0" aria-hidden="true">schedule</span>
+                            <span class="group-hover:underline underline-offset-4">Ver horarios de atenci&oacute;n</span>
+                        </a>
+                    </div>
                 </div>
             </div>
 
@@ -837,6 +858,7 @@
     <!-- WhatsApp flotante -->
     <a href="https://wa.me/573127557694?text=%C2%A1Hola%20Urban%20Food!%20Quiero%20hacer%20un%20pedido."
        target="_blank" rel="noopener"
+       data-sede-picker="whatsapp" aria-haspopup="dialog"
        class="fixed bottom-5 right-5 z-40 w-14 h-14 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-lg hover:scale-105 active:scale-95 transition-transform"
        aria-label="Escribir por WhatsApp a Urban Food">
         <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
