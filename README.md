@@ -77,8 +77,9 @@ Urban Food/
   número. Los links salen del objeto `SEDES` al inicio de `assets/js/script.js`: ahí se
   cambian, no en el HTML. Los botones siguen siendo `<a>` con el destino de El Carmen dentro,
   así que sin JavaScript llevan igual a un sitio válido
-- **Contacto por sede**: dirección, teléfono y correo propios de cada sede, tanto en la
-  sección **Sedes** como en el pie de página
+- **Contacto por sede**: cada sede tiene sus propios datos. En la sección **Sedes** van
+  dirección, teléfono, enlace de pedidos y horario; el correo va solo en el pie de página,
+  para no repetirlo dos veces en la misma página
 - **Animaciones de scroll** (Intersection Observer), desactivadas si el sistema pide
   `prefers-reduced-motion`
 - **Botón flotante de WhatsApp** con mensaje de pedido preescrito
@@ -141,7 +142,7 @@ Cada sede atiende su propio teléfono, su propio correo y su propia carta.
 > nadie termine llamando a un desconocido. Cuando lleguen los datos verdaderos hay que
 > cambiarlos en cuatro sitios (los cuatro están marcados con `TODO`):
 >
-> 1. `index.html` — ficha de la sede en la sección **Sedes**
+> 1. `index.html` — ficha de la sede en la sección **Sedes** (ahí solo va el teléfono)
 > 2. `index.html` — ficha de la sede en el **pie de página**
 > 3. `index.html` — bloque **JSON-LD** de la cabecera
 > 4. `assets/js/script.js` — objeto `SEDES` (de ahí sale el enlace de WhatsApp del selector)
