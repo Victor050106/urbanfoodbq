@@ -1,24 +1,20 @@
-# MCP credentials (contains API keys)
+# Credenciales MCP (contiene API keys)
 .mcp.json
 
-# Editor / OS junk
+# Basura de editor / sistema operativo
 .DS_Store
 Thumbs.db
 *.log
 
-# Documentos comerciales internos - NO deben subirse (repo publico)
-Propuesta_Comercial_Urban_Food_BQ.docx
-PASOS-PARA-VICTOR.md
-
-# Temporal
-_to_delete/
+# Documentos internos - NO deben subirse (repo publico)
+docs/
 
 # Repo de plugins de Claude Code clonado dentro del proyecto: no es parte del sitio
 everything-claude-code/
 
 # Fotos originales de camara (8-12 MB c/u). Se conservan en local como fuente,
-# pero al sitio solo suben las versiones optimizadas de img/menu/
-menuurban/
+# pero al sitio solo suben las versiones optimizadas de assets/img/menu/
+_source/menuurban/
 
 # Archivo fuente de Illustrator (3 MB, no lo usa el sitio)
-PersonajeUrbanFood.ai
+_source/PersonajeUrbanFood.ai

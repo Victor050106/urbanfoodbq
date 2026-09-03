@@ -1,8 +1,10 @@
 /**
- * Urban Food BQ – Comentarios (Google Apps Script)
+ * Urban Food – Comentarios (Google Apps Script)
  *
  * SETUP (una sola vez):
- *  1. Crea una hoja de cálculo nueva en Google Drive llamada "Urban Food BQ - Comentarios".
+ *  1. Crea una hoja de cálculo nueva en Google Drive llamada "Urban Food - Comentarios".
+ *     (Si ya existe con el nombre viejo, déjala como está: el script queda ligado
+ *     al archivo, no a su nombre.)
  *  2. Renombra la primera hoja (pestaña) a "Comentarios".
  *  3. En la fila 1, escribe las columnas en este orden: timestamp | name | rating | comment | approved
  *  4. Menú: Extensiones > Apps Script. Pega TODO este archivo en el editor (reemplaza Code.gs).
