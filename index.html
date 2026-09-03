@@ -160,7 +160,7 @@
                 <img src="assets/brand/logor.png" alt="Urban Food" class="h-10 md:h-12 w-auto rounded">
                 <span class="font-display text-headline-md text-white tracking-tight hidden sm:block">URBAN FOOD</span>
             </a>
-            <div class="hidden md:flex items-center gap-8" id="navLinks">
+            <div class="hidden md:flex items-center gap-8" id="navLinks" data-nav-links="desktop">
                 <a href="#menu" class="font-body text-label-bold uppercase tracking-wider text-white/80 hover:text-vibrant-orange transition-colors">Menú</a>
                 <a href="#nosotros" class="font-body text-label-bold uppercase tracking-wider text-white/80 hover:text-vibrant-orange transition-colors">Nosotros</a>
                 <a href="#horarios" class="font-body text-label-bold uppercase tracking-wider text-white/80 hover:text-vibrant-orange transition-colors">Horarios</a>
@@ -179,7 +179,7 @@
         </div>
         <!-- Mobile Menu -->
         <div id="mobileMenu" class="md:hidden hidden bg-deep-black border-t border-white/10">
-            <div class="flex flex-col px-margin-mobile py-4 gap-4">
+            <div class="flex flex-col px-margin-mobile py-4 gap-4" data-nav-links="mobile">
                 <a href="#menu" class="font-body text-label-bold uppercase tracking-wider text-white py-2">Menú</a>
                 <a href="#nosotros" class="font-body text-label-bold uppercase tracking-wider text-white py-2">Nosotros</a>
                 <a href="#horarios" class="font-body text-label-bold uppercase tracking-wider text-white py-2">Horarios</a>
@@ -438,6 +438,22 @@
                     <p class="text-white/60 text-sm">Llegamos a gran parte de Barranquilla y Soledad con el sabor Urban.</p>
                 </div>
             </div>
+        </div>
+    </section>
+
+    <!-- NOVEDADES -->
+    <!-- El contenido lo arma script.js con lo que haya en la pestana "Novedades"
+         de la hoja de calculo. Arranca oculta a proposito: si no hay ninguna
+         novedad vigente, la seccion no aparece y la pagina no muestra un hueco
+         ni una noticia vieja. Ver docs/PASOS-NOVEDADES.md. -->
+    <section id="novedades" class="hidden py-24 bg-deep-black text-white relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-1/3 h-full bg-fresh-teal/10 skew-x-12 -translate-x-1/2 pointer-events-none" aria-hidden="true"></div>
+        <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop relative">
+            <div class="mb-12">
+                <span class="text-fresh-teal font-body text-label-bold uppercase tracking-[0.2em] mb-4 block">Lo &uacute;ltimo</span>
+                <h2 class="font-display text-headline-lg uppercase leading-none">Novedades</h2>
+            </div>
+            <div id="novedadesLista" class="space-y-16"></div>
         </div>
     </section>
 

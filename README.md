@@ -40,12 +40,15 @@ Urban Food/
 │   │   ├── hero-pattern.webp # Textura de doodles del hero (~128 KB)
 │   │   ├── mascota.webp      # Mascota de marca con transparencia (~113 KB)
 │   │   ├── og-cover.jpg      # Imagen 1200x630 para WhatsApp / Facebook / X
-│   │   └── menu/             # 7 fotos de categorías, 800x800
+│   │   ├── menu/             # 7 fotos de categorías, 800x800
+│   │   └── novedades/        # Carátulas de las novedades
+│   ├── video/                # Videos de las novedades (H.264, no se precargan)
 │   └── brand/            # logo.png, logor.png, favicon.png, faviconr.png
 ├── apps-script/
 │   └── Code.gs           # Backend de comentarios (Google Apps Script)
 ├── docs/                 # Documentos internos, NO se suben al repo
 │   ├── PASOS-PARA-VICTOR.md
+│   ├── PASOS-NOVEDADES.md
 │   └── Propuesta_Comercial_Urban_Food_BQ.docx
 └── _source/              # Fuentes de diseño: el sitio NO las carga
     ├── banner.svg        # Arte original del banner (3,7 MB)
@@ -83,6 +86,11 @@ Urban Food/
 - **Animaciones de scroll** (Intersection Observer), desactivadas si el sistema pide
   `prefers-reduced-motion`
 - **Botón flotante de WhatsApp** con mensaje de pedido preescrito
+- **Sección de novedades** alimentada desde la hoja de cálculo: el restaurante publica y
+  retira anuncios (apertura de sede, promociones) sin tocar el código. Si no hay ninguna
+  novedad vigente la sección no aparece, y cada una puede llevar fecha de vencimiento para
+  retirarse sola. Admite video con carátula: el archivo solo se descarga al pulsar play
+  (ver `docs/PASOS-NOVEDADES.md`)
 - **Sección de opiniones** con formulario de comentarios y moderación previa (ver más abajo)
 - **Accesibilidad**: etiquetas asociadas a sus campos, calificación por estrellas manejable
   con teclado (patrón `radiogroup` con flechas), modal con foco atrapado y devuelto, y
@@ -91,7 +99,8 @@ Urban Food/
 ## Comentarios y moderación
 
 Los comentarios que dejan los clientes se guardan en una hoja de Google Sheets a través de
-un Google Apps Script (ver `apps-script/Code.gs`).
+un Google Apps Script (ver `apps-script/Code.gs`). El mismo script sirve las novedades desde
+una segunda pestaña de esa hoja, y la página lo consulta una sola vez para las dos cosas.
 
 **Ningún comentario se publica automáticamente.** Cada comentario nuevo llega a la hoja con
 la columna `approved` sin marcar. Para que aparezca en la página:

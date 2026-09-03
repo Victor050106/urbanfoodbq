@@ -143,6 +143,16 @@ summary {
     transform: translateY(0);
 }
 
+/* Novedades: el video vertical reserva su alto desde el primer pintado, para
+   que la seccion no pegue un salto cuando termina de cargar la caratula. */
+.novedad-video video {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 9 / 16;
+    background: #000;
+}
+
 /* Modales: entrada corta en vez de un corte seco */
 .modal-overlay:not(.hidden) {
     animation: modal-fade 160ms ease-out;

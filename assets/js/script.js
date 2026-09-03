@@ -288,10 +288,12 @@ document.addEventListener('keydown', (e) => {
     if (e.key === 'Tab') trapFocus(sedeModal, e);
 });
 
-// ============ Reviews ============
+// ============ Datos de la hoja de cálculo ============
 // URL del web app de Google Apps Script (ver apps-script/Code.gs para setup).
-// Si está vacía, la sección queda sin opiniones y el formulario no envía.
-const REVIEWS_API_URL = 'https://script.google.com/macros/s/AKfycbxbmTJiBV-pWqsm_qhVen_fDoe3rDWV-iuq2ccQZrf7zDI3E5XtT0rFDhOVpEd9BcKlTw/exec';
+// De aquí salen las opiniones aprobadas y las novedades vigentes, en una sola
+// llamada. Si está vacía, las dos secciones se quedan sin contenido: las
+// opiniones muestran la invitación a opinar y las novedades no aparecen.
+const SHEET_API_URL = 'https://script.google.com/macros/s/AKfycbxbmTJiBV-pWqsm_qhVen_fDoe3rDWV-iuq2ccQZrf7zDI3E5XtT0rFDhOVpEd9BcKlTw/exec';
 
 // Solo se muestran opiniones reales aprobadas desde la hoja de cálculo.
 // No hay testimonios de ejemplo: si no hay ninguno aprobado, se invita a opinar.
@@ -314,28 +316,34 @@ function relativeTime(ts) {
     return plural(Math.floor(diff / 86400 / 365), 'año', 'años');
 }
 
-async function fetchRemoteReviews() {
-    if (!REVIEWS_API_URL) return null;
+// Una sola petición trae opiniones y novedades: son la misma hoja y el mismo
+// script, así que pedirlas por separado seria despertar dos veces el Apps
+// Script (que arranca en frio y tarda unos segundos).
+async function fetchSheetData() {
+    if (!SHEET_API_URL) return null;
     try {
-        const res = await fetch(REVIEWS_API_URL, { method: 'GET', cache: 'no-store' });
+        const res = await fetch(SHEET_API_URL, { method: 'GET', cache: 'no-store' });
         if (!res.ok) return null;
-        const data = await res.json();
-        if (!Array.isArray(data.reviews)) return null;
-        return data.reviews.map(r => ({
-            name: r.name,
-            rating: r.rating,
-            comment: r.comment,
-            when: r.timestamp ? relativeTime(r.timestamp) : 'Recién'
-        }));
+        return await res.json();
     } catch {
         return null;
     }
 }
 
+function mapReviews(data) {
+    if (!data || !Array.isArray(data.reviews)) return null;
+    return data.reviews.map(r => ({
+        name: r.name,
+        rating: r.rating,
+        comment: r.comment,
+        when: r.timestamp ? relativeTime(r.timestamp) : 'Recién'
+    }));
+}
+
 async function postRemoteReview(review) {
-    if (!REVIEWS_API_URL) return false;
+    if (!SHEET_API_URL) return false;
     try {
-        const res = await fetch(REVIEWS_API_URL, {
+        const res = await fetch(SHEET_API_URL, {
             method: 'POST',
             // text/plain evita preflight CORS con Apps Script
             body: JSON.stringify(review)
@@ -405,9 +413,10 @@ let cachedReviews = [];
 renderReviews(cachedReviews, 'loading');
 
 (async () => {
-    const remote = await fetchRemoteReviews();
-    cachedReviews = remote || [];
+    const data = await fetchSheetData();
+    cachedReviews = mapReviews(data) || [];
     renderReviews(cachedReviews, 'ready');
+    renderNovedades(data && data.novedades);
 })();
 
 // ============ Review modal ============
@@ -542,6 +551,81 @@ reviewForm?.addEventListener('submit', async (e) => {
     paintStars(5);
     closeModal();
 });
+
+// ============ Novedades ============
+// Lo que se ve aqui sale de la pestana "Novedades" de la hoja de calculo: el
+// restaurante publica y retira novedades desde ahi, sin tocar el sitio. La
+// seccion nace oculta y solo se muestra si el Apps Script devuelve algo
+// vigente, para que nunca quede un titular viejo colgado en la pagina.
+
+const novedadesSection = document.getElementById('novedades');
+const novedadesLista = document.getElementById('novedadesLista');
+
+// El video no se descarga al abrir la pagina: primero se ve la caratula y el
+// archivo (varios MB) solo empieza a bajar cuando alguien pulsa el play.
+function novedadMedia(n) {
+    if (!n.video) {
+        return n.poster
+            ? `<img src="${escapeHtml(n.poster)}" alt="" loading="lazy" decoding="async" class="w-full rounded-2xl">`
+            : '';
+    }
+    const poster = n.poster ? ` poster="${escapeHtml(n.poster)}"` : '';
+    return `
+        <div class="novedad-video relative rounded-2xl overflow-hidden bg-white/5">
+            <video class="w-full block" controls preload="none" playsinline${poster}>
+                <source src="${escapeHtml(n.video)}" type="video/mp4">
+                Tu navegador no puede reproducir este video.
+            </video>
+        </div>`;
+}
+
+function renderNovedades(items) {
+    if (!novedadesSection || !novedadesLista) return;
+    const lista = Array.isArray(items) ? items.filter(n => n && n.titulo) : [];
+    if (!lista.length) return; // la seccion se queda oculta
+
+    novedadesLista.innerHTML = lista.map(n => {
+        const media = novedadMedia(n);
+        const etiqueta = n.etiqueta
+            ? `<span class="inline-block bg-fresh-teal text-deep-black font-body text-label-bold uppercase tracking-wider px-3 py-1 rounded-full mb-4">${escapeHtml(n.etiqueta)}</span>`
+            : '';
+        const texto = n.texto
+            ? `<p class="font-body text-body-lg text-white/70 leading-relaxed">${escapeHtml(n.texto)}</p>`
+            : '';
+        // Sin video ni foto el texto ocupa todo el ancho, en vez de dejar un hueco.
+        return `
+            <article class="grid ${media ? 'lg:grid-cols-[minmax(0,340px)_1fr]' : 'grid-cols-1'} gap-8 lg:gap-12 items-center">
+                ${media ? `<div class="max-w-[340px] w-full mx-auto lg:mx-0">${media}</div>` : ''}
+                <div>
+                    ${etiqueta}
+                    <h3 class="font-display text-headline-lg uppercase leading-none mb-4">${escapeHtml(n.titulo)}</h3>
+                    ${texto}
+                </div>
+            </article>`;
+    }).join('');
+
+    novedadesSection.classList.remove('hidden');
+
+    // El enlace del menu se agrega solo cuando hay algo que ver: un enlace a una
+    // seccion oculta deja al visitante mirando una pagina que no se movio.
+    document.querySelectorAll('[data-nav-links]').forEach(nav => {
+        if (nav.querySelector('a[href="#novedades"]')) return;
+        const a = document.createElement('a');
+        a.href = '#novedades';
+        a.textContent = 'Novedades';
+        a.className = nav.dataset.navLinks === 'mobile'
+            ? 'font-body text-label-bold uppercase tracking-wider text-white py-2'
+            : 'font-body text-label-bold uppercase tracking-wider text-white/80 hover:text-vibrant-orange transition-colors';
+        if (nav.dataset.navLinks === 'mobile') {
+            // Se reusa el boton hamburguesa en vez de esconder el menu a mano:
+            // asi el icono y el aria-expanded quedan coherentes.
+            a.addEventListener('click', () => {
+                if (mobileMenu && !mobileMenu.classList.contains('hidden')) menuToggle?.click();
+            });
+        }
+        nav.insertBefore(a, nav.firstElementChild);
+    });
+}
 
 // ============ Fade-in observer ============
 const observer = new IntersectionObserver((entries) => {

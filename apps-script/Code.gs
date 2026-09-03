@@ -1,5 +1,5 @@
 /**
- * Urban Food – Comentarios (Google Apps Script)
+ * Urban Food – Comentarios y Novedades (Google Apps Script)
  *
  * SETUP (una sola vez):
  *  1. Crea una hoja de cálculo nueva en Google Drive llamada "Urban Food - Comentarios".
@@ -7,6 +7,9 @@
  *     al archivo, no a su nombre.)
  *  2. Renombra la primera hoja (pestaña) a "Comentarios".
  *  3. En la fila 1, escribe las columnas en este orden: timestamp | name | rating | comment | approved
+ *  3b. Crea una segunda pestaña llamada "Novedades" con estas columnas en la fila 1:
+ *      etiqueta | titulo | texto | video | poster | mostrar_hasta | publicado
+ *      (ver docs/PASOS-NOVEDADES.md para el paso a paso con ejemplos)
  *  4. Menú: Extensiones > Apps Script. Pega TODO este archivo en el editor (reemplaza Code.gs).
  *  5. Guarda (Ctrl+S). Ponle nombre al proyecto, p.ej. "Urban Food Comentarios".
  *  6. Menú: Implementar > Nueva implementación.
@@ -28,12 +31,17 @@
  */
 
 const SHEET_NAME = 'Comentarios';
+const NEWS_SHEET_NAME = 'Novedades';
 const MAX_REVIEWS = 20;
+const MAX_NEWS = 3;
 const MAX_NAME = 60;
 const MAX_COMMENT = 500;
 
 function doGet(e) {
-  return jsonResponse(readReviews());
+  // Una sola respuesta para las dos secciones: la pagina hace un unico pedido.
+  const data = readReviews();
+  data.novedades = readNews();
+  return jsonResponse(data);
 }
 
 function doPost(e) {
@@ -96,6 +104,56 @@ function readReviews() {
     .slice(0, MAX_REVIEWS);
 
   return { reviews: reviews };
+}
+
+/**
+ * Lee la pestaña "Novedades".
+ *
+ * Columnas: etiqueta | titulo | texto | video | poster | mostrar_hasta | publicado
+ *
+ * Solo salen las filas con "publicado" marcado y cuya fecha "mostrar_hasta" no
+ * haya pasado todavia. Esa fecha es la que evita que la seccion se quede con
+ * una novedad vieja: cuando vence, la novedad desaparece sola de la pagina y
+ * nadie tiene que acordarse de bajarla. Si la celda va vacia, no caduca.
+ *
+ * Si la pestaña no existe, se devuelve una lista vacia y la pagina simplemente
+ * no muestra la seccion: el sitio sigue funcionando igual.
+ */
+function readNews() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName(NEWS_SHEET_NAME);
+  if (!sheet) return [];
+
+  const values = sheet.getDataRange().getValues();
+  if (values.length < 2) return [];
+
+  // Comparamos contra el final del dia, no contra este instante: si alguien
+  // escribe "5 de septiembre" espera verlo durante todo el 5, no hasta las 00:00.
+  const hoy = new Date();
+  hoy.setHours(0, 0, 0, 0);
+
+  return values.slice(1)
+    .filter(function (row) {
+      const publicado = row[6] === true || String(row[6]).toUpperCase() === 'TRUE';
+      if (!publicado) return false;
+      const hasta = row[5];
+      if (!hasta) return true;
+      const d = hasta instanceof Date ? hasta : new Date(hasta);
+      if (isNaN(d.getTime())) return true; // fecha ilegible: se muestra igual
+      d.setHours(23, 59, 59, 999);
+      return d >= hoy;
+    })
+    .map(function (row) {
+      return {
+        etiqueta: String(row[0] || '').trim().slice(0, 40),
+        titulo: String(row[1] || '').trim().slice(0, 120),
+        texto: String(row[2] || '').trim().slice(0, 600),
+        video: String(row[3] || '').trim().slice(0, 300),
+        poster: String(row[4] || '').trim().slice(0, 300)
+      };
+    })
+    .filter(function (n) { return n.titulo; })
+    .slice(0, MAX_NEWS);
 }
 
 /**
