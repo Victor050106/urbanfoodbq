@@ -431,7 +431,33 @@ function avisarReserva(sede, r) {
     });
   } catch (err) {
     console.error('No se pudo enviar el correo de la reserva: ' + err);
+    // Queda a la vista en la hoja: sin esto el fallo solo se ve en el registro
+    // de ejecuciones del Apps Script, que nadie revisa.
+    try {
+      getResSheet().getRange(r.fila, 1).setNote('⚠️ No se pudo enviar el correo de aviso: ' + err);
+    } catch (e) { /* la reserva ya quedo guardada; no hay nada mas que hacer */ }
   }
+}
+
+/**
+ * Ejecutala UNA VEZ desde el editor (menu de funciones > probarCorreo > Ejecutar).
+ * Sirve para dos cosas:
+ *  1. Que Google pida el permiso de enviar correos. Actualizar la implementacion
+ *     NO lo pide: sin este paso los avisos de reserva fallan en silencio.
+ *  2. Comprobar que el aviso llega a cada correo de RES_SEDES.
+ */
+function probarCorreo() {
+  Object.keys(RES_SEDES).forEach(function (k) {
+    const sede = RES_SEDES[k];
+    MailApp.sendEmail({
+      to: sede.email,
+      subject: 'Prueba de avisos de reserva · ' + sede.nombre,
+      body: 'Si lees esto, los avisos de reservas de la sede ' + sede.nombre + ' llegan a este correo.',
+      name: 'Reservas Urban Food'
+    });
+    console.log('Correo de prueba enviado a ' + sede.email + ' (' + sede.nombre + ')');
+  });
+  console.log('Correos que quedan hoy: ' + MailApp.getRemainingDailyQuota());
 }
 
 function mensajeConfirmacion(sede, fecha, hora, personas, nombre) {
