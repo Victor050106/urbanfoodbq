@@ -35,7 +35,7 @@ Urban Food/
 ├── sitemap.xml           # Mapa del sitio
 ├── assets/               # Todo lo que el sitio carga en el navegador
 │   ├── css/styles.css    # Estilos que complementan a Tailwind
-│   ├── js/script.js      # Sedes, horarios, estado abierto/cerrado, opiniones, modales
+│   ├── js/script.js      # Sedes, horarios, estado abierto/cerrado, opiniones, reservas, modales
 │   ├── img/
 │   │   ├── hero-pattern.webp # Textura de doodles del hero (~128 KB)
 │   │   ├── mascota.webp      # Mascota de marca con transparencia (~113 KB)
@@ -45,10 +45,11 @@ Urban Food/
 │   ├── video/                # Videos de las novedades (H.264, no se precargan)
 │   └── brand/            # logo.png, logor.png, favicon.png, faviconr.png
 ├── apps-script/
-│   └── Code.gs           # Backend de comentarios (Google Apps Script)
+│   └── Code.gs           # Backend de comentarios, novedades y reservas (Google Apps Script)
 ├── docs/                 # Documentos internos, NO se suben al repo
 │   ├── PASOS-PARA-VICTOR.md
 │   ├── PASOS-NOVEDADES.md
+│   ├── PASOS-RESERVAS.md
 │   └── Propuesta_Comercial_Urban_Food_BQ.docx
 └── _source/              # Fuentes de diseño: el sitio NO las carga
     ├── banner.svg        # Arte original del banner (3,7 MB)
@@ -91,6 +92,11 @@ Urban Food/
   novedad vigente la sección no aparece, y cada una puede llevar fecha de vencimiento para
   retirarse sola. Admite video con carátula: el archivo solo se descarga al pulsar play
   (ver `docs/PASOS-NOVEDADES.md`)
+- **Reservas para grupos**: una reserva por sede y por día, con mínimo 24 horas de
+  anticipación y de 10 a 20 personas (El Carmen) o de 10 a 30 (Hipódromo). El calendario
+  tacha los días ya tomados; la solicitud llega a la pestaña `Reservas` de la hoja, avisa
+  por correo a la sede y queda pendiente hasta que alguien la confirme. Al terminar, el
+  cliente puede mandarle el resumen por WhatsApp a la sede (ver `docs/PASOS-RESERVAS.md`)
 - **Sección de opiniones** con formulario de comentarios y moderación previa (ver más abajo)
 - **Accesibilidad**: etiquetas asociadas a sus campos, calificación por estrellas manejable
   con teclado (patrón `radiogroup` con flechas), modal con foco atrapado y devuelto, y

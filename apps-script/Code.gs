@@ -10,6 +10,8 @@
  *  3b. Crea una segunda pestaña llamada "Novedades" con estas columnas en la fila 1:
  *      etiqueta | titulo | texto | video | poster | mostrar_hasta | publicado
  *      (ver docs/PASOS-NOVEDADES.md para el paso a paso con ejemplos)
+ *  3c. La pestaña "Reservas" NO hay que crearla: el script la crea sola con la
+ *      primera reserva (ver docs/PASOS-RESERVAS.md).
  *  4. Menú: Extensiones > Apps Script. Pega TODO este archivo en el editor (reemplaza Code.gs).
  *  5. Guarda (Ctrl+S). Ponle nombre al proyecto, p.ej. "Urban Food Comentarios".
  *  6. Menú: Implementar > Nueva implementación.
@@ -21,6 +23,7 @@
  *  7. Copia la URL del web app (termina en /exec) y pásamela.
  *
  * Para actualizar el código después: Implementar > Administrar implementaciones > lápiz > Nueva versión.
+ * Si Google vuelve a pedir permisos (p.ej. para enviar correos), hay que aceptarlos.
  *
  * MODERACIÓN:
  *  Los comentarios nuevos NO se publican automáticamente. Llegan a la hoja con la
@@ -38,9 +41,15 @@ const MAX_NAME = 60;
 const MAX_COMMENT = 500;
 
 function doGet(e) {
-  // Una sola respuesta para las dos secciones: la pagina hace un unico pedido.
+  // ?q=reservas: solo los dias ocupados. La pagina lo pide al abrir el
+  // formulario de reserva, para no mostrar libre un dia que se tomo hace un rato.
+  if (e && e.parameter && e.parameter.q === 'reservas') {
+    return jsonResponse({ reservas: readOcupadas() });
+  }
+  // Una sola respuesta para todas las secciones: la pagina hace un unico pedido.
   const data = readReviews();
   data.novedades = readNews();
+  data.reservas = readOcupadas();
   return jsonResponse(data);
 }
 
@@ -54,6 +63,10 @@ function doPost(e) {
     const honeypot = String(data.website || '').trim();
     if (honeypot) {
       return jsonResponse({ ok: true });
+    }
+
+    if (data.tipo === 'reserva') {
+      return jsonResponse(createReservation(data));
     }
 
     const name = String(data.name || '').trim().slice(0, MAX_NAME);
@@ -202,4 +215,356 @@ function jsonResponse(obj) {
   return ContentService
     .createTextOutput(JSON.stringify(obj))
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+// ============================================================================
+// RESERVAS
+// ============================================================================
+//
+// Pestaña "Reservas" (se crea sola con la primera reserva):
+//   creada | sede | fecha | hora | personas | nombre | telefono | nota | estado | avisar_cliente
+//
+// Reglas:
+//  - Una reserva por sede y por dia. El dia queda bloqueado mientras la reserva
+//    este "pendiente" o "confirmada"; si se pasa a "rechazada" o "cancelada",
+//    el dia vuelve a quedar libre en la pagina.
+//  - Minimo 24 horas de anticipacion (nunca el mismo dia).
+//  - Personas: de 10 a 20 en El Carmen y de 10 a 30 en Hipodromo.
+//
+// OJO: los limites, las horas y los dias de anticipacion estan repetidos en
+// RESERVA_* de assets/js/script.js. Si cambias uno aqui, cambialo alla tambien:
+// la pagina los usa para no dejar escoger lo que el servidor igual rechazaria.
+
+const RES_SHEET_NAME = 'Reservas';
+const RES_HEADERS = ['creada', 'sede', 'fecha', 'hora', 'personas', 'nombre', 'telefono', 'nota', 'estado', 'avisar_cliente'];
+const RES_ESTADOS = ['pendiente', 'confirmada', 'rechazada', 'cancelada'];
+const RES_ESTADOS_LIBRES = ['rechazada', 'cancelada'];
+const RES_TZ = 'America/Bogota';
+const RES_ANTICIPACION_HORAS = 24;
+const RES_MAX_DIAS = 60;
+const RES_MAX_NOMBRE = 60;
+const RES_MAX_NOTA = 300;
+
+// email: a donde llega el aviso de cada reserva nueva. Puede ser una lista
+// separada por comas, p.ej. 'dueno@gmail.com, encargado@gmail.com'.
+const RES_SEDES = {
+  carmen:    { nombre: 'El Carmen', min: 10, max: 20, email: 'urbanfoodbq@gmail.com' },
+  hipodromo: { nombre: 'Hipódromo', min: 10, max: 30, email: 'urbanfoodbq@gmail.com' }
+};
+
+// Horas de llegada que se pueden escoger: de 4:00 PM a 10:00 PM cada media hora.
+const RES_HORAS = (function () {
+  const out = [];
+  for (let m = 16 * 60; m <= 22 * 60; m += 30) {
+    out.push(pad2(Math.floor(m / 60)) + ':' + pad2(m % 60));
+  }
+  return out;
+})();
+
+const DIAS_ES = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+const MESES_ES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio',
+  'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+
+function createReservation(data) {
+  const sedeKey = String(data.sede || '');
+  const sede = RES_SEDES.hasOwnProperty(sedeKey) ? RES_SEDES[sedeKey] : null;
+  if (!sede) return resError('invalido', 'Elige una sede.');
+
+  const fecha = String(data.fecha || '');
+  if (!isIsoDate(fecha)) return resError('invalido', 'Elige una fecha válida.');
+
+  const hora = String(data.hora || '');
+  if (RES_HORAS.indexOf(hora) === -1) return resError('invalido', 'Elige una hora válida.');
+
+  const personas = parseInt(data.personas, 10);
+  if (!(personas >= sede.min && personas <= sede.max)) {
+    return resError('invalido', 'En ' + sede.nombre + ' se reserva para ' + sede.min + ' a ' + sede.max + ' personas.');
+  }
+
+  const nombre = String(data.nombre || '').trim().slice(0, RES_MAX_NOMBRE);
+  if (!nombre) return resError('invalido', 'Escribe tu nombre.');
+
+  const telefono = normalizarTelefono(data.telefono);
+  if (!telefono) return resError('invalido', 'Escribe un celular válido de 10 dígitos.');
+
+  const nota = String(data.nota || '').trim().slice(0, RES_MAX_NOTA);
+
+  // La hora se compara contra este instante y no contra "mañana": reservar el
+  // martes a las 8 PM para el miercoles a las 5 PM son menos de 24 horas.
+  if (slotMs(fecha, hora) - Date.now() < RES_ANTICIPACION_HORAS * 3600 * 1000) {
+    return resError('anticipacion', 'Las reservas se hacen con mínimo 24 horas de anticipación.');
+  }
+  if (fecha > addDaysIso(hoyIso(), RES_MAX_DIAS)) {
+    return resError('invalido', 'Solo recibimos reservas hasta con ' + RES_MAX_DIAS + ' días de anticipación.');
+  }
+
+  // El candado evita que dos personas que envian a la vez el mismo dia queden
+  // las dos guardadas: la segunda espera, lee la hoja ya actualizada y se rechaza.
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(15000);
+  } catch (err) {
+    return resError('ocupado_servidor', 'Hay mucha gente reservando en este momento. Inténtalo de nuevo en unos segundos.');
+  }
+
+  let fila;
+  try {
+    const sheet = getResSheet();
+    const ocupadas = fechasOcupadas(sheet);
+    if (ocupadas[sedeKey].indexOf(fecha) !== -1) {
+      return resError('ocupado', 'Ese día ya tiene una reserva en ' + sede.nombre + '. Elige otro día.');
+    }
+
+    fila = nextFreeRow(sheet);
+    const avisar = '=HYPERLINK("' + waUrl(telefono, mensajeConfirmacion(sede, fecha, hora, personas, nombre)) +
+      '", "Confirmar por WhatsApp")';
+
+    // fecha, hora y telefono como texto: si no, Sheets los convierte en fecha,
+    // hora y numero (y al telefono le quita el "+").
+    sheet.getRange(fila, 3, 1, 2).setNumberFormat('@');
+    sheet.getRange(fila, 7).setNumberFormat('@');
+    sheet.getRange(fila, 1, 1, 9).setValues([[
+      new Date(), sede.nombre, fecha, horaLegible(hora), personas,
+      textoSeguro(nombre), telefonoLegible(telefono), textoSeguro(nota), 'pendiente'
+    ]]);
+    sheet.getRange(fila, 9).setDataValidation(
+      SpreadsheetApp.newDataValidation().requireValueInList(RES_ESTADOS, true).build()
+    );
+    sheet.getRange(fila, 10).setFormula(avisar);
+    SpreadsheetApp.flush();
+  } finally {
+    lock.releaseLock();
+  }
+
+  // Fuera del candado: si el correo tarda o falla, la reserva ya quedo guardada.
+  avisarReserva(sede, { fecha: fecha, hora: hora, personas: personas, nombre: nombre, telefono: telefono, nota: nota, fila: fila });
+
+  return { ok: true };
+}
+
+/** Dias ocupados por sede, de hoy en adelante. Solo fechas: nunca datos del cliente. */
+function readOcupadas() {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(RES_SHEET_NAME);
+  return sheet ? fechasOcupadas(sheet) : ocupadasVacias();
+}
+
+function fechasOcupadas(sheet) {
+  const out = ocupadasVacias();
+  const values = sheet.getDataRange().getValues();
+  const tz = sheet.getParent().getSpreadsheetTimeZone();
+  const hoy = hoyIso();
+
+  for (let i = 1; i < values.length; i++) {
+    const row = values[i];
+    const key = sedeKeyDe(row[1]);
+    const fecha = fechaDeCelda(row[2], tz);
+    const estado = String(row[8] || '').trim().toLowerCase();
+    if (!key || !fecha || fecha < hoy) continue;
+    if (RES_ESTADOS_LIBRES.indexOf(estado) !== -1) continue;
+    if (out[key].indexOf(fecha) === -1) out[key].push(fecha);
+  }
+  Object.keys(out).forEach(function (k) { out[k].sort(); });
+  return out;
+}
+
+function ocupadasVacias() {
+  const out = {};
+  Object.keys(RES_SEDES).forEach(function (k) { out[k] = []; });
+  return out;
+}
+
+function getResSheet() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  let sheet = ss.getSheetByName(RES_SHEET_NAME);
+  if (!sheet) {
+    sheet = ss.insertSheet(RES_SHEET_NAME);
+    sheet.getRange(1, 1, 1, RES_HEADERS.length).setValues([RES_HEADERS]).setFontWeight('bold');
+    sheet.setFrozenRows(1);
+  }
+  return sheet;
+}
+
+/** Correo al negocio. Nunca rompe la reserva: si falla, solo queda en el registro. */
+function avisarReserva(sede, r) {
+  try {
+    const ss = SpreadsheetApp.getActiveSpreadsheet();
+    const cuando = fechaLarga(r.fecha) + ' a las ' + horaLegible(r.hora);
+    const wa = waUrl(r.telefono, mensajeConfirmacion(sede, r.fecha, r.hora, r.personas, r.nombre));
+    const hoja = ss.getUrl() + '#gid=' + getResSheet().getSheetId() + '&range=A' + r.fila;
+
+    const filas = [
+      ['Sede', sede.nombre],
+      ['Fecha', cuando],
+      ['Personas', String(r.personas)],
+      ['Nombre', r.nombre],
+      ['Celular', telefonoLegible(r.telefono)],
+      ['Nota', r.nota || '—']
+    ];
+
+    const html =
+      '<div style="font-family:Arial,sans-serif;font-size:15px;color:#111">' +
+      '<h2 style="margin:0 0 12px">Nueva reserva · ' + escHtml(sede.nombre) + '</h2>' +
+      '<table cellpadding="6" style="border-collapse:collapse">' +
+      filas.map(function (f) {
+        return '<tr><td style="color:#666">' + f[0] + '</td><td><b>' + escHtml(f[1]) + '</b></td></tr>';
+      }).join('') +
+      '</table>' +
+      '<p style="margin:16px 0 8px">Queda <b>pendiente</b> y el día ya aparece bloqueado en la página.</p>' +
+      '<ol style="margin:0 0 16px;padding-left:20px">' +
+      '<li>Habla con el cliente y confirma.</li>' +
+      '<li>En la hoja, cambia el estado a <b>confirmada</b> (o a <b>rechazada</b> para liberar el día).</li>' +
+      '</ol>' +
+      '<p><a href="' + escHtml(wa) + '" style="background:#25D366;color:#fff;padding:10px 16px;border-radius:999px;text-decoration:none">Confirmar por WhatsApp</a>' +
+      '&nbsp;&nbsp;<a href="' + escHtml(hoja) + '">Abrir la hoja de reservas</a></p>' +
+      '</div>';
+
+    const texto = 'Nueva reserva en ' + sede.nombre + '\n\n' +
+      filas.map(function (f) { return f[0] + ': ' + f[1]; }).join('\n') +
+      '\n\nConfirmar por WhatsApp: ' + wa + '\nHoja de reservas: ' + hoja;
+
+    MailApp.sendEmail({
+      to: sede.email,
+      subject: 'Nueva reserva ' + sede.nombre + ' · ' + cuando + ' · ' + r.personas + ' personas',
+      body: texto,
+      htmlBody: html,
+      name: 'Reservas Urban Food'
+    });
+  } catch (err) {
+    console.error('No se pudo enviar el correo de la reserva: ' + err);
+    // Queda a la vista en la hoja: sin esto el fallo solo se ve en el registro
+    // de ejecuciones del Apps Script, que nadie revisa.
+    try {
+      getResSheet().getRange(r.fila, 1).setNote('⚠️ No se pudo enviar el correo de aviso: ' + err);
+    } catch (e) { /* la reserva ya quedo guardada; no hay nada mas que hacer */ }
+  }
+}
+
+/**
+ * Ejecutala UNA VEZ desde el editor (menu de funciones > probarCorreo > Ejecutar).
+ * Sirve para dos cosas:
+ *  1. Que Google pida el permiso de enviar correos. Actualizar la implementacion
+ *     NO lo pide: sin este paso los avisos de reserva fallan en silencio.
+ *  2. Comprobar que el aviso llega a cada correo de RES_SEDES.
+ */
+function probarCorreo() {
+  Object.keys(RES_SEDES).forEach(function (k) {
+    const sede = RES_SEDES[k];
+    MailApp.sendEmail({
+      to: sede.email,
+      subject: 'Prueba de avisos de reserva · ' + sede.nombre,
+      body: 'Si lees esto, los avisos de reservas de la sede ' + sede.nombre + ' llegan a este correo.',
+      name: 'Reservas Urban Food'
+    });
+    console.log('Correo de prueba enviado a ' + sede.email + ' (' + sede.nombre + ')');
+  });
+  console.log('Correos que quedan hoy: ' + MailApp.getRemainingDailyQuota());
+}
+
+function mensajeConfirmacion(sede, fecha, hora, personas, nombre) {
+  return '¡Hola ' + nombre + '! Te confirmamos tu reserva en Urban Food, sede ' + sede.nombre +
+    ', para el ' + fechaLarga(fecha) + ' a las ' + horaLegible(hora) + ', ' + personas +
+    ' personas. ¡Te esperamos!';
+}
+
+function resError(code, msg) {
+  return { ok: false, code: code, error: msg };
+}
+
+// ---------- Fechas y horas (Colombia no tiene horario de verano: siempre UTC-5) ----------
+
+function hoyIso() {
+  return Utilities.formatDate(new Date(), RES_TZ, 'yyyy-MM-dd');
+}
+
+function isIsoDate(s) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(s)) return false;
+  const p = s.split('-').map(Number);
+  const d = new Date(Date.UTC(p[0], p[1] - 1, p[2]));
+  // Descarta cosas como 2026-02-31, que Date "corrige" a otro dia.
+  return d.getUTCFullYear() === p[0] && d.getUTCMonth() === p[1] - 1 && d.getUTCDate() === p[2];
+}
+
+function addDaysIso(iso, n) {
+  const p = iso.split('-').map(Number);
+  return new Date(Date.UTC(p[0], p[1] - 1, p[2] + n)).toISOString().slice(0, 10);
+}
+
+/** Instante (ms) en que empieza la reserva, en hora de Colombia. */
+function slotMs(fecha, hora) {
+  const p = fecha.split('-').map(Number);
+  const h = hora.split(':').map(Number);
+  return Date.UTC(p[0], p[1] - 1, p[2], h[0] + 5, h[1]);
+}
+
+function fechaLarga(iso) {
+  const p = iso.split('-').map(Number);
+  const d = new Date(Date.UTC(p[0], p[1] - 1, p[2]));
+  return DIAS_ES[d.getUTCDay()] + ' ' + p[2] + ' de ' + MESES_ES[p[1] - 1];
+}
+
+function horaLegible(hhmm) {
+  const h = hhmm.split(':').map(Number);
+  const h12 = h[0] % 12 === 0 ? 12 : h[0] % 12;
+  return h12 + ':' + pad2(h[1]) + (h[0] < 12 ? ' AM' : ' PM');
+}
+
+/** La fecha llega como texto (lo normal) o como Date si alguien la reescribio a mano en la hoja. */
+function fechaDeCelda(v, tz) {
+  if (v instanceof Date && !isNaN(v.getTime())) return Utilities.formatDate(v, tz, 'yyyy-MM-dd');
+  const s = String(v || '').trim();
+  if (isIsoDate(s)) return s;
+  const m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/); // 4/10/2026 escrito a mano
+  if (m) {
+    const iso = m[3] + '-' + pad2(Number(m[2])) + '-' + pad2(Number(m[1]));
+    if (isIsoDate(iso)) return iso;
+  }
+  return '';
+}
+
+// ---------- Utilidades de reservas ----------
+
+function sedeKeyDe(v) {
+  const s = sinAcentos(String(v || '')).trim().toLowerCase();
+  const keys = Object.keys(RES_SEDES);
+  for (let i = 0; i < keys.length; i++) {
+    if (s === keys[i] || s === sinAcentos(RES_SEDES[keys[i]].nombre).toLowerCase()) return keys[i];
+  }
+  return '';
+}
+
+/** Celular colombiano: acepta "312 755 7694", "+57 312-755-7694", etc. Devuelve "573127557694" o ''. */
+function normalizarTelefono(v) {
+  let d = String(v || '').replace(/\D/g, '');
+  if (d.length === 12 && d.indexOf('57') === 0) d = d.slice(2);
+  return /^3\d{9}$/.test(d) ? '57' + d : '';
+}
+
+function telefonoLegible(t) {
+  return '+57 ' + t.slice(2, 5) + ' ' + t.slice(5, 8) + ' ' + t.slice(8);
+}
+
+function waUrl(telefono, texto) {
+  return 'https://wa.me/' + telefono + '?text=' + encodeURIComponent(texto);
+}
+
+/**
+ * Lo que escribe el cliente va a una celda: si empieza por = + - @, Sheets lo
+ * tomaria como formula. El apostrofo inicial lo deja como texto (y no se ve).
+ */
+function textoSeguro(s) {
+  return /^[=+\-@]/.test(s) ? "'" + s : s;
+}
+
+function sinAcentos(s) {
+  return s.normalize('NFD').replace(/[̀-ͯ]/g, '');
+}
+
+function escHtml(s) {
+  return String(s).replace(/[&<>"']/g, function (c) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+  });
+}
+
+function pad2(n) {
+  return (n < 10 ? '0' : '') + n;
 }

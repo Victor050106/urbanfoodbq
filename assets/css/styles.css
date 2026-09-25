@@ -153,6 +153,114 @@ summary {
     background: #000;
 }
 
+/* Reservas: tarjetas de sede y calendario.
+   En CSS plano por lo mismo que el badge: el calendario lo arma script.js y
+   un Tailwind compilado no veria las clases que solo existen dentro del JS. */
+.reserva-sede-card {
+    display: block;
+    height: 100%;
+    border: 2px solid #000;
+    border-radius: 16px;
+    padding: 14px 16px;
+    color: #000;
+    transition: background-color 0.15s, color 0.15s;
+}
+.reserva-sede:hover .reserva-sede-card {
+    background: rgba(0, 0, 0, 0.05);
+}
+.reserva-sede input:checked + .reserva-sede-card {
+    background: #000;
+    color: #fff;
+}
+.reserva-sede input:focus-visible + .reserva-sede-card {
+    outline: 2px solid #FF6B00;
+    outline-offset: 2px;
+}
+
+.reserva-cal {
+    border: 2px solid #e2e2e2;
+    border-radius: 12px;
+    padding: 12px;
+}
+.reserva-cal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+.reserva-cal-mes {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+.reserva-cal-nav {
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9999px;
+}
+.reserva-cal-nav:hover:not(:disabled) {
+    background: #f3f3f3;
+}
+.reserva-cal-nav:disabled {
+    opacity: 0.25;
+}
+.reserva-cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 4px;
+    text-align: center;
+}
+.reserva-cal-dow {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #5e5e5e;
+    padding: 4px 0;
+}
+.reserva-cal-day {
+    height: 40px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #000;
+}
+.reserva-cal-day:hover:not(:disabled) {
+    background: rgba(255, 107, 0, 0.12);
+}
+.reserva-cal-day:disabled {
+    color: #c4c4c4;
+    font-weight: 400;
+}
+/* Ya reservado: se distingue de "no disponible" para que se entienda por qué */
+.reserva-cal-day.is-taken {
+    color: #a04100;
+    text-decoration: line-through;
+    background: rgba(255, 107, 0, 0.08);
+}
+.reserva-cal-day.is-selected {
+    background: #FF6B00;
+    color: #fff;
+}
+.reserva-cal-leyenda {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    font-size: 12px;
+    color: #5e5e5e;
+}
+.reserva-cal-leyenda i {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    background: rgba(255, 107, 0, 0.25);
+}
+
 /* Modales: entrada corta en vez de un corte seco */
 .modal-overlay:not(.hidden) {
     animation: modal-fade 160ms ease-out;
@@ -171,6 +279,7 @@ summary {
 button:focus-visible,
 a:focus-visible,
 input:focus-visible,
+select:focus-visible,
 textarea:focus-visible {
     outline: 2px solid #FF6B00;
     outline-offset: 2px;

@@ -103,7 +103,7 @@
           "telephone": "+573127557694",
           "email": "urbanfoodbq@gmail.com",
           "hasMenu": "https://menu.fu.do/urbanfoodbq",
-          "acceptsReservations": "False",
+          "acceptsReservations": "True",
           "address": {
             "@type": "PostalAddress",
             "streetAddress": "Calle 53D # 19-06",
@@ -133,6 +133,7 @@
           "telephone": "+573000000000",
           "email": "hipodromo@urbanfoodbq.com",
           "hasMenu": "https://menu.fu.do/urbanfoodsl",
+          "acceptsReservations": "True",
           "address": {
             "@type": "PostalAddress",
             "streetAddress": "Cra. 29 # 26-04",
@@ -160,7 +161,7 @@
                 <img src="assets/brand/logor.png" alt="Urban Food" class="h-10 md:h-12 w-auto rounded">
                 <span class="font-display text-headline-md text-white tracking-tight hidden sm:block">URBAN FOOD</span>
             </a>
-            <div class="hidden md:flex items-center gap-8" id="navLinks" data-nav-links="desktop">
+            <div class="hidden lg:flex items-center gap-8" id="navLinks" data-nav-links="desktop">
                 <a href="#menu" class="font-body text-label-bold uppercase tracking-wider text-white/80 hover:text-vibrant-orange transition-colors">Menú</a>
                 <a href="#nosotros" class="font-body text-label-bold uppercase tracking-wider text-white/80 hover:text-vibrant-orange transition-colors">Nosotros</a>
                 <a href="#horarios" class="font-body text-label-bold uppercase tracking-wider text-white/80 hover:text-vibrant-orange transition-colors">Horarios</a>
@@ -171,14 +172,14 @@
                 <a href="https://menu.fu.do/urbanfoodbq" target="_blank" rel="noopener" data-sede-picker="pedido" aria-haspopup="dialog" class="hidden sm:inline-block bg-vibrant-orange text-white px-5 py-2.5 rounded-full font-body text-label-bold uppercase tracking-wider hover:bg-white hover:text-deep-black transition-colors active:scale-95">
                     Pedir Ahora
                 </a>
-                <button class="md:hidden text-white w-11 h-11 inline-flex items-center justify-center -mr-2" id="menuToggle"
+                <button class="lg:hidden text-white w-11 h-11 inline-flex items-center justify-center -mr-2" id="menuToggle"
                         aria-label="Abrir menú" aria-expanded="false" aria-controls="mobileMenu">
                     <span class="material-symbols-outlined text-3xl" data-menu-icon>menu</span>
                 </button>
             </div>
         </div>
         <!-- Mobile Menu -->
-        <div id="mobileMenu" class="md:hidden hidden bg-deep-black border-t border-white/10">
+        <div id="mobileMenu" class="lg:hidden hidden bg-deep-black border-t border-white/10">
             <div class="flex flex-col px-margin-mobile py-4 gap-4" data-nav-links="mobile">
                 <a href="#menu" class="font-body text-label-bold uppercase tracking-wider text-white py-2">Menú</a>
                 <a href="#nosotros" class="font-body text-label-bold uppercase tracking-wider text-white py-2">Nosotros</a>
@@ -457,6 +458,36 @@
         </div>
     </section>
 
+    <!-- RESERVAS -->
+    <!-- Arranca oculta: script.js la muestra solo cuando el Apps Script responde
+         con los dias ocupados. Asi, si el backend no esta al dia o no responde,
+         nadie llena un formulario que despues no se puede enviar. -->
+    <section id="reservas" class="hidden py-20 bg-vibrant-orange relative overflow-hidden">
+        <div class="absolute -bottom-6 right-0 font-display text-[140px] md:text-[200px] text-deep-black/[0.07] select-none leading-none pointer-events-none" aria-hidden="true">GRUPOS</div>
+        <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop relative grid lg:grid-cols-[1fr_auto] gap-10 lg:gap-16 items-center">
+            <div>
+                <span class="text-deep-black font-body text-label-bold uppercase tracking-[0.2em] mb-4 block">Reservas para grupos</span>
+                <h2 class="font-display text-headline-lg md:text-display-lg-mobile text-deep-black uppercase leading-none mb-5">&iquest;Vienes en grupo? Te guardamos el espacio</h2>
+                <p class="font-body text-body-lg text-deep-black/80 max-w-2xl mb-6">Cumplea&ntilde;os, despedidas o la reuni&oacute;n del parche: reserva para tu grupo y la sede te confirma por WhatsApp. Recibimos una sola reserva por sede cada d&iacute;a.</p>
+                <ul class="flex flex-wrap gap-3 font-body text-label-bold uppercase tracking-wider text-deep-black">
+                    <li class="inline-flex items-center gap-2 bg-white/25 border-2 border-deep-black rounded-full px-4 py-2">
+                        <span class="material-symbols-outlined text-lg" aria-hidden="true">groups</span>El Carmen: 10 a 20 personas
+                    </li>
+                    <li class="inline-flex items-center gap-2 bg-white/25 border-2 border-deep-black rounded-full px-4 py-2">
+                        <span class="material-symbols-outlined text-lg" aria-hidden="true">groups</span>Hip&oacute;dromo: 10 a 30 personas
+                    </li>
+                    <li class="inline-flex items-center gap-2 bg-white/25 border-2 border-deep-black rounded-full px-4 py-2">
+                        <span class="material-symbols-outlined text-lg" aria-hidden="true">schedule</span>M&iacute;nimo 24 h antes
+                    </li>
+                </ul>
+            </div>
+            <button type="button" data-open-reserva aria-haspopup="dialog" class="bg-deep-black text-white px-10 py-5 rounded-full font-display text-headline-md uppercase tracking-wider hover:bg-white hover:text-deep-black transition-all shadow-hard active:translate-x-1 active:translate-y-1 active:shadow-none inline-flex items-center justify-center gap-3 justify-self-start lg:justify-self-end">
+                Reservar
+                <span class="material-symbols-outlined" aria-hidden="true">event_available</span>
+            </button>
+        </div>
+    </section>
+
     <!-- UBICACIÓN -->
     <section id="ubicacion" class="py-24 bg-white">
         <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
@@ -684,6 +715,99 @@
                     </a>
                 </div>
                 <p id="sedeModalFoot" class="font-body text-xs text-secondary text-center pt-5">Se abre la carta de fu.do en una pesta&ntilde;a nueva.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- RESERVA MODAL -->
+    <!-- El calendario lo arma script.js. Los limites (personas, horas, 24 h de
+         anticipacion) estan en RESERVA_* de script.js y en apps-script/Code.gs. -->
+    <div id="reservaModal" class="modal-overlay fixed inset-0 z-[60] flex items-center justify-center p-4 bg-deep-black/80 hidden"
+         role="dialog" aria-modal="true" aria-labelledby="reservaModalTitle">
+        <div class="modal-panel bg-white max-w-lg w-full rounded-lg shadow-2xl relative max-h-[90svh] overflow-x-hidden overflow-y-auto">
+            <button type="button" id="closeReservaModal" class="absolute top-3 right-3 w-11 h-11 inline-flex items-center justify-center text-deep-black hover:text-vibrant-orange" aria-label="Cerrar">
+                <span class="material-symbols-outlined">close</span>
+            </button>
+            <div class="p-6 sm:p-8">
+                <h3 id="reservaModalTitle" class="font-display text-headline-md text-deep-black uppercase mb-2 text-center leading-none">Reserva para tu grupo</h3>
+                <p class="font-body text-body-md text-secondary text-center mb-6">La reserva queda pendiente hasta que la sede te confirme por WhatsApp.</p>
+
+                <form id="reservaForm" class="space-y-5" novalidate>
+                    <!-- Campo trampa anti-bots: invisible para personas, los bots suelen rellenarlo. No borrar. -->
+                    <div style="position:absolute;left:-9999px;top:-9999px;" aria-hidden="true">
+                        <label for="reservaWebsite">Dejar en blanco</label>
+                        <input type="text" id="reservaWebsite" name="website" tabindex="-1" autocomplete="off">
+                    </div>
+
+                    <fieldset>
+                        <legend class="block text-xs font-body text-label-bold uppercase mb-2 text-deep-black">1. Sede</legend>
+                        <div class="grid grid-cols-2 gap-3">
+                            <label class="reserva-sede">
+                                <input type="radio" name="sede" value="carmen" class="sr-only">
+                                <span class="reserva-sede-card">
+                                    <span class="block font-display text-headline-md uppercase leading-none">El Carmen</span>
+                                    <span class="block font-body text-xs mt-1 opacity-70">10 a 20 personas</span>
+                                </span>
+                            </label>
+                            <label class="reserva-sede">
+                                <input type="radio" name="sede" value="hipodromo" class="sr-only">
+                                <span class="reserva-sede-card">
+                                    <span class="block font-display text-headline-md uppercase leading-none">Hip&oacute;dromo</span>
+                                    <span class="block font-body text-xs mt-1 opacity-70">10 a 30 personas</span>
+                                </span>
+                            </label>
+                        </div>
+                    </fieldset>
+
+                    <fieldset>
+                        <legend class="block text-xs font-body text-label-bold uppercase mb-2 text-deep-black">2. Fecha</legend>
+                        <div id="reservaCalendario" class="reserva-cal"></div>
+                        <p id="reservaFechaTexto" class="font-body text-sm text-secondary mt-2" aria-live="polite">Elige primero la sede para ver los d&iacute;as libres.</p>
+                    </fieldset>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label for="reservaHora" class="block text-xs font-body text-label-bold uppercase mb-1 text-deep-black">3. Hora de llegada</label>
+                            <select id="reservaHora" name="hora" disabled class="w-full border-2 border-surface-container-highest rounded-lg p-3 focus:border-vibrant-orange outline-none transition-colors disabled:bg-surface-container-low disabled:text-secondary">
+                                <option value="">Elige la fecha</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="reservaPersonas" class="block text-xs font-body text-label-bold uppercase mb-1 text-deep-black">4. Personas</label>
+                            <input id="reservaPersonas" name="personas" type="number" inputmode="numeric" min="10" max="30" step="1" class="w-full border-2 border-surface-container-highest rounded-lg p-3 focus:border-vibrant-orange outline-none transition-colors" placeholder="10 a 30">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label for="reservaNombre" class="block text-xs font-body text-label-bold uppercase mb-1 text-deep-black">A nombre de</label>
+                        <input id="reservaNombre" name="nombre" type="text" maxlength="60" autocomplete="name" class="w-full border-2 border-surface-container-highest rounded-lg p-3 focus:border-vibrant-orange outline-none transition-colors" placeholder="Tu nombre completo">
+                    </div>
+                    <div>
+                        <label for="reservaTelefono" class="block text-xs font-body text-label-bold uppercase mb-1 text-deep-black">Celular (WhatsApp)</label>
+                        <input id="reservaTelefono" name="telefono" type="tel" inputmode="tel" maxlength="20" autocomplete="tel-national" class="w-full border-2 border-surface-container-highest rounded-lg p-3 focus:border-vibrant-orange outline-none transition-colors" placeholder="300 123 4567">
+                    </div>
+                    <div>
+                        <label for="reservaNota" class="block text-xs font-body text-label-bold uppercase mb-1 text-deep-black">Nota <span class="normal-case font-normal text-secondary">(opcional)</span></label>
+                        <textarea id="reservaNota" name="nota" maxlength="300" rows="2" class="w-full border-2 border-surface-container-highest rounded-lg p-3 focus:border-vibrant-orange outline-none transition-colors" placeholder="Ej: es un cumplea&ntilde;os, llevamos torta"></textarea>
+                    </div>
+
+                    <p id="reservaError" class="hidden text-sm font-body text-red-700 bg-red-50 border border-red-200 rounded-lg p-3" role="alert"></p>
+                    <button class="w-full bg-vibrant-orange text-white py-4 rounded-full font-display text-headline-md uppercase tracking-wider hover:bg-deep-black transition-all disabled:opacity-60 disabled:cursor-not-allowed" type="submit">
+                        Enviar reserva
+                    </button>
+                    <p class="text-xs text-secondary text-center">Con m&iacute;nimo 24 horas de anticipaci&oacute;n. Tu d&iacute;a queda apartado mientras la sede confirma.</p>
+                </form>
+
+                <div id="reservaExito" class="hidden text-center py-2" tabindex="-1">
+                    <span class="material-symbols-outlined text-fresh-teal text-6xl block mb-3" style="font-variation-settings: 'FILL' 1;" aria-hidden="true">check_circle</span>
+                    <p class="font-display text-headline-md text-deep-black uppercase leading-none mb-3">&iexcl;Solicitud recibida!</p>
+                    <p id="reservaExitoTexto" class="font-body text-body-md text-secondary mb-6"></p>
+                    <a id="reservaWhatsApp" href="#" target="_blank" rel="noopener" class="w-full inline-flex items-center justify-center gap-3 bg-[#25D366] text-white py-4 rounded-full font-display text-headline-md uppercase tracking-wider hover:bg-deep-black transition-colors">
+                        Avisar por WhatsApp
+                    </a>
+                    <p class="font-body text-xs text-secondary mt-3 mb-5">Env&iacute;ale el mensaje a la sede para que te confirme m&aacute;s r&aacute;pido.</p>
+                    <button type="button" data-close-reserva class="font-body text-label-bold uppercase tracking-wider text-deep-black border-b-2 border-deep-black pb-1 hover:text-vibrant-orange hover:border-vibrant-orange transition-colors">Cerrar</button>
+                </div>
             </div>
         </div>
     </div>
