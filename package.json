@@ -1,0 +1,12 @@
+{
+  "name": "urban-food",
+  "private": true,
+  "scripts": {
+    "start": "npx serve . -l 3000",
+    "test": "node --test tests/*.test.js",
+    "test:e2e": "node tests/e2e.js"
+  },
+  "devDependencies": {
+    "playwright-core": "^1.64.0"
+  }
+}

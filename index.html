@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" class="light">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +7,7 @@
     <meta name="description" content="Urban Food - La mejor comida a tu manera. Parrilla, pizzas, perros, hamburguesas, salchipapas, salvajadas y más en Barranquilla. Pide a domicilio o visítanos.">
     <link rel="canonical" href="https://urbanfoodbq.com/">
     <meta name="theme-color" content="#000000">
-    <meta property="og:type" content="restaurant">
+    <meta property="og:type" content="website">
     <meta property="og:site_name" content="Urban Food">
     <meta property="og:locale" content="es_CO">
     <meta property="og:title" content="Urban Food - Parrilla, Pizza, Perros y más en Barranquilla">
@@ -24,45 +24,34 @@
     <link rel="icon" type="image/png" href="assets/brand/faviconr.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- La mascota solo se pinta en lg+ (ver el hero). Sin este media, cada visitante
-         de celular descargaba 113 KB en alta prioridad que nunca se muestran. -->
     <link rel="preload" as="image" href="assets/img/mascota.webp" media="(min-width: 1024px)" fetchpriority="high">
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
     <script>
       tailwind.config = {
-        darkMode: "class",
         theme: {
           extend: {
             colors: {
               "deep-black": "#000000",
               "vibrant-orange": "#FF6B00",
               "fresh-teal": "#1ABC9C",
-              "warm-gold": "#F39C12",
               "background": "#f9f9f9",
-              "surface": "#f9f9f9",
               "surface-container": "#eeeeee",
               "surface-container-low": "#f3f3f3",
-              "surface-container-lowest": "#ffffff",
-              "surface-container-high": "#e8e8e8",
               "surface-container-highest": "#e2e2e2",
               "on-background": "#1a1c1c",
               "on-surface": "#1a1c1c",
-              "secondary": "#5e5e5e",
-              "primary": "#a04100",
-              "primary-container": "#ff6b00"
+              "secondary": "#5e5e5e"
             },
             borderRadius: {
               DEFAULT: "0.125rem",
               lg: "0.25rem",
-              xl: "0.5rem",
               full: "9999px"
             },
             spacing: {
               "container-max": "1280px",
               "margin-desktop": "64px",
-              "base": "8px",
               "margin-mobile": "20px",
               "gutter-mobile": "16px",
               "gutter-desktop": "24px"
@@ -86,6 +75,17 @@
       }
     </script>
     <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="modulepreload" href="assets/js/config.js">
+    <link rel="modulepreload" href="assets/js/util.js">
+    <link rel="modulepreload" href="assets/js/fechas.js">
+    <link rel="modulepreload" href="assets/js/api.js">
+    <link rel="modulepreload" href="assets/js/modal.js">
+    <link rel="modulepreload" href="assets/js/nav.js">
+    <link rel="modulepreload" href="assets/js/horario.js">
+    <link rel="modulepreload" href="assets/js/sedes.js">
+    <link rel="modulepreload" href="assets/js/opiniones.js">
+    <link rel="modulepreload" href="assets/js/novedades.js">
+    <link rel="modulepreload" href="assets/js/reservas.js">
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -103,7 +103,7 @@
           "telephone": "+573127557694",
           "email": "urbanfoodbq@gmail.com",
           "hasMenu": "https://menu.fu.do/urbanfoodbq",
-          "acceptsReservations": "True",
+          "acceptsReservations": true,
           "address": {
             "@type": "PostalAddress",
             "streetAddress": "Calle 53D # 19-06",
@@ -133,7 +133,7 @@
           "telephone": "+573000000000",
           "email": "hipodromo@urbanfoodbq.com",
           "hasMenu": "https://menu.fu.do/urbanfoodsl",
-          "acceptsReservations": "True",
+          "acceptsReservations": true,
           "address": {
             "@type": "PostalAddress",
             "streetAddress": "Cra. 29 # 26-04",
@@ -153,12 +153,13 @@
     </script>
 </head>
 <body class="bg-background text-on-background font-body selection:bg-vibrant-orange selection:text-white">
+    <svg hidden><symbol id="i-wa" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></symbol></svg>
 
     <!-- NAV -->
     <nav id="navbar" class="fixed top-0 w-full z-50 bg-deep-black border-b border-white/10 transition-shadow">
         <div class="flex justify-between items-center px-margin-mobile md:px-margin-desktop py-3 max-w-container-max mx-auto">
-            <a href="#inicio" class="flex items-center gap-3 group">
-                <img src="assets/brand/logor.png" alt="Urban Food" class="h-10 md:h-12 w-auto rounded">
+            <a href="#inicio" class="flex items-center gap-3 group min-h-11">
+                <img src="assets/brand/logor.webp" alt="Urban Food" width="227" height="128" class="h-10 md:h-12 w-auto rounded">
                 <span class="font-display text-headline-md text-white tracking-tight hidden sm:block">URBAN FOOD</span>
             </a>
             <div class="hidden lg:flex items-center gap-8" id="navLinks" data-nav-links="desktop">
@@ -181,11 +182,11 @@
         <!-- Mobile Menu -->
         <div id="mobileMenu" class="lg:hidden hidden bg-deep-black border-t border-white/10">
             <div class="flex flex-col px-margin-mobile py-4 gap-4" data-nav-links="mobile">
-                <a href="#menu" class="font-body text-label-bold uppercase tracking-wider text-white py-2">Menú</a>
-                <a href="#nosotros" class="font-body text-label-bold uppercase tracking-wider text-white py-2">Nosotros</a>
-                <a href="#horarios" class="font-body text-label-bold uppercase tracking-wider text-white py-2">Horarios</a>
-                <a href="#ubicacion" class="font-body text-label-bold uppercase tracking-wider text-white py-2">Sedes</a>
-                <a href="#opiniones" class="font-body text-label-bold uppercase tracking-wider text-white py-2">Opiniones</a>
+                <a href="#menu" class="font-body text-label-bold uppercase tracking-wider text-white py-3">Menú</a>
+                <a href="#nosotros" class="font-body text-label-bold uppercase tracking-wider text-white py-3">Nosotros</a>
+                <a href="#horarios" class="font-body text-label-bold uppercase tracking-wider text-white py-3">Horarios</a>
+                <a href="#ubicacion" class="font-body text-label-bold uppercase tracking-wider text-white py-3">Sedes</a>
+                <a href="#opiniones" class="font-body text-label-bold uppercase tracking-wider text-white py-3">Opiniones</a>
                 <a href="https://menu.fu.do/urbanfoodbq" target="_blank" rel="noopener" data-sede-picker="pedido" aria-haspopup="dialog" class="bg-vibrant-orange text-white px-5 py-3 rounded-full font-body text-label-bold uppercase tracking-wider text-center">Pedir Ahora</a>
             </div>
         </div>
@@ -193,7 +194,6 @@
 
     <!-- HERO -->
     <section id="inicio" class="relative min-h-[88svh] flex items-center pt-28 pb-16 overflow-hidden bg-deep-black">
-        <!-- Textura de doodles de marca (decorativa, no compite con el titular) -->
         <div class="absolute inset-0 z-0" aria-hidden="true">
             <img src="assets/img/hero-pattern.webp" alt="" class="w-full h-full object-cover opacity-[0.28]" fetchpriority="high" decoding="async" width="1920" height="1080">
             <div class="absolute inset-0 bg-gradient-to-r from-deep-black via-deep-black/85 to-deep-black/30"></div>
@@ -204,7 +204,7 @@
                 <div>
                     <div class="flex flex-wrap items-center gap-3 mb-6">
                         <span class="inline-block text-vibrant-orange font-body text-label-bold uppercase tracking-[0.3em] border-l-4 border-vibrant-orange pl-4">Barranquilla · Colombia</span>
-                        <!-- Estado en vivo: lo calcula script.js -->
+                        <!-- Estado en vivo: lo calcula assets/js/horario.js -->
                         <span id="openBadge" class="open-badge hidden items-center gap-2 font-body">
                             <span class="open-dot" data-dot></span>
                             <span data-openText></span>
@@ -227,11 +227,6 @@
                         </a>
                     </div>
                 </div>
-                <!-- Mascota de marca: ahora es protagonista, no textura de fondo.
-                     Va como fondo (.mascota-art) y no como <img>: los navegadores
-                     descargan igual las imágenes en display:none, así que con
-                     "hidden lg:block" los celulares pagaban 113 KB por algo que
-                     nunca ven. Dentro de un @media solo se pide en lg+. -->
                 <div class="hidden lg:block relative">
                     <div class="mascota-art" role="img" aria-label="Mascota de Urban Food"></div>
                 </div>
@@ -252,19 +247,19 @@
                     <h2 class="font-display text-headline-lg text-deep-black uppercase leading-none">Todo lo que tenemos para ti</h2>
                 </div>
                 <div class="h-px flex-grow bg-deep-black/10 mx-8 hidden md:block"></div>
-                <a href="https://menu.fu.do/urbanfoodbq" target="_blank" rel="noopener" data-sede-picker="carta" aria-haspopup="dialog" class="flex items-center gap-2 text-deep-black font-body text-label-bold uppercase border-b-2 border-deep-black pb-1 hover:text-vibrant-orange hover:border-vibrant-orange transition-all whitespace-nowrap">
+                <a href="https://menu.fu.do/urbanfoodbq" target="_blank" rel="noopener" data-sede-picker="carta" aria-haspopup="dialog" class="tap flex items-center gap-2 text-deep-black font-body text-label-bold uppercase border-b-2 border-deep-black pb-1 hover:text-vibrant-orange hover:border-vibrant-orange transition-all whitespace-nowrap">
                     Ver Carta Completa
                     <span class="material-symbols-outlined text-base">arrow_forward</span>
                 </a>
             </div>
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-gutter-mobile md:gap-gutter-desktop">
                 <article class="group relative aspect-square overflow-hidden bg-deep-black border border-deep-black/5 category-card fade-in flex flex-col items-center justify-center text-center p-6">
-                    <span class="material-symbols-outlined text-vibrant-orange text-5xl mb-3" style="font-variation-settings: 'FILL' 1;">restaurant</span>
+                    <span class="material-symbols-outlined text-vibrant-orange text-5xl mb-3 icon-fill">restaurant</span>
                     <h3 class="font-display text-headline-md text-white uppercase leading-none">Grill Urban</h3>
                     <p class="font-body text-xs text-white/70 mt-2">Carnes asadas a la parrilla, pechuga, lomo de cerdo, costillas BBQ, parrilladas mixtas y nuestras famosas picadas Urban.</p>
                 </article>
                 <article class="group relative aspect-square overflow-hidden bg-vibrant-orange border border-deep-black/5 category-card fade-in flex flex-col items-center justify-center text-center p-6">
-                    <span class="material-symbols-outlined text-deep-black text-5xl mb-3" style="font-variation-settings: 'FILL' 1;">fastfood</span>
+                    <span class="material-symbols-outlined text-deep-black text-5xl mb-3 icon-fill">fastfood</span>
                     <h3 class="font-display text-headline-md text-deep-black uppercase leading-none">Perros</h3>
                     <p class="font-body text-xs text-deep-black/80 mt-2">Más de 20 variedades: desde el sencillo hasta el Perro Salvaje de 40cm, pasando por el Suizo, Cazador, Estrato 8 y más.</p>
                 </article>
@@ -272,7 +267,7 @@
                     <img class="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all duration-500 category-image" src="assets/img/menu/hamburguesa.jpg" alt="Hamburguesas - Urban Food" loading="lazy" decoding="async" width="800" height="800">
                     <div class="absolute inset-0 bg-gradient-to-t from-deep-black via-deep-black/35 to-transparent opacity-90"></div>
                     <div class="absolute bottom-4 left-4 right-4">
-                        <span class="material-symbols-outlined text-vibrant-orange mb-1" style="font-variation-settings: 'FILL' 1;">lunch_dining</span>
+                        <span class="material-symbols-outlined text-vibrant-orange mb-1 icon-fill">lunch_dining</span>
                         <h3 class="font-display text-headline-md text-white uppercase leading-none">Hamburguesas</h3>
                         <p class="font-body text-xs text-white/70 mt-1 hidden md:block">La Coleta, La Patrona con carne angus, la Pechichona con doble carne y nuestras clásicas sencillas y especiales.</p>
                     </div>
@@ -281,13 +276,13 @@
                     <img class="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all duration-500 category-image" src="assets/img/menu/pizza.jpg" alt="Pizzas - Urban Food" loading="lazy" decoding="async" width="800" height="800">
                     <div class="absolute inset-0 bg-gradient-to-t from-deep-black via-deep-black/35 to-transparent opacity-90"></div>
                     <div class="absolute bottom-4 left-4 right-4">
-                        <span class="material-symbols-outlined text-vibrant-orange mb-1" style="font-variation-settings: 'FILL' 1;">local_pizza</span>
+                        <span class="material-symbols-outlined text-vibrant-orange mb-1 icon-fill">local_pizza</span>
                         <h3 class="font-display text-headline-md text-white uppercase leading-none">Pizzas</h3>
                         <p class="font-body text-xs text-white/70 mt-1 hidden md:block">Desde personal hasta XLarge. Más de 20 sabores: Hawaiana, Capricciosa, Carnavale, Amore, la Quesuda y la Pizzaperro.</p>
                     </div>
                 </article>
                 <article class="group relative aspect-square overflow-hidden bg-deep-black border border-deep-black/5 category-card fade-in flex flex-col items-center justify-center text-center p-6">
-                    <span class="material-symbols-outlined text-vibrant-orange text-5xl mb-3" style="font-variation-settings: 'FILL' 1;">tapas</span>
+                    <span class="material-symbols-outlined text-vibrant-orange text-5xl mb-3 icon-fill">tapas</span>
                     <h3 class="font-display text-headline-md text-white uppercase leading-none">Salchipapas</h3>
                     <p class="font-body text-xs text-white/70 mt-2">Sencilla, suiza, ranchera, especial, La Golosa gratinada... todas con nuestra chimichurri, salsa tártara y piña.</p>
                 </article>
@@ -295,7 +290,7 @@
                     <img class="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all duration-500 category-image" src="assets/img/menu/sandwich.jpg" alt="Sandwich - Urban Food" loading="lazy" decoding="async" width="800" height="800">
                     <div class="absolute inset-0 bg-gradient-to-t from-deep-black via-deep-black/35 to-transparent opacity-90"></div>
                     <div class="absolute bottom-4 left-4 right-4">
-                        <span class="material-symbols-outlined text-vibrant-orange mb-1" style="font-variation-settings: 'FILL' 1;">lunch_dining</span>
+                        <span class="material-symbols-outlined text-vibrant-orange mb-1 icon-fill">lunch_dining</span>
                         <h3 class="font-display text-headline-md text-white uppercase leading-none">Sandwich</h3>
                         <p class="font-body text-xs text-white/70 mt-1 hidden md:block">Urban Sandwich de 40cm, Carnívoro, Corroncho, Callejero y más, todos en pan de finas hierbas.</p>
                     </div>
@@ -304,7 +299,7 @@
                     <img class="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all duration-500 category-image" src="assets/img/menu/mazorca.jpg" alt="Mazorcas - Urban Food" loading="lazy" decoding="async" width="800" height="800">
                     <div class="absolute inset-0 bg-gradient-to-t from-deep-black via-deep-black/35 to-transparent opacity-90"></div>
                     <div class="absolute bottom-4 left-4 right-4">
-                        <span class="material-symbols-outlined text-vibrant-orange mb-1" style="font-variation-settings: 'FILL' 1;">skillet</span>
+                        <span class="material-symbols-outlined text-vibrant-orange mb-1 icon-fill">skillet</span>
                         <h3 class="font-display text-headline-md text-white uppercase leading-none">Mazorcas</h3>
                         <p class="font-body text-xs text-white/70 mt-1 hidden md:block">Mazorcas y desgranados con bollo en todas las combinaciones: carne, pollo, chori-buti, suiza, ranchera y la Urban gratinada.</p>
                     </div>
@@ -313,7 +308,7 @@
                     <img class="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all duration-500 category-image" src="assets/img/menu/salvajada.jpg" alt="Salvajadas - Urban Food" loading="lazy" decoding="async" width="800" height="800">
                     <div class="absolute inset-0 bg-gradient-to-t from-deep-black via-deep-black/35 to-transparent opacity-90"></div>
                     <div class="absolute bottom-4 left-4 right-4">
-                        <span class="material-symbols-outlined text-vibrant-orange mb-1" style="font-variation-settings: 'FILL' 1;">groups</span>
+                        <span class="material-symbols-outlined text-vibrant-orange mb-1 icon-fill">groups</span>
                         <h3 class="font-display text-headline-md text-white uppercase leading-none">Salvajadas</h3>
                         <p class="font-body text-xs text-white/70 mt-1 hidden md:block">Para compartir de 2 a 7 personas. La Corroncha, La Del Barrio, Sin Mente y la Urban Salvaje con costillas BBQ.</p>
                     </div>
@@ -322,13 +317,13 @@
                     <img class="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all duration-500 category-image" src="assets/img/menu/pincho.jpg" alt="Taco Pizza y Pinchos - Urban Food" loading="lazy" decoding="async" width="800" height="800">
                     <div class="absolute inset-0 bg-gradient-to-t from-deep-black via-deep-black/35 to-transparent opacity-90"></div>
                     <div class="absolute bottom-4 left-4 right-4">
-                        <span class="material-symbols-outlined text-vibrant-orange mb-1" style="font-variation-settings: 'FILL' 1;">layers</span>
+                        <span class="material-symbols-outlined text-vibrant-orange mb-1 icon-fill">layers</span>
                         <h3 class="font-display text-headline-md text-white uppercase leading-none">Taco Pizza & Pinchos</h3>
                         <p class="font-body text-xs text-white/70 mt-1 hidden md:block">Taco pizza en masa crocante horneada con queso mozzarella. Pinchos de carne, pollo, chori-buti y el Urban gratinado.</p>
                     </div>
                 </article>
                 <article class="group relative aspect-square overflow-hidden bg-vibrant-orange border border-deep-black/5 category-card fade-in flex flex-col items-center justify-center text-center p-6">
-                    <span class="material-symbols-outlined text-deep-black text-5xl mb-3" style="font-variation-settings: 'FILL' 1;">child_care</span>
+                    <span class="material-symbols-outlined text-deep-black text-5xl mb-3 icon-fill">child_care</span>
                     <h3 class="font-display text-headline-md text-deep-black uppercase leading-none">Menú Infantil</h3>
                     <p class="font-body text-xs text-deep-black/80 mt-2">Nuggets, mini pizzas, salchipapa mini, salchipollo y vaqueritos de carne o pechuga para los más pequeños.</p>
                 </article>
@@ -336,13 +331,13 @@
                     <img class="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all duration-500 category-image" src="assets/img/menu/bebidas.jpg" alt="Bebidas y Frappés - Urban Food" loading="lazy" decoding="async" width="800" height="800">
                     <div class="absolute inset-0 bg-gradient-to-t from-deep-black via-deep-black/35 to-transparent opacity-90"></div>
                     <div class="absolute bottom-4 left-4 right-4">
-                        <span class="material-symbols-outlined text-vibrant-orange mb-1" style="font-variation-settings: 'FILL' 1;">local_bar</span>
+                        <span class="material-symbols-outlined text-vibrant-orange mb-1 icon-fill">local_bar</span>
                         <h3 class="font-display text-headline-md text-white uppercase leading-none">Bebidas & Frappés</h3>
                         <p class="font-body text-xs text-white/70 mt-1 hidden md:block">Jugos naturales, frappés de cereza y coco, gaseosas, cervezas, Hit, Gatorade, Fuze Tea y más.</p>
                     </div>
                 </article>
                 <article class="group relative aspect-square overflow-hidden bg-deep-black border border-deep-black/5 category-card fade-in flex flex-col items-center justify-center text-center p-6">
-                    <span class="material-symbols-outlined text-vibrant-orange text-5xl mb-3" style="font-variation-settings: 'FILL' 1;">add_circle</span>
+                    <span class="material-symbols-outlined text-vibrant-orange text-5xl mb-3 icon-fill">add_circle</span>
                     <h3 class="font-display text-headline-md text-white uppercase leading-none">Adicionales</h3>
                     <p class="font-body text-xs text-white/70 mt-2">Papa francesa, patacón, yuca frita, aros de cebolla, ensalada, bollo, gratinado, tocineta y salsas de la casa.</p>
                 </article>
@@ -353,7 +348,6 @@
 
     <!-- NOSOTROS: MISION Y VISION -->
     <section id="nosotros" class="py-24 bg-surface-container-low relative overflow-hidden">
-        <!-- Marca de agua tipografica, decorativa -->
         <div class="absolute -top-6 right-0 font-display text-[140px] md:text-[200px] text-deep-black/[0.04] select-none leading-none pointer-events-none" aria-hidden="true">URBAN</div>
         <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop relative z-10">
             <div class="flex flex-col md:flex-row justify-between items-end mb-16 gap-6">
@@ -369,7 +363,7 @@
                 <!-- MISION -->
                 <article class="bg-white border-2 border-deep-black rounded-2xl p-8 md:p-10 shadow-hard fade-in">
                     <div class="w-14 h-14 bg-vibrant-orange rounded-2xl flex items-center justify-center mb-6">
-                        <span class="material-symbols-outlined text-deep-black text-3xl" style="font-variation-settings: 'FILL' 1;" aria-hidden="true">track_changes</span>
+                        <span class="material-symbols-outlined text-deep-black text-3xl icon-fill" aria-hidden="true">track_changes</span>
                     </div>
                     <h3 class="font-display text-headline-lg text-deep-black uppercase leading-none mb-5">Misi&oacute;n</h3>
                     <div class="font-body text-body-md text-on-surface/80 leading-relaxed space-y-4">
@@ -382,7 +376,7 @@
                 <article class="bg-deep-black border-2 border-deep-black rounded-2xl p-8 md:p-10 shadow-hard fade-in">
                     <div class="flex items-center justify-between gap-4 mb-6">
                         <div class="w-14 h-14 bg-fresh-teal rounded-2xl flex items-center justify-center">
-                            <span class="material-symbols-outlined text-deep-black text-3xl" style="font-variation-settings: 'FILL' 1;" aria-hidden="true">visibility</span>
+                            <span class="material-symbols-outlined text-deep-black text-3xl icon-fill" aria-hidden="true">visibility</span>
                         </div>
                         <span class="font-display text-headline-md text-fresh-teal border-2 border-fresh-teal/40 rounded-full px-4 py-1 leading-none tracking-wide">2031</span>
                     </div>
@@ -397,17 +391,17 @@
             <!-- PILARES -->
             <div class="grid sm:grid-cols-3 gap-gutter-mobile md:gap-gutter-desktop mt-16">
                 <div class="bg-white border-l-4 border-vibrant-orange rounded-2xl p-6 fade-in">
-                    <span class="material-symbols-outlined text-vibrant-orange text-3xl mb-3 block" style="font-variation-settings: 'FILL' 1;" aria-hidden="true">verified</span>
+                    <span class="material-symbols-outlined text-vibrant-orange text-3xl mb-3 block icon-fill" aria-hidden="true">verified</span>
                     <h4 class="font-display text-headline-md text-deep-black uppercase leading-none mb-2">Calidad e inocuidad</h4>
                     <p class="font-body text-body-md text-secondary">Ingredientes seleccionados y buenas pr&aacute;cticas de manufactura en cada preparaci&oacute;n.</p>
                 </div>
                 <div class="bg-white border-l-4 border-deep-black rounded-2xl p-6 fade-in">
-                    <span class="material-symbols-outlined text-deep-black text-3xl mb-3 block" style="font-variation-settings: 'FILL' 1;" aria-hidden="true">groups</span>
+                    <span class="material-symbols-outlined text-deep-black text-3xl mb-3 block icon-fill" aria-hidden="true">groups</span>
                     <h4 class="font-display text-headline-md text-deep-black uppercase leading-none mb-2">Nuestra gente</h4>
                     <p class="font-body text-body-md text-secondary">Un entorno de trabajo seguro, equitativo y motivador para quienes hacen Urban Food.</p>
                 </div>
                 <div class="bg-white border-l-4 border-fresh-teal rounded-2xl p-6 fade-in">
-                    <span class="material-symbols-outlined text-fresh-teal text-3xl mb-3 block" style="font-variation-settings: 'FILL' 1;" aria-hidden="true">eco</span>
+                    <span class="material-symbols-outlined text-fresh-teal text-3xl mb-3 block icon-fill" aria-hidden="true">eco</span>
                     <h4 class="font-display text-headline-md text-deep-black uppercase leading-none mb-2">Conciencia ambiental</h4>
                     <p class="font-body text-body-md text-secondary">Gesti&oacute;n responsable de los impactos de nuestra operaci&oacute;n sobre el entorno.</p>
                 </div>
@@ -424,18 +418,17 @@
                 <span class="text-vibrant-orange font-body text-label-bold uppercase tracking-[0.2em] mb-4 block relative">Horarios de Atención</span>
                 <h2 class="font-display text-headline-lg mb-8 uppercase leading-none relative">¿Cuándo nos visitas?</h2>
                 <div id="scheduleList" class="space-y-3 font-body text-body-md text-white/80 relative">
-                    <!-- Filled by script.js -->
                 </div>
             </div>
             <div class="lg:w-1/2 grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
                 <div class="bg-white/5 p-8 border-l-4 border-vibrant-orange backdrop-blur-md fade-in">
-                    <span class="material-symbols-outlined text-vibrant-orange text-4xl mb-4" style="font-variation-settings: 'FILL' 1;">timer</span>
-                    <h4 class="font-display text-headline-md uppercase mb-2 leading-none">Servicio Rápido</h4>
+                    <span class="material-symbols-outlined text-vibrant-orange text-4xl mb-4 icon-fill">timer</span>
+                    <h3 class="font-display text-headline-md uppercase mb-2 leading-none">Servicio Rápido</h3>
                     <p class="text-white/60 text-sm">Tu comida urbana lista en tiempo récord, caliente y deliciosa.</p>
                 </div>
                 <div class="bg-white/5 p-8 border-l-4 border-white/20 backdrop-blur-md sm:translate-y-8 fade-in">
-                    <span class="material-symbols-outlined text-white text-4xl mb-4" style="font-variation-settings: 'FILL' 1;">delivery_dining</span>
-                    <h4 class="font-display text-headline-md uppercase mb-2 leading-none">Domicilio</h4>
+                    <span class="material-symbols-outlined text-white text-4xl mb-4 icon-fill">delivery_dining</span>
+                    <h3 class="font-display text-headline-md uppercase mb-2 leading-none">Domicilio</h3>
                     <p class="text-white/60 text-sm">Llegamos a gran parte de Barranquilla y Soledad con el sabor Urban.</p>
                 </div>
             </div>
@@ -443,10 +436,6 @@
     </section>
 
     <!-- NOVEDADES -->
-    <!-- El contenido lo arma script.js con lo que haya en la pestana "Novedades"
-         de la hoja de calculo. Arranca oculta a proposito: si no hay ninguna
-         novedad vigente, la seccion no aparece y la pagina no muestra un hueco
-         ni una noticia vieja. Ver docs/PASOS-NOVEDADES.md. -->
     <section id="novedades" class="hidden py-24 bg-deep-black text-white relative overflow-hidden">
         <div class="absolute top-0 left-0 w-1/3 h-full bg-fresh-teal/10 skew-x-12 -translate-x-1/2 pointer-events-none" aria-hidden="true"></div>
         <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop relative">
@@ -459,9 +448,6 @@
     </section>
 
     <!-- RESERVAS -->
-    <!-- Arranca oculta: script.js la muestra solo cuando el Apps Script responde
-         con los dias ocupados. Asi, si el backend no esta al dia o no responde,
-         nadie llena un formulario que despues no se puede enviar. -->
     <section id="reservas" class="hidden py-20 bg-vibrant-orange relative overflow-hidden">
         <div class="absolute -bottom-6 right-0 font-display text-[140px] md:text-[200px] text-deep-black/[0.07] select-none leading-none pointer-events-none" aria-hidden="true">GRUPOS</div>
         <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop relative grid lg:grid-cols-[1fr_auto] gap-10 lg:gap-16 items-center">
@@ -519,7 +505,7 @@
                             </div>
                             <div>
                                 <h3 class="font-display text-headline-md uppercase text-deep-black mb-1 leading-none">WhatsApp / Teléfono</h3>
-                                <a class="font-body text-body-md text-secondary hover:text-vibrant-orange transition-colors" href="https://wa.me/573127557694" target="_blank" rel="noopener">+57 312 755 7694</a>
+                                <a class="tap font-body text-body-md text-secondary hover:text-vibrant-orange transition-colors" href="https://wa.me/573127557694" target="_blank" rel="noopener">+57 312 755 7694</a>
                             </div>
                         </div>
                         <div class="flex gap-5">
@@ -528,7 +514,7 @@
                             </div>
                             <div>
                                 <h3 class="font-display text-headline-md uppercase text-deep-black mb-1 leading-none">Pedidos Online</h3>
-                                <a class="font-body text-body-md text-secondary hover:text-vibrant-orange transition-colors" href="https://menu.fu.do/urbanfoodbq" target="_blank" rel="noopener">menu.fu.do/urbanfoodbq</a>
+                                <a class="tap font-body text-body-md text-secondary hover:text-vibrant-orange transition-colors" href="https://menu.fu.do/urbanfoodbq" target="_blank" rel="noopener">menu.fu.do/urbanfoodbq</a>
                             </div>
                         </div>
                         <div class="flex gap-5">
@@ -549,7 +535,7 @@
                     </div>
 
                     <!-- Hipódromo -->
-                    <div class="loc-content space-y-6 hidden" data-loc-content="hipodromo">
+                    <div class="loc-content space-y-6" data-loc-content="hipodromo">
                         <div class="flex gap-5">
                             <div class="flex-shrink-0 w-12 h-12 bg-deep-black flex items-center justify-center rounded-lg">
                                 <span class="material-symbols-outlined text-vibrant-orange">location_on</span>
@@ -565,9 +551,9 @@
                             </div>
                             <div>
                                 <!-- TODO: telefono provisional de Hipodromo. Al cambiarlo, tocar
-                                     tambien el pie de pagina, el JSON-LD y SEDES en assets/js/script.js. -->
+                                     tambien el pie de pagina, el JSON-LD y SEDES en assets/js/config.js. -->
                                 <h3 class="font-display text-headline-md uppercase text-deep-black mb-1 leading-none">WhatsApp / Teléfono</h3>
-                                <a class="font-body text-body-md text-secondary hover:text-vibrant-orange transition-colors" href="https://wa.me/573000000000" target="_blank" rel="noopener">+57 300 000 0000</a>
+                                <a class="tap font-body text-body-md text-secondary hover:text-vibrant-orange transition-colors" href="https://wa.me/573000000000" target="_blank" rel="noopener">+57 300 000 0000</a>
                             </div>
                         </div>
                         <div class="flex gap-5">
@@ -576,7 +562,7 @@
                             </div>
                             <div>
                                 <h3 class="font-display text-headline-md uppercase text-deep-black mb-1 leading-none">Pedidos Online</h3>
-                                <a class="font-body text-body-md text-secondary hover:text-vibrant-orange transition-colors" href="https://menu.fu.do/urbanfoodsl" target="_blank" rel="noopener">menu.fu.do/urbanfoodsl</a>
+                                <a class="tap font-body text-body-md text-secondary hover:text-vibrant-orange transition-colors" href="https://menu.fu.do/urbanfoodsl" target="_blank" rel="noopener">menu.fu.do/urbanfoodsl</a>
                             </div>
                         </div>
                         <div class="flex gap-5">
@@ -601,12 +587,12 @@
                 <div class="relative h-[400px] lg:h-[600px] bg-surface-container rounded-lg overflow-hidden border border-deep-black/10">
                     <iframe class="map-frame active" data-loc-map="carmen"
                         src="https://www.google.com/maps?q=Calle+53D+%23+19-06,+Barranquilla&output=embed"
-                        width="100%" height="100%" style="border:0; filter: grayscale(1) contrast(1.15);"
+                        width="100%" height="100%"
                         loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"
                         title="Urban Food - Sede El Carmen"></iframe>
                     <iframe class="map-frame" data-loc-map="hipodromo"
                         src="https://www.google.com/maps?q=Cra.+29+%23+26-04,+Soledad,+Atl%C3%A1ntico&output=embed"
-                        width="100%" height="100%" style="border:0; filter: grayscale(1) contrast(1.15);"
+                        width="100%" height="100%"
                         loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"
                         title="Urban Food - Sede Hipódromo"></iframe>
                     <div class="absolute bottom-4 left-4 z-20 bg-vibrant-orange text-white py-1 px-3 rounded font-body text-label-bold text-xs uppercase tracking-widest shadow-lg" id="activeLocationLabel">
@@ -625,7 +611,6 @@
                 <h2 class="font-display text-headline-lg text-deep-black uppercase leading-none">Opiniones de Clientes</h2>
             </div>
             <div id="reviewsGrid" class="grid md:grid-cols-3 gap-8 mb-12">
-                <!-- Filled by script.js -->
             </div>
             <div class="text-center">
                 <button id="openReviewModal" class="bg-deep-black text-white px-10 py-4 rounded-full font-display text-headline-md uppercase tracking-wider hover:bg-vibrant-orange transition-all shadow-hard active:translate-x-1 active:translate-y-1 active:shadow-none">
@@ -639,14 +624,14 @@
     <div id="reviewModal" class="modal-overlay fixed inset-0 z-[60] flex items-center justify-center p-4 bg-deep-black/80 hidden"
          role="dialog" aria-modal="true" aria-labelledby="reviewModalTitle">
         <div class="modal-panel bg-white max-w-md w-full rounded-lg overflow-x-hidden overflow-y-auto shadow-2xl relative max-h-[90svh]">
-            <button id="closeReviewModal" class="absolute top-3 right-3 w-11 h-11 inline-flex items-center justify-center text-deep-black hover:text-vibrant-orange" aria-label="Cerrar">
+            <button id="closeReviewModal" data-cerrar class="absolute top-3 right-3 w-11 h-11 inline-flex items-center justify-center text-deep-black hover:text-vibrant-orange" aria-label="Cerrar">
                 <span class="material-symbols-outlined">close</span>
             </button>
             <div class="p-8">
                 <h3 id="reviewModalTitle" class="font-display text-headline-md text-deep-black uppercase mb-6 text-center leading-none">Tu opinión nos importa</h3>
                 <form id="reviewForm" class="space-y-4">
                     <!-- Campo trampa anti-bots: invisible para personas, los bots suelen rellenarlo. No borrar. -->
-                    <div style="position:absolute;left:-9999px;top:-9999px;" aria-hidden="true">
+                    <div class="honeypot" aria-hidden="true">
                         <label for="website">Dejar en blanco</label>
                         <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
                     </div>
@@ -679,12 +664,10 @@
     </div>
 
     <!-- SELECTOR DE SEDE -->
-    <!-- Un solo modal para todos los botones de pedido y de carta. Los links
-         reales viven en SEDES (assets/js/script.js): si cambia uno, se cambia ahi. -->
     <div id="sedeModal" class="modal-overlay fixed inset-0 z-[60] flex items-center justify-center p-4 bg-deep-black/80 hidden"
          role="dialog" aria-modal="true" aria-labelledby="sedeModalTitle">
         <div class="modal-panel bg-white max-w-md w-full rounded-lg shadow-2xl relative max-h-[90svh] overflow-y-auto">
-            <button id="closeSedeModal" class="absolute top-3 right-3 w-11 h-11 inline-flex items-center justify-center text-deep-black hover:text-vibrant-orange" aria-label="Cerrar">
+            <button id="closeSedeModal" data-cerrar class="absolute top-3 right-3 w-11 h-11 inline-flex items-center justify-center text-deep-black hover:text-vibrant-orange" aria-label="Cerrar">
                 <span class="material-symbols-outlined">close</span>
             </button>
             <div class="p-8">
@@ -720,12 +703,10 @@
     </div>
 
     <!-- RESERVA MODAL -->
-    <!-- El calendario lo arma script.js. Los limites (personas, horas, 24 h de
-         anticipacion) estan en RESERVA_* de script.js y en apps-script/Code.gs. -->
     <div id="reservaModal" class="modal-overlay fixed inset-0 z-[60] flex items-center justify-center p-4 bg-deep-black/80 hidden"
          role="dialog" aria-modal="true" aria-labelledby="reservaModalTitle">
         <div class="modal-panel bg-white max-w-lg w-full rounded-lg shadow-2xl relative max-h-[90svh] overflow-x-hidden overflow-y-auto">
-            <button type="button" id="closeReservaModal" class="absolute top-3 right-3 w-11 h-11 inline-flex items-center justify-center text-deep-black hover:text-vibrant-orange" aria-label="Cerrar">
+            <button type="button" id="closeReservaModal" data-cerrar class="absolute top-3 right-3 w-11 h-11 inline-flex items-center justify-center text-deep-black hover:text-vibrant-orange" aria-label="Cerrar">
                 <span class="material-symbols-outlined">close</span>
             </button>
             <div class="p-6 sm:p-8">
@@ -734,7 +715,7 @@
 
                 <form id="reservaForm" class="space-y-5" novalidate>
                     <!-- Campo trampa anti-bots: invisible para personas, los bots suelen rellenarlo. No borrar. -->
-                    <div style="position:absolute;left:-9999px;top:-9999px;" aria-hidden="true">
+                    <div class="honeypot" aria-hidden="true">
                         <label for="reservaWebsite">Dejar en blanco</label>
                         <input type="text" id="reservaWebsite" name="website" tabindex="-1" autocomplete="off">
                     </div>
@@ -799,14 +780,14 @@
                 </form>
 
                 <div id="reservaExito" class="hidden text-center py-2" tabindex="-1">
-                    <span class="material-symbols-outlined text-fresh-teal text-6xl block mb-3" style="font-variation-settings: 'FILL' 1;" aria-hidden="true">check_circle</span>
+                    <span class="material-symbols-outlined text-fresh-teal text-6xl block mb-3 icon-fill" aria-hidden="true">check_circle</span>
                     <p class="font-display text-headline-md text-deep-black uppercase leading-none mb-3">&iexcl;Solicitud recibida!</p>
                     <p id="reservaExitoTexto" class="font-body text-body-md text-secondary mb-6"></p>
                     <a id="reservaWhatsApp" href="#" target="_blank" rel="noopener" class="w-full inline-flex items-center justify-center gap-3 bg-[#25D366] text-white py-4 rounded-full font-display text-headline-md uppercase tracking-wider hover:bg-deep-black transition-colors">
                         Avisar por WhatsApp
                     </a>
                     <p class="font-body text-xs text-secondary mt-3 mb-5">Env&iacute;ale el mensaje a la sede para que te confirme m&aacute;s r&aacute;pido.</p>
-                    <button type="button" data-close-reserva class="font-body text-label-bold uppercase tracking-wider text-deep-black border-b-2 border-deep-black pb-1 hover:text-vibrant-orange hover:border-vibrant-orange transition-colors">Cerrar</button>
+                    <button type="button" data-cerrar class="tap font-body text-label-bold uppercase tracking-wider text-deep-black border-b-2 border-deep-black pb-1 hover:text-vibrant-orange hover:border-vibrant-orange transition-colors">Cerrar</button>
                 </div>
             </div>
         </div>
@@ -814,22 +795,7 @@
 
     <!-- CTA FINAL -->
     <section class="py-24 bg-deep-black relative overflow-hidden">
-        <div class="absolute inset-0 opacity-10 pointer-events-none">
-            <div class="grid grid-cols-12 gap-4 h-full">
-                <div class="border-r border-white h-full"></div>
-                <div class="border-r border-white h-full"></div>
-                <div class="border-r border-white h-full"></div>
-                <div class="border-r border-white h-full"></div>
-                <div class="border-r border-white h-full"></div>
-                <div class="border-r border-white h-full"></div>
-                <div class="border-r border-white h-full"></div>
-                <div class="border-r border-white h-full"></div>
-                <div class="border-r border-white h-full"></div>
-                <div class="border-r border-white h-full"></div>
-                <div class="border-r border-white h-full"></div>
-                <div class="border-r border-white h-full"></div>
-            </div>
-        </div>
+        <div class="cta-rayas absolute inset-0 opacity-10 pointer-events-none" aria-hidden="true"></div>
         <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop text-center relative z-10">
             <h2 class="font-display text-display-lg-mobile md:text-display-lg text-white mb-6 uppercase leading-none">¿LISTO PARA ORDENAR?</h2>
             <p class="font-body text-body-lg text-white/60 mb-12 max-w-2xl mx-auto">Haz tu pedido online y disfruta del mejor sabor urbano directamente en tu puerta o recógelo en nuestro local.</p>
@@ -842,7 +808,6 @@
 
     <!-- FOOTER -->
     <footer class="bg-deep-black border-t-4 border-vibrant-orange w-full relative overflow-hidden">
-        <!-- Marca de agua tipografica: le da peso grafico al pie sin robar atencion -->
         <div class="absolute -bottom-2 left-1/2 -translate-x-1/2 w-full text-center pointer-events-none select-none" aria-hidden="true">
             <span class="font-display text-[20vw] leading-[0.8] text-white/[0.035] whitespace-nowrap">URBAN FOOD</span>
         </div>
@@ -852,9 +817,7 @@
 
                 <!-- MARCA -->
                 <div class="sm:col-span-2 lg:col-span-4">
-                    <img src="assets/brand/logor.png" alt="Urban Food" class="h-16 w-auto rounded mb-7">
-                    <!-- El eslogan es el protagonista del bloque: mismo tratamiento
-                         que el titular del hero (Bebas + segunda linea en naranja) -->
+                    <img src="assets/brand/logor.webp" alt="Urban Food" width="227" height="128" class="h-16 w-auto rounded mb-7">
                     <p class="font-display text-headline-lg lg:text-display-lg-mobile text-white uppercase leading-[0.9] mb-5">
                         La mejor comida<br><span class="text-vibrant-orange">a tu manera</span>
                     </p>
@@ -864,7 +827,7 @@
                     </div>
                     <div class="flex gap-3">
                     <a class="w-11 h-11 rounded-full border border-white/20 text-white/70 inline-flex items-center justify-center hover:bg-vibrant-orange hover:border-vibrant-orange hover:text-deep-black transition-colors" href="https://wa.me/573127557694" target="_blank" rel="noopener" data-sede-picker="whatsapp" aria-haspopup="dialog" aria-label="WhatsApp">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                        <svg width="20" height="20" fill="currentColor" aria-hidden="true"><use href="#i-wa"/></svg>
                     </a>
                     <a class="w-11 h-11 rounded-full border border-white/20 text-white/70 inline-flex items-center justify-center hover:bg-vibrant-orange hover:border-vibrant-orange hover:text-deep-black transition-colors" href="https://www.facebook.com/profile.php?id=100090055810195" target="_blank" rel="noopener" aria-label="Facebook">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
@@ -877,27 +840,24 @@
 
                 <!-- NAVEGACION -->
                 <div class="lg:col-span-2">
-                    <h4 class="font-display text-headline-md text-white uppercase tracking-wide mb-5 flex items-center gap-3 leading-none">
+                    <h3 class="font-display text-headline-md text-white uppercase tracking-wide mb-5 flex items-center gap-3 leading-none">
                         <span class="w-5 h-0.5 bg-vibrant-orange flex-shrink-0" aria-hidden="true"></span>Navegaci&oacute;n
-                    </h4>
+                    </h3>
                     <ul class="space-y-1 font-body text-body-md">
-                        <li><a class="block py-1.5 text-white/60 hover:text-vibrant-orange transition-colors" href="#inicio">Inicio</a></li>
-                        <li><a class="block py-1.5 text-white/60 hover:text-vibrant-orange transition-colors" href="#menu">Men&uacute;</a></li>
-                        <li><a class="block py-1.5 text-white/60 hover:text-vibrant-orange transition-colors" href="#nosotros">Nosotros</a></li>
-                        <li><a class="block py-1.5 text-white/60 hover:text-vibrant-orange transition-colors" href="#horarios">Horarios</a></li>
-                        <li><a class="block py-1.5 text-white/60 hover:text-vibrant-orange transition-colors" href="#ubicacion">Sedes</a></li>
-                        <li><a class="block py-1.5 text-white/60 hover:text-vibrant-orange transition-colors" href="#opiniones">Opiniones</a></li>
+                        <li><a class="block py-2.5 text-white/60 hover:text-vibrant-orange transition-colors" href="#inicio">Inicio</a></li>
+                        <li><a class="block py-2.5 text-white/60 hover:text-vibrant-orange transition-colors" href="#menu">Men&uacute;</a></li>
+                        <li><a class="block py-2.5 text-white/60 hover:text-vibrant-orange transition-colors" href="#nosotros">Nosotros</a></li>
+                        <li><a class="block py-2.5 text-white/60 hover:text-vibrant-orange transition-colors" href="#horarios">Horarios</a></li>
+                        <li><a class="block py-2.5 text-white/60 hover:text-vibrant-orange transition-colors" href="#ubicacion">Sedes</a></li>
+                        <li><a class="block py-2.5 text-white/60 hover:text-vibrant-orange transition-colors" href="#opiniones">Opiniones</a></li>
                     </ul>
                 </div>
 
                 <!-- SEDES Y CONTACTO -->
-                <!-- Cada sede es una ficha con su direccion, su telefono y su correo:
-                     antes habia una sola columna de contacto para las dos y el cliente
-                     no sabia a quien le estaba escribiendo. -->
                 <div class="sm:col-span-2 lg:col-span-6">
-                    <h4 class="font-display text-headline-md text-white uppercase tracking-wide mb-5 flex items-center gap-3 leading-none">
+                    <h3 class="font-display text-headline-md text-white uppercase tracking-wide mb-5 flex items-center gap-3 leading-none">
                         <span class="w-5 h-0.5 bg-vibrant-orange flex-shrink-0" aria-hidden="true"></span>Sedes y contacto
-                    </h4>
+                    </h3>
                     <div class="grid sm:grid-cols-2 gap-x-8 gap-y-8">
                         <!-- El Carmen -->
                         <div class="border-l-2 border-vibrant-orange pl-4">
@@ -905,19 +865,19 @@
                             <p class="font-body text-body-md text-white/60 leading-relaxed mb-2">Calle 53D # 19-06<br>Barranquilla</p>
                             <ul class="font-body text-body-md">
                                 <li>
-                                    <a class="group flex items-center gap-3 py-1.5 text-white/60 hover:text-white transition-colors" href="https://wa.me/573127557694" target="_blank" rel="noopener">
+                                    <a class="group flex items-center gap-3 py-2 text-white/60 hover:text-white transition-colors" href="https://wa.me/573127557694" target="_blank" rel="noopener">
                                         <span class="material-symbols-outlined text-vibrant-orange text-lg flex-shrink-0" aria-hidden="true">call</span>
                                         <span class="group-hover:underline underline-offset-4">+57 312 755 7694</span>
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="group flex items-center gap-3 py-1.5 text-white/60 hover:text-white transition-colors" href="mailto:urbanfoodbq@gmail.com">
+                                    <a class="group flex items-center gap-3 py-2 text-white/60 hover:text-white transition-colors" href="mailto:urbanfoodbq@gmail.com">
                                         <span class="material-symbols-outlined text-vibrant-orange text-lg flex-shrink-0" aria-hidden="true">mail</span>
                                         <span class="group-hover:underline underline-offset-4 break-all">urbanfoodbq@gmail.com</span>
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="inline-flex items-center gap-1 mt-1 py-1 font-body text-label-bold uppercase tracking-wider text-vibrant-orange hover:text-white transition-colors" href="https://www.google.com/maps?q=Calle+53D+%23+19-06,+Barranquilla" target="_blank" rel="noopener">
+                                    <a class="inline-flex items-center gap-1 py-3 -my-1 font-body text-label-bold uppercase tracking-wider text-vibrant-orange hover:text-white transition-colors" href="https://www.google.com/maps?q=Calle+53D+%23+19-06,+Barranquilla" target="_blank" rel="noopener">
                                         C&oacute;mo llegar
                                         <span class="material-symbols-outlined text-sm" aria-hidden="true">north_east</span>
                                     </a>
@@ -930,22 +890,22 @@
                             <p class="font-body text-body-md text-white/60 leading-relaxed mb-2">Cra. 29 # 26-04<br>Soledad, Atl&aacute;ntico</p>
                             <!-- TODO: telefono y correo provisionales. Cuando lleguen los
                                  reales hay que cambiarlos aqui, en la ficha de la seccion
-                                 Sedes, en el JSON-LD y en SEDES (assets/js/script.js). -->
+                                 Sedes, en el JSON-LD y en SEDES (assets/js/config.js). -->
                             <ul class="font-body text-body-md">
                                 <li>
-                                    <a class="group flex items-center gap-3 py-1.5 text-white/60 hover:text-white transition-colors" href="https://wa.me/573000000000" target="_blank" rel="noopener">
+                                    <a class="group flex items-center gap-3 py-2 text-white/60 hover:text-white transition-colors" href="https://wa.me/573000000000" target="_blank" rel="noopener">
                                         <span class="material-symbols-outlined text-fresh-teal text-lg flex-shrink-0" aria-hidden="true">call</span>
                                         <span class="group-hover:underline underline-offset-4">+57 300 000 0000</span>
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="group flex items-center gap-3 py-1.5 text-white/60 hover:text-white transition-colors" href="mailto:hipodromo@urbanfoodbq.com">
+                                    <a class="group flex items-center gap-3 py-2 text-white/60 hover:text-white transition-colors" href="mailto:hipodromo@urbanfoodbq.com">
                                         <span class="material-symbols-outlined text-fresh-teal text-lg flex-shrink-0" aria-hidden="true">mail</span>
                                         <span class="group-hover:underline underline-offset-4 break-all">hipodromo@urbanfoodbq.com</span>
                                     </a>
                                 </li>
                                 <li>
-                                    <a class="inline-flex items-center gap-1 mt-1 py-1 font-body text-label-bold uppercase tracking-wider text-fresh-teal hover:text-white transition-colors" href="https://www.google.com/maps?q=Cra.+29+%23+26-04,+Soledad,+Atl%C3%A1ntico" target="_blank" rel="noopener">
+                                    <a class="inline-flex items-center gap-1 py-3 -my-1 font-body text-label-bold uppercase tracking-wider text-fresh-teal hover:text-white transition-colors" href="https://www.google.com/maps?q=Cra.+29+%23+26-04,+Soledad,+Atl%C3%A1ntico" target="_blank" rel="noopener">
                                         C&oacute;mo llegar
                                         <span class="material-symbols-outlined text-sm" aria-hidden="true">north_east</span>
                                     </a>
@@ -958,7 +918,7 @@
                             Pedir online
                             <span class="material-symbols-outlined" aria-hidden="true">shopping_bag</span>
                         </a>
-                        <a class="group inline-flex items-center gap-3 py-1.5 font-body text-body-md text-white/60 hover:text-white transition-colors" href="#horarios">
+                        <a class="group inline-flex items-center gap-3 py-2.5 font-body text-body-md text-white/60 hover:text-white transition-colors" href="#horarios">
                             <span class="material-symbols-outlined text-vibrant-orange text-lg flex-shrink-0" aria-hidden="true">schedule</span>
                             <span class="group-hover:underline underline-offset-4">Ver horarios de atenci&oacute;n</span>
                         </a>
@@ -969,7 +929,7 @@
             <!-- BARRA INFERIOR -->
             <div class="mt-16 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <p class="font-body text-label-sm uppercase tracking-wider text-white/40 text-center sm:text-left">&copy; <span data-year>2026</span> Urban Food S.A.S. Todos los derechos reservados.</p>
-                <a class="inline-flex items-center gap-2 font-body text-label-sm uppercase tracking-wider text-white/40 hover:text-vibrant-orange transition-colors py-2" href="#inicio">
+                <a class="inline-flex items-center gap-2 font-body text-label-sm uppercase tracking-wider text-white/40 hover:text-vibrant-orange transition-colors py-2.5" href="#inicio">
                     Volver arriba
                     <span class="material-symbols-outlined text-base" aria-hidden="true">arrow_upward</span>
                 </a>
@@ -983,9 +943,9 @@
        data-sede-picker="whatsapp" aria-haspopup="dialog"
        class="fixed bottom-5 right-5 z-40 w-14 h-14 rounded-full bg-[#25D366] text-white flex items-center justify-center shadow-lg hover:scale-105 active:scale-95 transition-transform"
        aria-label="Escribir por WhatsApp a Urban Food">
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        <svg width="28" height="28" fill="currentColor" aria-hidden="true"><use href="#i-wa"/></svg>
     </a>
 
-    <script src="assets/js/script.js"></script>
+    <script type="module" src="assets/js/main.js"></script>
 </body>
 </html>

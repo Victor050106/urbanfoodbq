@@ -16,6 +16,29 @@ body {
     display: inline-block;
     vertical-align: middle;
 }
+.icon-fill {
+    font-variation-settings: 'FILL' 1;
+}
+
+/* Campo trampa anti-bots: fuera de pantalla, no display:none, porque algunos
+   bots se saltan los campos ocultos. */
+.honeypot {
+    position: absolute;
+    left: -9999px;
+    top: -9999px;
+}
+
+/* Enlaces de texto sueltos: el área táctil llega a 44 px sin mover el diseño. */
+.tap {
+    position: relative;
+}
+.tap::after {
+    content: '';
+    position: absolute;
+    inset: 50% 0 auto;
+    min-height: 44px;
+    transform: translateY(-50%);
+}
 
 /* Los navegadores le ponen cursor "flecha" a los <button>; en un sitio así
    conviene que todo lo clicable se sienta clicable. */
@@ -54,6 +77,12 @@ summary {
     transform: scale(1.05);
 }
 
+.cta-rayas {
+    background: repeating-linear-gradient(to right,
+        transparent 0 calc(100% / 12 - 1px),
+        #fff calc(100% / 12 - 1px) calc(100% / 12));
+}
+
 /* Navbar scroll state */
 #navbar.scrolled {
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
@@ -80,6 +109,8 @@ summary {
     width: 100%;
     height: 100%;
     display: none;
+    border: 0;
+    filter: grayscale(1) contrast(1.15);
 }
 .map-frame.active {
     display: block;
@@ -88,7 +119,7 @@ summary {
 /* Badge "Abierto ahora / Cerrado".
    En CSS plano y no con clases de Tailwind aplicadas desde JS: el CDN de Tailwind
    las genera en caliente mirando el DOM, pero un build real solo mira el código
-   fuente. Como estas clases solo existirían dentro de script.js, al migrar a un
+   fuente. Como estas clases solo existirían dentro del JS, al migrar a un
    CSS compilado el badge se quedaría sin estilos. */
 .open-badge {
     border-radius: 9999px;
@@ -154,7 +185,7 @@ summary {
 }
 
 /* Reservas: tarjetas de sede y calendario.
-   En CSS plano por lo mismo que el badge: el calendario lo arma script.js y
+   En CSS plano por lo mismo que el badge: el calendario lo arma reservas.js y
    un Tailwind compilado no veria las clases que solo existen dentro del JS. */
 .reserva-sede-card {
     display: block;

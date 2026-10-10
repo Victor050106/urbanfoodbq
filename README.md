@@ -35,7 +35,13 @@ Urban Food/
 ├── sitemap.xml           # Mapa del sitio
 ├── assets/               # Todo lo que el sitio carga en el navegador
 │   ├── css/styles.css    # Estilos que complementan a Tailwind
-│   ├── js/script.js      # Sedes, horarios, estado abierto/cerrado, opiniones, reservas, modales
+│   ├── js/               # Módulos ES nativos, uno por sección (sin build)
+│   │   ├── main.js       # Arranque: inicia cada sección y hace la única petición a la hoja
+│   │   ├── config.js     # Lo que se cambia a mano: horario, SEDES, URL del Apps Script, reglas de reserva
+│   │   ├── api.js        # getJson / postJson contra el Apps Script
+│   │   ├── modal.js      # Abrir, cerrar, Escape y foco atrapado, compartido por los 3 modales
+│   │   ├── fechas.js · util.js
+│   │   └── horario.js · nav.js · sedes.js · opiniones.js · novedades.js · reservas.js
 │   ├── img/
 │   │   ├── hero-pattern.webp # Textura de doodles del hero (~128 KB)
 │   │   ├── mascota.webp      # Mascota de marca con transparencia (~113 KB)
@@ -65,6 +71,9 @@ Urban Food/
 > y se cargaba entero antes de que se viera nada. Se descompuso en `assets/img/hero-pattern.webp` +
 > `assets/img/mascota.webp` (~240 KB entre las dos). Si algún día se rehace el arte, hay que
 > volver a exportar esas dos piezas: el sitio ya no lee `banner.svg`.
+>
+> La mascota va como fondo CSS (`.mascota-art`) y no como `<img>`, y su `preload` lleva
+> `media="(min-width: 1024px)"`: así los celulares, donde no se muestra, no la descargan.
 
 ## Funcionalidades
 
@@ -78,7 +87,7 @@ Urban Food/
 - **Selector de sedes** (El Carmen / Hipódromo) con datos de contacto y mapa por sede
 - **Selector de sede**: los botones de pedido, de carta y de WhatsApp abren un modal que
   pregunta a qué sede va la acción, porque cada una tiene su propio menú en fu.do y su propio
-  número. Los links salen del objeto `SEDES` al inicio de `assets/js/script.js`: ahí se
+  número. Los links salen del objeto `SEDES` de `assets/js/config.js`: ahí se
   cambian, no en el HTML. Los botones siguen siendo `<a>` con el destino de El Carmen dentro,
   así que sin JavaScript llevan igual a un sitio válido
 - **Contacto por sede**: cada sede tiene sus propios datos. En la sección **Sedes** van
@@ -96,7 +105,9 @@ Urban Food/
   anticipación y de 10 a 20 personas (El Carmen) o de 10 a 30 (Hipódromo). El calendario
   tacha los días ya tomados; la solicitud llega a la pestaña `Reservas` de la hoja, avisa
   por correo a la sede y queda pendiente hasta que alguien la confirme. Al terminar, el
-  cliente puede mandarle el resumen por WhatsApp a la sede (ver `docs/PASOS-RESERVAS.md`)
+  cliente puede mandarle el resumen por WhatsApp a la sede (ver `docs/PASOS-RESERVAS.md`).
+  Para que nadie bloquee el calendario con reservas falsas, no se aceptan más de 8 pendientes
+  a la vez
 - **Sección de opiniones** con formulario de comentarios y moderación previa (ver más abajo)
 - **Accesibilidad**: etiquetas asociadas a sus campos, calificación por estrellas manejable
   con teclado (patrón `radiogroup` con flechas), modal con foco atrapado y devuelto, y
@@ -127,6 +138,8 @@ comentario es spam u ofensivo, simplemente déjalo sin marcar (o borra la fila).
 - **Escapado de HTML** — el nombre y el comentario se escapan antes de mostrarse, para que
   nadie pueda inyectar código en la página.
 - **Límites de longitud** — nombre máx. 60 caracteres, comentario máx. 500.
+- **Sin fórmulas en la hoja** — si un texto empieza por `=`, `+`, `-` o `@`, se guarda como
+  texto y no como fórmula de Sheets.
 
 > Después de modificar `apps-script/Code.gs` hay que volver a desplegar el script:
 > Implementar > Administrar implementaciones > (lápiz) > Versión: Nueva versión > Implementar.
@@ -140,6 +153,21 @@ npx serve . -l 3000
 ```
 
 Luego abre [http://localhost:3000](http://localhost:3000) en tu navegador.
+
+### Pruebas
+
+```bash
+npm install
+npm test           # reglas del Apps Script, sin red ni navegador
+npm run test:e2e   # la página completa; necesita el servidor corriendo en otra terminal
+```
+
+`tests/code-gs.test.js` ejecuta `apps-script/Code.gs` contra una hoja falsa en memoria:
+reservas válidas y rechazadas, día ocupado, tope de pendientes y opiniones con fórmulas.
+`tests/e2e.js` abre la página en Microsoft Edge (escritorio y celular) y revisa horario,
+selector de sede, modales, opiniones, calendario de reservas y áreas táctiles. Los envíos
+de opiniones y reservas se simulan: nunca escriben en la hoja real. Las capturas quedan en
+`tests/shots/`.
 
 ## Información de contacto del restaurante
 
@@ -160,7 +188,7 @@ Cada sede atiende su propio teléfono, su propio correo y su propia carta.
 > 1. `index.html` — ficha de la sede en la sección **Sedes** (ahí solo va el teléfono)
 > 2. `index.html` — ficha de la sede en el **pie de página**
 > 3. `index.html` — bloque **JSON-LD** de la cabecera
-> 4. `assets/js/script.js` — objeto `SEDES` (de ahí sale el enlace de WhatsApp del selector)
+> 4. `assets/js/config.js` — objeto `SEDES` (de ahí sale el enlace de WhatsApp del selector)
 
 ## Licencia
 

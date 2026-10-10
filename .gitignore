@@ -18,3 +18,7 @@ _source/menuurban/
 
 # Archivo fuente de Illustrator (3 MB, no lo usa el sitio)
 _source/PersonajeUrbanFood.ai
+
+# Dependencias y capturas de las pruebas
+node_modules/
+tests/shots/

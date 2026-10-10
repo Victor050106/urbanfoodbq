@@ -84,10 +84,18 @@ function doPost(e) {
     // vacías cuentan como "dato" para Google Sheets, así que appendRow()
     // escribiría muy por debajo de la última fila real (ej. fila 201).
     // En su lugar se calcula la primera fila libre mirando SOLO la columna A.
-    const sheet = getSheet();
-    const row = nextFreeRow(sheet);
-    sheet.getRange(row, 1, 1, 4).setValues([[new Date(), name, rating, comment]]);
-    sheet.getRange(row, 5).insertCheckboxes().setValue(false);
+    // Con el candado, dos comentarios que llegan a la vez no caen en la misma fila.
+    const lock = LockService.getScriptLock();
+    lock.waitLock(15000);
+    try {
+      const sheet = getSheet();
+      const row = nextFreeRow(sheet);
+      sheet.getRange(row, 1, 1, 4).setValues([[new Date(), textoSeguro(name), rating, textoSeguro(comment)]]);
+      sheet.getRange(row, 5).insertCheckboxes().setValue(false);
+      SpreadsheetApp.flush();
+    } finally {
+      lock.releaseLock();
+    }
 
     return jsonResponse({ ok: true, review: { timestamp: new Date().toISOString(), name, rating, comment } });
   } catch (err) {
@@ -232,7 +240,7 @@ function jsonResponse(obj) {
 //  - Personas: de 10 a 20 en El Carmen y de 10 a 30 en Hipodromo.
 //
 // OJO: los limites, las horas y los dias de anticipacion estan repetidos en
-// RESERVA_* de assets/js/script.js. Si cambias uno aqui, cambialo alla tambien:
+// assets/js/config.js (SEDES y RESERVA_*). Si cambias uno aqui, cambialo alla tambien:
 // la pagina los usa para no dejar escoger lo que el servidor igual rechazaria.
 
 const RES_SHEET_NAME = 'Reservas';
@@ -244,6 +252,9 @@ const RES_ANTICIPACION_HORAS = 24;
 const RES_MAX_DIAS = 60;
 const RES_MAX_NOMBRE = 60;
 const RES_MAX_NOTA = 300;
+// Tope de reservas sin confirmar a la vez: si alguien envia reservas falsas en
+// masa, solo alcanza a bloquear estos dias y a gastar estos correos.
+const RES_MAX_PENDIENTES = 8;
 
 // email: a donde llega el aviso de cada reserva nueva. Puede ser una lista
 // separada por comas, p.ej. 'dueno@gmail.com, encargado@gmail.com'.
@@ -314,6 +325,9 @@ function createReservation(data) {
     if (ocupadas[sedeKey].indexOf(fecha) !== -1) {
       return resError('ocupado', 'Ese día ya tiene una reserva en ' + sede.nombre + '. Elige otro día.');
     }
+    if (pendientesFuturas(sheet) >= RES_MAX_PENDIENTES) {
+      return resError('lleno', 'Tenemos varias reservas por confirmar. Escríbenos por WhatsApp y te ayudamos.');
+    }
 
     fila = nextFreeRow(sheet);
     const avisar = '=HYPERLINK("' + waUrl(telefono, mensajeConfirmacion(sede, fecha, hora, personas, nombre)) +
@@ -365,6 +379,15 @@ function fechasOcupadas(sheet) {
   }
   Object.keys(out).forEach(function (k) { out[k].sort(); });
   return out;
+}
+
+function pendientesFuturas(sheet) {
+  const tz = sheet.getParent().getSpreadsheetTimeZone();
+  const hoy = hoyIso();
+  return sheet.getDataRange().getValues().slice(1).filter(function (row) {
+    const fecha = fechaDeCelda(row[2], tz);
+    return fecha && fecha >= hoy && String(row[8] || '').trim().toLowerCase() === 'pendiente';
+  }).length;
 }
 
 function ocupadasVacias() {
