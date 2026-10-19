@@ -1,9 +1,9 @@
 // Utilidades compartidas por la página de reservas y el panel de la cajera.
 // Lo puro (formatos, calendario, enlaces) se prueba en tests/reservas/comun.test.js.
 
-// URL del despliegue "/exec" del Apps Script de reservas. Vacía hasta que el dueño lo despliegue:
-// mientras tanto la página avisa que las reservas en línea llegan pronto y ofrece WhatsApp.
-var RESERVAS_API_URL = '';
+// URL del despliegue "/exec" del Apps Script de reservas (proyecto "Urban Food Reservas" de la hoja
+// "Urban Food - Reservas"). Si se deja vacía, la página avisa que las reservas llegan pronto y ofrece WhatsApp.
+var RESERVAS_API_URL = 'https://script.google.com/macros/s/AKfycbxivUUZIYuM9FJ0TvJWLc8hcAOmspxMkb_KSXWw1WKFRh3OG_BNxAKMeKFvqDnPg1Co/exec';
 
 var TZ_RESERVAS = 'America/Bogota';
 
