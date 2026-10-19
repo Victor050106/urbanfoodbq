@@ -85,7 +85,6 @@
     <link rel="modulepreload" href="assets/js/sedes.js">
     <link rel="modulepreload" href="assets/js/opiniones.js">
     <link rel="modulepreload" href="assets/js/novedades.js">
-    <link rel="modulepreload" href="assets/js/reservas.js">
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -168,6 +167,7 @@
                 <a href="#horarios" class="font-body text-label-bold uppercase tracking-wider text-white/80 hover:text-vibrant-orange transition-colors">Horarios</a>
                 <a href="#ubicacion" class="font-body text-label-bold uppercase tracking-wider text-white/80 hover:text-vibrant-orange transition-colors">Sedes</a>
                 <a href="#opiniones" class="font-body text-label-bold uppercase tracking-wider text-white/80 hover:text-vibrant-orange transition-colors">Opiniones</a>
+                <a href="reservas/" class="font-body text-label-bold uppercase tracking-wider text-white/80 hover:text-vibrant-orange transition-colors">Reservar</a>
             </div>
             <div class="flex items-center gap-3">
                 <a href="https://menu.fu.do/urbanfoodbq" target="_blank" rel="noopener" data-sede-picker="pedido" aria-haspopup="dialog" class="hidden sm:inline-block bg-vibrant-orange text-white px-5 py-2.5 rounded-full font-body text-label-bold uppercase tracking-wider hover:bg-white hover:text-deep-black transition-colors active:scale-95">
@@ -187,6 +187,7 @@
                 <a href="#horarios" class="font-body text-label-bold uppercase tracking-wider text-white py-3">Horarios</a>
                 <a href="#ubicacion" class="font-body text-label-bold uppercase tracking-wider text-white py-3">Sedes</a>
                 <a href="#opiniones" class="font-body text-label-bold uppercase tracking-wider text-white py-3">Opiniones</a>
+                <a href="reservas/" class="font-body text-label-bold uppercase tracking-wider text-white py-3">Reservar</a>
                 <a href="https://menu.fu.do/urbanfoodbq" target="_blank" rel="noopener" data-sede-picker="pedido" aria-haspopup="dialog" class="bg-vibrant-orange text-white px-5 py-3 rounded-full font-body text-label-bold uppercase tracking-wider text-center">Pedir Ahora</a>
             </div>
         </div>
@@ -224,6 +225,10 @@
                         <a href="#menu" data-sede-picker="carta" aria-haspopup="dialog" class="border-2 border-white text-white px-8 py-4 rounded-full font-display text-headline-md uppercase tracking-wide hover:bg-white hover:text-deep-black transition-all inline-flex items-center justify-center gap-3">
                             Ver Menú
                             <span class="material-symbols-outlined">restaurant_menu</span>
+                        </a>
+                        <a href="reservas/" class="border-2 border-vibrant-orange text-vibrant-orange px-8 py-4 rounded-full font-display text-headline-md uppercase tracking-wide hover:bg-vibrant-orange hover:text-deep-black transition-all inline-flex items-center justify-center gap-3">
+                            Reservar Mesa
+                            <span class="material-symbols-outlined">event_seat</span>
                         </a>
                     </div>
                 </div>
@@ -448,29 +453,31 @@
     </section>
 
     <!-- RESERVAS -->
-    <section id="reservas" class="hidden py-20 bg-vibrant-orange relative overflow-hidden">
-        <div class="absolute -bottom-6 right-0 font-display text-[140px] md:text-[200px] text-deep-black/[0.07] select-none leading-none pointer-events-none" aria-hidden="true">GRUPOS</div>
+    <!-- Las reglas reales viven en la hoja Config de "Urban Food - Reservas": si cambian
+         el adelanto o los días, actualizar también estos textos. -->
+    <section id="reservas" class="py-20 bg-vibrant-orange relative overflow-hidden">
+        <div class="absolute -bottom-6 right-0 font-display text-[140px] md:text-[200px] text-deep-black/[0.07] select-none leading-none pointer-events-none" aria-hidden="true">RESERVA</div>
         <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop relative grid lg:grid-cols-[1fr_auto] gap-10 lg:gap-16 items-center">
             <div>
-                <span class="text-deep-black font-body text-label-bold uppercase tracking-[0.2em] mb-4 block">Reservas para grupos</span>
-                <h2 class="font-display text-headline-lg md:text-display-lg-mobile text-deep-black uppercase leading-none mb-5">&iquest;Vienes en grupo? Te guardamos el espacio</h2>
-                <p class="font-body text-body-lg text-deep-black/80 max-w-2xl mb-6">Cumplea&ntilde;os, despedidas o la reuni&oacute;n del parche: reserva para tu grupo y la sede te confirma por WhatsApp. Recibimos una sola reserva por sede cada d&iacute;a.</p>
+                <span class="text-deep-black font-body text-label-bold uppercase tracking-[0.2em] mb-4 block">Reservas en l&iacute;nea</span>
+                <h2 class="font-display text-headline-lg md:text-display-lg-mobile text-deep-black uppercase leading-none mb-5">Aparta tu mesa en un minuto</h2>
+                <p class="font-body text-body-lg text-deep-black/80 max-w-2xl mb-6">Escoge sede, d&iacute;a y hora, paga un adelanto de $50.000 y listo: te llega la confirmaci&oacute;n al correo. El adelanto se descuenta de tu cuenta, as&iacute; que no pagas de m&aacute;s.</p>
                 <ul class="flex flex-wrap gap-3 font-body text-label-bold uppercase tracking-wider text-deep-black">
                     <li class="inline-flex items-center gap-2 bg-white/25 border-2 border-deep-black rounded-full px-4 py-2">
-                        <span class="material-symbols-outlined text-lg" aria-hidden="true">groups</span>El Carmen: 10 a 20 personas
+                        <span class="material-symbols-outlined text-lg" aria-hidden="true">groups</span>Mesa o sal&oacute;n VIP
                     </li>
                     <li class="inline-flex items-center gap-2 bg-white/25 border-2 border-deep-black rounded-full px-4 py-2">
-                        <span class="material-symbols-outlined text-lg" aria-hidden="true">groups</span>Hip&oacute;dromo: 10 a 30 personas
+                        <span class="material-symbols-outlined text-lg" aria-hidden="true">payments</span>Adelanto descontable
                     </li>
                     <li class="inline-flex items-center gap-2 bg-white/25 border-2 border-deep-black rounded-full px-4 py-2">
-                        <span class="material-symbols-outlined text-lg" aria-hidden="true">schedule</span>M&iacute;nimo 24 h antes
+                        <span class="material-symbols-outlined text-lg" aria-hidden="true">event_busy</span>Cancela con 24 h y te devolvemos
                     </li>
                 </ul>
             </div>
-            <button type="button" data-open-reserva aria-haspopup="dialog" class="bg-deep-black text-white px-10 py-5 rounded-full font-display text-headline-md uppercase tracking-wider hover:bg-white hover:text-deep-black transition-all shadow-hard active:translate-x-1 active:translate-y-1 active:shadow-none inline-flex items-center justify-center gap-3 justify-self-start lg:justify-self-end">
+            <a href="reservas/" class="bg-deep-black text-white px-10 py-5 rounded-full font-display text-headline-md uppercase tracking-wider hover:bg-white hover:text-deep-black transition-all shadow-hard active:translate-x-1 active:translate-y-1 active:shadow-none inline-flex items-center justify-center gap-3 justify-self-start lg:justify-self-end">
                 Reservar
                 <span class="material-symbols-outlined" aria-hidden="true">event_available</span>
-            </button>
+            </a>
         </div>
     </section>
 
@@ -526,10 +533,14 @@
                                 <p class="font-body text-body-md text-secondary" data-today-schedule>Cargando...</p>
                             </div>
                         </div>
-                        <div class="pt-2">
+                        <div class="pt-2 flex flex-wrap gap-3">
                             <a href="https://www.google.com/maps?q=Calle+53D+%23+19-06,+Barranquilla" target="_blank" rel="noopener" class="bg-deep-black text-white px-6 py-3 font-body text-label-bold rounded-full uppercase tracking-wider inline-flex items-center gap-3 hover:bg-vibrant-orange transition-all">
                                 Obtener Direcciones
                                 <span class="material-symbols-outlined">navigation</span>
+                            </a>
+                            <a href="reservas/" class="border-2 border-deep-black text-deep-black px-6 py-3 font-body text-label-bold rounded-full uppercase tracking-wider inline-flex items-center gap-3 hover:bg-deep-black hover:text-white transition-all">
+                                Reservar mesa
+                                <span class="material-symbols-outlined">event_seat</span>
                             </a>
                         </div>
                     </div>
@@ -574,10 +585,14 @@
                                 <p class="font-body text-body-md text-secondary" data-today-schedule>Cargando...</p>
                             </div>
                         </div>
-                        <div class="pt-2">
+                        <div class="pt-2 flex flex-wrap gap-3">
                             <a href="https://www.google.com/maps?q=Cra.+29+%23+26-04,+Soledad,+Atl%C3%A1ntico" target="_blank" rel="noopener" class="bg-deep-black text-white px-6 py-3 font-body text-label-bold rounded-full uppercase tracking-wider inline-flex items-center gap-3 hover:bg-vibrant-orange transition-all">
                                 Obtener Direcciones
                                 <span class="material-symbols-outlined">navigation</span>
+                            </a>
+                            <a href="reservas/" class="border-2 border-deep-black text-deep-black px-6 py-3 font-body text-label-bold rounded-full uppercase tracking-wider inline-flex items-center gap-3 hover:bg-deep-black hover:text-white transition-all">
+                                Reservar mesa
+                                <span class="material-symbols-outlined">event_seat</span>
                             </a>
                         </div>
                     </div>
@@ -698,97 +713,6 @@
                     </a>
                 </div>
                 <p id="sedeModalFoot" class="font-body text-xs text-secondary text-center pt-5">Se abre la carta de fu.do en una pesta&ntilde;a nueva.</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- RESERVA MODAL -->
-    <div id="reservaModal" class="modal-overlay fixed inset-0 z-[60] flex items-center justify-center p-4 bg-deep-black/80 hidden"
-         role="dialog" aria-modal="true" aria-labelledby="reservaModalTitle">
-        <div class="modal-panel bg-white max-w-lg w-full rounded-lg shadow-2xl relative max-h-[90svh] overflow-x-hidden overflow-y-auto">
-            <button type="button" id="closeReservaModal" data-cerrar class="absolute top-3 right-3 w-11 h-11 inline-flex items-center justify-center text-deep-black hover:text-vibrant-orange" aria-label="Cerrar">
-                <span class="material-symbols-outlined">close</span>
-            </button>
-            <div class="p-6 sm:p-8">
-                <h3 id="reservaModalTitle" class="font-display text-headline-md text-deep-black uppercase mb-2 text-center leading-none">Reserva para tu grupo</h3>
-                <p class="font-body text-body-md text-secondary text-center mb-6">La reserva queda pendiente hasta que la sede te confirme por WhatsApp.</p>
-
-                <form id="reservaForm" class="space-y-5" novalidate>
-                    <!-- Campo trampa anti-bots: invisible para personas, los bots suelen rellenarlo. No borrar. -->
-                    <div class="honeypot" aria-hidden="true">
-                        <label for="reservaWebsite">Dejar en blanco</label>
-                        <input type="text" id="reservaWebsite" name="website" tabindex="-1" autocomplete="off">
-                    </div>
-
-                    <fieldset>
-                        <legend class="block text-xs font-body text-label-bold uppercase mb-2 text-deep-black">1. Sede</legend>
-                        <div class="grid grid-cols-2 gap-3">
-                            <label class="reserva-sede">
-                                <input type="radio" name="sede" value="carmen" class="sr-only">
-                                <span class="reserva-sede-card">
-                                    <span class="block font-display text-headline-md uppercase leading-none">El Carmen</span>
-                                    <span class="block font-body text-xs mt-1 opacity-70">10 a 20 personas</span>
-                                </span>
-                            </label>
-                            <label class="reserva-sede">
-                                <input type="radio" name="sede" value="hipodromo" class="sr-only">
-                                <span class="reserva-sede-card">
-                                    <span class="block font-display text-headline-md uppercase leading-none">Hip&oacute;dromo</span>
-                                    <span class="block font-body text-xs mt-1 opacity-70">10 a 30 personas</span>
-                                </span>
-                            </label>
-                        </div>
-                    </fieldset>
-
-                    <fieldset>
-                        <legend class="block text-xs font-body text-label-bold uppercase mb-2 text-deep-black">2. Fecha</legend>
-                        <div id="reservaCalendario" class="reserva-cal"></div>
-                        <p id="reservaFechaTexto" class="font-body text-sm text-secondary mt-2" aria-live="polite">Elige primero la sede para ver los d&iacute;as libres.</p>
-                    </fieldset>
-
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label for="reservaHora" class="block text-xs font-body text-label-bold uppercase mb-1 text-deep-black">3. Hora de llegada</label>
-                            <select id="reservaHora" name="hora" disabled class="w-full border-2 border-surface-container-highest rounded-lg p-3 focus:border-vibrant-orange outline-none transition-colors disabled:bg-surface-container-low disabled:text-secondary">
-                                <option value="">Elige la fecha</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label for="reservaPersonas" class="block text-xs font-body text-label-bold uppercase mb-1 text-deep-black">4. Personas</label>
-                            <input id="reservaPersonas" name="personas" type="number" inputmode="numeric" min="10" max="30" step="1" class="w-full border-2 border-surface-container-highest rounded-lg p-3 focus:border-vibrant-orange outline-none transition-colors" placeholder="10 a 30">
-                        </div>
-                    </div>
-
-                    <div>
-                        <label for="reservaNombre" class="block text-xs font-body text-label-bold uppercase mb-1 text-deep-black">A nombre de</label>
-                        <input id="reservaNombre" name="nombre" type="text" maxlength="60" autocomplete="name" class="w-full border-2 border-surface-container-highest rounded-lg p-3 focus:border-vibrant-orange outline-none transition-colors" placeholder="Tu nombre completo">
-                    </div>
-                    <div>
-                        <label for="reservaTelefono" class="block text-xs font-body text-label-bold uppercase mb-1 text-deep-black">Celular (WhatsApp)</label>
-                        <input id="reservaTelefono" name="telefono" type="tel" inputmode="tel" maxlength="20" autocomplete="tel-national" class="w-full border-2 border-surface-container-highest rounded-lg p-3 focus:border-vibrant-orange outline-none transition-colors" placeholder="300 123 4567">
-                    </div>
-                    <div>
-                        <label for="reservaNota" class="block text-xs font-body text-label-bold uppercase mb-1 text-deep-black">Nota <span class="normal-case font-normal text-secondary">(opcional)</span></label>
-                        <textarea id="reservaNota" name="nota" maxlength="300" rows="2" class="w-full border-2 border-surface-container-highest rounded-lg p-3 focus:border-vibrant-orange outline-none transition-colors" placeholder="Ej: es un cumplea&ntilde;os, llevamos torta"></textarea>
-                    </div>
-
-                    <p id="reservaError" class="hidden text-sm font-body text-red-700 bg-red-50 border border-red-200 rounded-lg p-3" role="alert"></p>
-                    <button class="w-full bg-vibrant-orange text-white py-4 rounded-full font-display text-headline-md uppercase tracking-wider hover:bg-deep-black transition-all disabled:opacity-60 disabled:cursor-not-allowed" type="submit">
-                        Enviar reserva
-                    </button>
-                    <p class="text-xs text-secondary text-center">Con m&iacute;nimo 24 horas de anticipaci&oacute;n. Tu d&iacute;a queda apartado mientras la sede confirma.</p>
-                </form>
-
-                <div id="reservaExito" class="hidden text-center py-2" tabindex="-1">
-                    <span class="material-symbols-outlined text-fresh-teal text-6xl block mb-3 icon-fill" aria-hidden="true">check_circle</span>
-                    <p class="font-display text-headline-md text-deep-black uppercase leading-none mb-3">&iexcl;Solicitud recibida!</p>
-                    <p id="reservaExitoTexto" class="font-body text-body-md text-secondary mb-6"></p>
-                    <a id="reservaWhatsApp" href="#" target="_blank" rel="noopener" class="w-full inline-flex items-center justify-center gap-3 bg-[#25D366] text-white py-4 rounded-full font-display text-headline-md uppercase tracking-wider hover:bg-deep-black transition-colors">
-                        Avisar por WhatsApp
-                    </a>
-                    <p class="font-body text-xs text-secondary mt-3 mb-5">Env&iacute;ale el mensaje a la sede para que te confirme m&aacute;s r&aacute;pido.</p>
-                    <button type="button" data-cerrar class="tap font-body text-label-bold uppercase tracking-wider text-deep-black border-b-2 border-deep-black pb-1 hover:text-vibrant-orange hover:border-vibrant-orange transition-colors">Cerrar</button>
-                </div>
             </div>
         </div>
     </div>
@@ -929,6 +853,7 @@
             <!-- BARRA INFERIOR -->
             <div class="mt-16 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <p class="font-body text-label-sm uppercase tracking-wider text-white/40 text-center sm:text-left">&copy; <span data-year>2026</span> Urban Food S.A.S. Todos los derechos reservados.</p>
+                <a class="tap inline-flex items-center gap-2 font-body text-label-sm uppercase tracking-wider text-white/40 hover:text-vibrant-orange transition-colors py-2.5" href="privacidad/">Política de datos</a>
                 <a class="inline-flex items-center gap-2 font-body text-label-sm uppercase tracking-wider text-white/40 hover:text-vibrant-orange transition-colors py-2.5" href="#inicio">
                     Volver arriba
                     <span class="material-symbols-outlined text-base" aria-hidden="true">arrow_upward</span>

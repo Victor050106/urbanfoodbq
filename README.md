@@ -37,11 +37,12 @@ Urban Food/
 │   ├── css/styles.css    # Estilos que complementan a Tailwind
 │   ├── js/               # Módulos ES nativos, uno por sección (sin build)
 │   │   ├── main.js       # Arranque: inicia cada sección y hace la única petición a la hoja
-│   │   ├── config.js     # Lo que se cambia a mano: horario, SEDES, URL del Apps Script, reglas de reserva
+│   │   ├── config.js     # Lo que se cambia a mano: horario, SEDES, URL del Apps Script
 │   │   ├── api.js        # getJson / postJson contra el Apps Script
-│   │   ├── modal.js      # Abrir, cerrar, Escape y foco atrapado, compartido por los 3 modales
+│   │   ├── modal.js      # Abrir, cerrar, Escape y foco atrapado, compartido por los modales
 │   │   ├── fechas.js · util.js
-│   │   └── horario.js · nav.js · sedes.js · opiniones.js · novedades.js · reservas.js
+│   │   ├── horario.js · nav.js · sedes.js · opiniones.js · novedades.js
+│   │   └── reservas.js · reservas-comun.js · panel.js · cancelar.js  # Páginas de /reservas/ (scripts clásicos)
 │   ├── img/
 │   │   ├── hero-pattern.webp # Textura de doodles del hero (~128 KB)
 │   │   ├── mascota.webp      # Mascota de marca con transparencia (~113 KB)
@@ -50,8 +51,17 @@ Urban Food/
 │   │   └── novedades/        # Carátulas de las novedades
 │   ├── video/                # Videos de las novedades (H.264, no se precargan)
 │   └── brand/            # logo.png, logor.png, favicon.png, faviconr.png
+├── reservas/             # Reservas en línea
+│   ├── index.html        # Página para reservar (sede, día, hora, adelanto con Bold)
+│   ├── cancelar/         # Cancelación con el enlace del correo (token), no con el código
+│   └── panel/            # Panel de la cajera (no se indexa)
+├── privacidad/           # Política de tratamiento de datos personales
 ├── apps-script/
-│   └── Code.gs           # Backend de comentarios, novedades y reservas (Google Apps Script)
+│   ├── Code.gs           # Backend de comentarios y novedades (Google Apps Script)
+│   └── reservas/         # Backend de reservas (otro proyecto, hoja "Urban Food - Reservas")
+├── tests/
+│   ├── code-gs.test.js · e2e.js
+│   └── reservas/         # Pruebas del backend de reservas + servidor local con Bold simulado
 ├── docs/                 # Documentos internos, NO se suben al repo
 │   ├── PASOS-PARA-VICTOR.md
 │   ├── PASOS-NOVEDADES.md
@@ -101,13 +111,7 @@ Urban Food/
   novedad vigente la sección no aparece, y cada una puede llevar fecha de vencimiento para
   retirarse sola. Admite video con carátula: el archivo solo se descarga al pulsar play
   (ver `docs/PASOS-NOVEDADES.md`)
-- **Reservas para grupos**: una reserva por sede y por día, con mínimo 24 horas de
-  anticipación y de 10 a 20 personas (El Carmen) o de 10 a 30 (Hipódromo). El calendario
-  tacha los días ya tomados; la solicitud llega a la pestaña `Reservas` de la hoja, avisa
-  por correo a la sede y queda pendiente hasta que alguien la confirme. Al terminar, el
-  cliente puede mandarle el resumen por WhatsApp a la sede (ver `docs/PASOS-RESERVAS.md`).
-  Para que nadie bloquee el calendario con reservas falsas, no se aceptan más de 8 pendientes
-  a la vez
+- **Reservas en línea** con adelanto pagado en Bold (ver la sección [Reservas](#reservas))
 - **Sección de opiniones** con formulario de comentarios y moderación previa (ver más abajo)
 - **Accesibilidad**: etiquetas asociadas a sus campos, calificación por estrellas manejable
   con teclado (patrón `radiogroup` con flechas), modal con foco atrapado y devuelto, y
@@ -144,6 +148,39 @@ comentario es spam u ofensivo, simplemente déjalo sin marcar (o borra la fila).
 > Después de modificar `apps-script/Code.gs` hay que volver a desplegar el script:
 > Implementar > Administrar implementaciones > (lápiz) > Versión: Nueva versión > Implementar.
 
+> `Code.gs` todavía tiene el backend de las reservas para grupos (pestaña `Reservas` de la hoja
+> de comentarios). La página ya no lo usa; se puede quitar cuando las reservas en línea estén
+> funcionando y no queden reservas de grupo pendientes.
+
+## Reservas
+
+Los clientes reservan mesa o el salón VIP desde `/reservas/`. El camino es: enlace
+"Reservar" del sitio, página de reservas (sede, día, hora, datos), pago del adelanto en
+Bold y confirmación con un código de reserva. Si cancelan con 24 horas o más de anticipación
+se devuelve el adelanto.
+
+- **Cajera:** revisa y marca las reservas del día (llegó / no llegó) en `/reservas/panel/`.
+- **Administración:** todo queda en la hoja de Google **"Urban Food - Reservas"** (reservas
+  y configuración: adelanto, días, cupos).
+- **Datos personales:** la política está en `/privacidad/`; el formulario la enlaza.
+- **Puesta en marcha:** los pasos de despliegue (Apps Script, llaves de Bold, claves de la
+  cajera) están en `docs/PASOS-RESERVAS.md`. Es un documento interno y no se sube al repo.
+  Las llaves y claves van en las Propiedades del script, nunca en el código. Mientras
+  `RESERVAS_API_URL` (en `assets/js/reservas-comun.js`) esté vacía, la página muestra
+  "disponibles muy pronto" con botones a WhatsApp.
+- Los textos de la sección naranja de la portada (`#reservas` en `index.html`) repiten el
+  adelanto y la regla de las 24 horas: si cambian en la hoja Config, cambiarlos ahí también.
+
+Para probar sin desplegar nada hay un servidor de desarrollo con Bold simulado:
+
+```bash
+node tests/reservas/servidor-local.js
+```
+
+y abrir [http://localhost:3000/reservas/?api=local](http://localhost:3000/reservas/?api=local)
+(el puerto se cambia con la variable `PORT`). Ese mismo servidor sirve el resto del sitio, así
+que también sirve para `npm run test:e2e`.
+
 ## Correr localmente
 
 Requiere [Node.js](https://nodejs.org) instalado.
@@ -158,15 +195,16 @@ Luego abre [http://localhost:3000](http://localhost:3000) en tu navegador.
 
 ```bash
 npm install
-npm test           # reglas del Apps Script, sin red ni navegador
+npm test           # reglas de los dos Apps Script, sin red ni navegador
 npm run test:e2e   # la página completa; necesita el servidor corriendo en otra terminal
 ```
 
 `tests/code-gs.test.js` ejecuta `apps-script/Code.gs` contra una hoja falsa en memoria:
-reservas válidas y rechazadas, día ocupado, tope de pendientes y opiniones con fórmulas.
+reservas de grupo y opiniones con fórmulas. `tests/reservas/` prueba el backend de las
+reservas en línea (cupos, estados, Bold, correos, hoja) con servicios de Google falsos.
 `tests/e2e.js` abre la página en Microsoft Edge (escritorio y celular) y revisa horario,
-selector de sede, modales, opiniones, calendario de reservas y áreas táctiles. Los envíos
-de opiniones y reservas se simulan: nunca escriben en la hoja real. Las capturas quedan en
+selector de sede, modales, opiniones, enlaces a reservas y áreas táctiles. Los envíos
+de opiniones se simulan: nunca escriben en la hoja real. Las capturas quedan en
 `tests/shots/`.
 
 ## Información de contacto del restaurante

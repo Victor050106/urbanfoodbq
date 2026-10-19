@@ -46,14 +46,16 @@ async function setup(browser, viewport) {
   let data = null;
   try { data = r && await r.json(); } catch {}
   check('API hoja responde', !!data, r ? `status ${r.status()}, ${t1 - t0} ms desde inicio` : 'sin respuesta');
-  if (data) check('API trae reviews/novedades/reservas', Array.isArray(data.reviews) && Array.isArray(data.novedades) && typeof data.reservas === 'object',
-    `reviews=${data.reviews?.length} novedades=${data.novedades?.length} reservas=${JSON.stringify(data.reservas)}`);
-  await p.locator('#reservas').waitFor({ state: 'visible', timeout: 15000 }).catch(() => {});
+  if (data) check('API trae reviews/novedades', Array.isArray(data.reviews) && Array.isArray(data.novedades),
+    `reviews=${data.reviews?.length} novedades=${data.novedades?.length}`);
+  await p.waitForTimeout(500);
   const reviewCards = await p.locator('#reviewsGrid article').count();
   check('opiniones pintadas', data ? reviewCards === Math.min(6, data.reviews.length) : true, `${reviewCards} tarjetas`);
   check('novedades visible si hay', data ? (await p.locator('#novedades').isVisible()) === (data.novedades.length > 0) : true);
   check('reservas visible', await p.locator('#reservas').isVisible());
-  check('nav con enlace Reservas', (await p.locator('[data-nav-links] a[href="#reservas"]').count()) >= 1);
+  check('nav con enlace Reservar', (await p.locator('[data-nav-links] a[href="reservas/"]').count()) === 2);
+  check('enlaces a /reservas/ (nav x2, hero, seccion, sedes x2)', (await p.locator('a[href="reservas/"]').count()) === 6);
+  check('pie con politica de datos', (await p.locator('footer a[href="privacidad/"]').count()) === 1);
 
   // Sedes
   await p.locator('.loc-btn[data-loc="hipodromo"]').click();
@@ -96,45 +98,22 @@ async function setup(browser, viewport) {
   check('opiniones: envio mock -> pendiente visible y modal cerrado',
     !(await p.locator('#reviewModal').isVisible()) && (await p.locator('#reviewsGrid').innerText()).includes('Pendiente de aprobación'));
 
-  // Reservas
-  await p.locator('[data-open-reserva]').first().click();
-  check('modal reservas abre', await p.locator('#reservaModal').isVisible());
-  await p.locator('#reservaForm button[type=submit]').click();
-  check('reservas: pide sede', (await p.locator('#reservaError').innerText()).includes('sede'));
-  await p.locator('input[name="sede"][value="carmen"]').check({ force: true });
-  const libres = p.locator('#reservaCalendario [data-dia]:not([disabled])');
-  const nLibres = await libres.count();
-  check('calendario con dias libres', nLibres > 0, `${nLibres} libres este mes`);
-  const taken = await p.locator('#reservaCalendario .is-taken').count();
-  check('calendario marca ocupados', true, `${taken} tachados`);
-  await libres.first().click();
-  const fechaTxt = await p.locator('#reservaFechaTexto').innerText();
-  const horas = await p.locator('#reservaHora option').count();
-  check('elegir dia habilita horas', horas > 1, `${fechaTxt} / ${horas - 1} horas`);
-  await p.keyboard.press('ArrowRight');
-  check('flechas mueven foco en calendario', await p.evaluate(() => !!document.activeElement.dataset.dia));
-  await p.selectOption('#reservaHora', { index: 1 });
-  await p.fill('#reservaPersonas', '25');
-  await p.fill('#reservaNombre', 'Prueba E2E');
-  await p.fill('#reservaTelefono', '300 123 4567');
-  await p.locator('#reservaForm button[type=submit]').click();
-  check('reservas: valida personas por sede (25 > 20 Carmen)', (await p.locator('#reservaError').innerText()).includes('10 a 20'));
-  await p.fill('#reservaPersonas', '12');
-  await p.fill('#reservaTelefono', '12345');
-  await p.locator('#reservaForm button[type=submit]').click();
-  check('reservas: valida celular', (await p.locator('#reservaError').innerText()).includes('celular'));
-  await p.fill('#reservaTelefono', '+57 300-123-4567');
-  await p.locator('#reservaForm button[type=submit]').click();
-  await p.waitForTimeout(500);
-  const exito = await p.locator('#reservaExito').isVisible();
-  const wa = await p.locator('#reservaWhatsApp').getAttribute('href');
-  check('reservas: envio mock -> exito + link WhatsApp', exito && wa.startsWith('https://wa.me/573127557694'), (await p.locator('#reservaExitoTexto').innerText()));
-  await p.screenshot({ path: out + 'desktop-reserva-exito.png' });
-  await p.keyboard.press('Escape');
-  check('Escape cierra reservas', !(await p.locator('#reservaModal').isVisible()));
-  check('POSTs interceptados (no tocaron la hoja)', d.posts.length === 2, d.posts.map(x => x.slice(0, 80)).join(' || '));
+  check('POSTs interceptados (no tocaron la hoja)', d.posts.length === 1, d.posts.map(x => x.slice(0, 80)).join(' || '));
 
   await p.screenshot({ path: out + 'desktop-full.png', fullPage: true });
+
+  // Reservas: la pagina vive en /reservas/ (el flujo completo con Bold simulado se prueba
+  // con tests/reservas/servidor-local.js). Sin RESERVAS_API_URL muestra el aviso "pronto".
+  const rv = await setup(browser, { width: 1366, height: 800 });
+  await rv.page.goto('http://localhost:3000/reservas/', { waitUntil: 'load' });
+  await rv.page.waitForTimeout(500);
+  const pronto = await rv.page.locator('#pronto').isVisible();
+  const app = await rv.page.locator('#app').isVisible();
+  const waPronto = await rv.page.locator('#prontoWa a[href^="https://wa.me/"]').count();
+  check('pagina de reservas carga (pronto con WhatsApp o formulario)', (pronto && waPronto === 2) || app, pronto ? `pronto, ${waPronto} WhatsApp` : 'formulario');
+  check('pagina de reservas sin errores', rv.errors.length === 0, rv.errors.join(' | '));
+  await rv.page.screenshot({ path: out + 'desktop-reservas.png' });
+  await rv.ctx.close();
 
   // Recursos pesados
   const perf = await p.evaluate(() => performance.getEntriesByType('resource')
@@ -160,8 +139,6 @@ async function setup(browser, viewport) {
     .map(e => { const r = e.getBoundingClientRect(); const a = e.classList.contains('tap') ? parseFloat(getComputedStyle(e, '::after').height) : 0; return { t: (e.innerText || e.getAttribute('aria-label') || '').trim().slice(0, 25), w: Math.round(r.width), h: Math.max(Math.round(r.height), a) }; })
     .filter(x => x.w && (x.h < 44 || x.w < 44)).slice(0, 12));
   check('movil: objetivos tactiles < 44px', small.length === 0, JSON.stringify(small));
-  await mp.locator('[data-open-reserva]').first().click();
-  await mp.screenshot({ path: out + 'mobile-reserva.png' });
   await mp.screenshot({ path: out + 'mobile-full.png', fullPage: true });
 
   console.log(results.join('\n'));

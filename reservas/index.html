@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservas | URBAN FOOD Barranquilla</title>
+    <meta name="description" content="Reserva tu mesa o el salón VIP en Urban Food: elige sede, día y hora, y confirma con un adelanto que se descuenta de tu cuenta.">
+    <link rel="canonical" href="https://urbanfoodbq.com/reservas/">
+    <meta name="theme-color" content="#000000">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Urban Food">
+    <meta property="og:locale" content="es_CO">
+    <meta property="og:title" content="Reservas | Urban Food">
+    <meta property="og:description" content="Reserva tu mesa o el salón VIP en Urban Food Barranquilla.">
+    <meta property="og:image" content="https://urbanfoodbq.com/assets/img/og-cover.jpg">
+    <meta property="og:url" content="https://urbanfoodbq.com/reservas/">
+    <link rel="icon" type="image/png" href="../assets/brand/faviconr.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "deep-black": "#000000",
+              "vibrant-orange": "#FF6B00",
+              "fresh-teal": "#1ABC9C",
+              "warm-gold": "#F39C12",
+              "background": "#f9f9f9",
+              "surface": "#f9f9f9",
+              "surface-container": "#eeeeee",
+              "surface-container-low": "#f3f3f3",
+              "surface-container-lowest": "#ffffff",
+              "surface-container-high": "#e8e8e8",
+              "surface-container-highest": "#e2e2e2",
+              "on-background": "#1a1c1c",
+              "on-surface": "#1a1c1c",
+              "secondary": "#5e5e5e",
+              "primary": "#a04100",
+              "primary-container": "#ff6b00"
+            },
+            borderRadius: {
+              DEFAULT: "0.125rem",
+              lg: "0.25rem",
+              xl: "0.5rem",
+              full: "9999px"
+            },
+            spacing: {
+              "container-max": "1280px",
+              "margin-desktop": "64px",
+              "base": "8px",
+              "margin-mobile": "20px",
+              "gutter-mobile": "16px",
+              "gutter-desktop": "24px"
+            },
+            fontFamily: {
+              "display": ["Bebas Neue", "sans-serif"],
+              "body": ["Inter", "sans-serif"]
+            },
+            fontSize: {
+              "display-lg-mobile": ["48px", { lineHeight: "48px", letterSpacing: "0.02em", fontWeight: "400" }],
+              "display-lg": ["80px", { lineHeight: "80px", letterSpacing: "0.02em", fontWeight: "400" }],
+              "headline-lg": ["40px", { lineHeight: "40px", letterSpacing: "0.03em", fontWeight: "400" }],
+              "headline-md": ["24px", { lineHeight: "32px", letterSpacing: "-0.01em", fontWeight: "700" }],
+              "body-lg": ["18px", { lineHeight: "28px", fontWeight: "400" }],
+              "body-md": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+              "label-bold": ["14px", { lineHeight: "20px", fontWeight: "700" }],
+              "label-sm": ["12px", { lineHeight: "16px", fontWeight: "500" }]
+            }
+          }
+        }
+      }
+    </script>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <style>
+        :root { --bg:#0f0f0f; --card:#1a1a1a; --line:#2c2c2c; --mute:#9a9a9a; }
+        body { background: var(--bg); color: #f3f3f3; }
+        .titulo { font-family: 'Bebas Neue', sans-serif; letter-spacing: .5px; }
+        .campo { width: 100%; min-height: 44px; background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; color: #f3f3f3; font-size: 16px; }
+        .campo:focus { border-color: #FF6B00; box-shadow: none; }
+        .etiqueta { display: block; color: var(--mute); font-size: 12px; margin: 14px 0 6px; }
+        .opcion { min-height: 44px; border: 1px solid var(--line); border-radius: 10px; padding: 8px; text-align: center; background: transparent; color: #f3f3f3; font-weight: 500; }
+        .opcion[aria-pressed="true"] { border-color: #FF6B00; background: rgba(255,107,0,.12); font-weight: 700; }
+        .boton { display: flex; align-items: center; justify-content: center; width: 100%; min-height: 48px; margin-top: 18px; background: #FF6B00; color: #fff; font-weight: 700; border-radius: 12px; padding: 10px; }
+        .boton:disabled { opacity: .4; cursor: not-allowed; }
+        .boton-sec { background: transparent; border: 1px solid var(--line); color: #f3f3f3; margin-top: 10px; }
+        .tarjeta { background: var(--card); border-radius: 12px; padding: 14px; line-height: 1.7; }
+        .nota { font-size: 12px; color: var(--mute); line-height: 1.5; margin-top: 10px; }
+        .contador { display: flex; align-items: center; justify-content: space-between; background: var(--card); border-radius: 10px; padding: 6px 10px; }
+        .contador button { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); font-size: 22px; background: transparent; color: #f3f3f3; }
+        .contador button:disabled { opacity: .25; cursor: default; }
+        .cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; font-size: 14px; }
+        .cal .cab { color: var(--mute); font-size: 12px; padding: 4px 0; }
+        .cal button { min-height: 44px; border-radius: 8px; background: var(--card); color: #f3f3f3; border: 1px solid transparent; }
+        .cal button:disabled { opacity: .3; cursor: default; }
+        .cal button[aria-pressed="true"] { background: #FF6B00; font-weight: 700; }
+        .navmes { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        .navmes button { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); background: var(--card); color: #f3f3f3; font-size: 20px; }
+        .navmes button:disabled { opacity: .25; cursor: default; }
+        .horas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .horas button { min-height: 44px; border-radius: 9px; background: var(--card); border: 1px solid var(--line); color: #f3f3f3; }
+        .horas button[aria-pressed="true"] { border-color: #FF6B00; background: rgba(255,107,0,.15); font-weight: 700; }
+        .horas button:disabled { opacity: .35; text-decoration: line-through; cursor: default; }
+        .error { background: rgba(220,53,69,.15); border: 1px solid rgba(220,53,69,.5); border-radius: 10px; padding: 10px 12px; margin-top: 14px; font-size: 14px; }
+        .atras { color: var(--mute); min-height: 44px; padding: 0 4px; font-size: 14px; }
+        .check { display: flex; gap: 10px; align-items: flex-start; margin-top: 14px; font-size: 13px; line-height: 1.5; color: #d0d0d0; }
+        .check input { width: 22px; height: 22px; margin-top: 1px; flex: none; accent-color: #FF6B00; }
+        .check a { color: #FF6B00; text-decoration: underline; }
+        .wa { background: #25D366; color: #07240f; }
+        .codigo { font-family: 'Bebas Neue', sans-serif; font-size: 40px; letter-spacing: 3px; text-align: center; color: #FF6B00; }
+        .icono { width: 60px; height: 60px; border-radius: 50%; display: grid; place-items: center; font-size: 30px; font-weight: 700; margin: 8px auto; color: #0f0f0f; }
+        [hidden] { display: none !important; }
+        /* Los títulos reciben el foco por código (lectores de pantalla); no hace falta marcarlos. */
+        h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus { outline: none; }
+    </style>
+</head>
+<body class="font-body">
+    <header class="border-b border-white/10 bg-deep-black">
+        <div class="max-w-xl mx-auto px-4 py-3 flex items-center justify-between">
+            <a href="../" class="flex items-center gap-3">
+                <img src="../assets/brand/logor.webp" alt="Urban Food" width="227" height="128" class="h-10 w-auto rounded">
+                <span class="titulo text-2xl text-vibrant-orange">URBAN FOOD <small class="text-sm text-white/50 font-body tracking-normal">Reservas</small></span>
+            </a>
+            <a href="../" class="text-sm text-white/60 min-h-[44px] inline-flex items-center">Volver al sitio</a>
+        </div>
+    </header>
+
+    <main class="max-w-xl mx-auto px-4 pt-4 pb-16">
+        <!-- Sin API configurada: aviso y WhatsApp de cada sede -->
+        <section id="pronto" hidden>
+            <h1 class="titulo text-3xl mt-4">Reservas en línea</h1>
+            <div class="tarjeta mt-3">Las reservas en línea estarán disponibles muy pronto. Mientras tanto, reserva por WhatsApp con la sede que prefieras.</div>
+            <div id="prontoWa"></div>
+        </section>
+
+        <div id="app" hidden>
+            <div class="flex items-center justify-between">
+                <button type="button" id="atras" class="atras" hidden>&larr; Atrás</button>
+                <span id="progreso" class="text-xs text-white/50 ml-auto"></span>
+            </div>
+            <div id="error" class="error" role="alert" hidden></div>
+
+            <!-- 1. Sede y personas -->
+            <section data-paso="1" hidden>
+                <h1 class="titulo text-3xl mt-2">Reserva tu mesa</h1>
+                <span class="etiqueta">Sede</span>
+                <div class="grid grid-cols-2 gap-2" id="sedes"></div>
+                <span class="etiqueta">¿Cuántas personas?</span>
+                <div class="contador">
+                    <button type="button" id="menos" aria-label="Una persona menos">&minus;</button>
+                    <b id="personas" class="text-xl" aria-live="polite">2</b>
+                    <button type="button" id="mas" aria-label="Una persona más">+</button>
+                </div>
+                <p id="espacio" class="nota" aria-live="polite"></p>
+                <div id="grupo" class="tarjeta mt-4" hidden></div>
+                <button type="button" class="boton" id="a2">Elegir día</button>
+            </section>
+
+            <!-- 2. Día -->
+            <section data-paso="2" hidden>
+                <h2 class="titulo text-3xl mt-2">¿Qué día?</h2>
+                <div class="navmes">
+                    <button type="button" id="mesAnt" aria-label="Mes anterior">&lsaquo;</button>
+                    <b id="mesNombre" aria-live="polite"></b>
+                    <button type="button" id="mesSig" aria-label="Mes siguiente">&rsaquo;</button>
+                </div>
+                <div class="cal" id="cal"></div>
+                <p class="nota">Los días apagados no tienen cupo o no se abren a reservas.</p>
+            </section>
+
+            <!-- 3. Hora -->
+            <section data-paso="3" hidden>
+                <h2 class="titulo text-3xl mt-2" id="tituloHoras"></h2>
+                <span class="etiqueta">Elige una hora</span>
+                <div class="horas" id="horas"></div>
+                <p class="nota">Las horas tachadas ya no tienen cupo para tu grupo.</p>
+                <button type="button" class="boton" id="a4" disabled>Continuar</button>
+            </section>
+
+            <!-- 4. Datos -->
+            <section data-paso="4" hidden>
+                <h2 class="titulo text-3xl mt-2">¿A nombre de quién?</h2>
+                <form id="datos" novalidate autocomplete="on">
+                    <!-- Campo trampa anti-bots: invisible para personas, los bots suelen rellenarlo. No borrar. -->
+                    <div style="position:absolute;left:-9999px;top:-9999px;" aria-hidden="true">
+                        <label for="website">Dejar en blanco</label>
+                        <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+                    </div>
+                    <label class="etiqueta" for="nombre">Nombre completo</label>
+                    <input class="campo" id="nombre" name="nombre" autocomplete="name" maxlength="60" required>
+                    <label class="etiqueta" for="documento">Documento</label>
+                    <div class="grid grid-cols-[96px_1fr] gap-2">
+                        <select class="campo" id="tipo_doc" name="tipo_doc" aria-label="Tipo de documento">
+                            <option value="CC">CC</option><option value="CE">CE</option><option value="PA">PA</option>
+                        </select>
+                        <input class="campo" id="documento" name="documento" maxlength="20" autocomplete="off" required>
+                    </div>
+                    <label class="etiqueta" for="correo">Correo</label>
+                    <input class="campo" id="correo" name="correo" type="email" autocomplete="email" maxlength="100" required>
+                    <label class="etiqueta" for="celular">Celular (WhatsApp)</label>
+                    <input class="campo" id="celular" name="celular" type="tel" autocomplete="tel" maxlength="20" required>
+                    <label class="etiqueta" for="comentario">Ocasión o comentario (opcional)</label>
+                    <textarea class="campo" id="comentario" name="comentario" rows="2" maxlength="200"></textarea>
+                    <label class="check"><input type="checkbox" id="acepta_datos"> <span>Autorizo el tratamiento de mis datos personales según la <a href="../privacidad/" target="_blank" rel="noopener">política de privacidad</a>.</span></label>
+                    <label class="check"><input type="checkbox" id="acepta_politica"> <span id="textoAceptaPolitica">Acepto la política de la reserva: el adelanto se descuenta de mi cuenta y no se devuelve si cancelo con menos de 24 horas o no llego.</span></label>
+                    <button type="submit" class="boton">Revisar y pagar</button>
+                </form>
+            </section>
+
+            <!-- 5. Resumen y pago -->
+            <section data-paso="5" hidden>
+                <h2 class="titulo text-3xl mt-2">Confirma con tu adelanto</h2>
+                <div class="tarjeta mt-3" id="resumen"></div>
+                <p class="nota" id="politica"></p>
+                <div class="error" id="aviso24" hidden>Faltan menos de 24 horas para tu reserva: si cancelas, este adelanto no se devuelve.</div>
+                <button type="button" class="boton" id="pagar">Pagar</button>
+                <p class="nota">Pagas en la página segura de Bold (QR / Bre-B, transferencia, tarjeta o PSE).</p>
+            </section>
+        </div>
+
+        <!-- 6. Confirmación (llega con ?codigo=) -->
+        <section id="confirmacion" hidden aria-live="polite"></section>
+    </main>
+
+    <script src="../assets/js/reservas-comun.js"></script>
+    <script src="../assets/js/reservas.js"></script>
+</body>
+</html>
