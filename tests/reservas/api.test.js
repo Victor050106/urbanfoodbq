@@ -236,7 +236,11 @@ test('días y horas públicas con validación de parámetros', () => {
   a.equal(x.ok, true); a.equal(x.dias.length, 31);
   a.equal(x.dias.find((z) => z.fecha === '2026-10-22').disponible, true);
   a.equal(x.dias.find((z) => z.fecha === '2026-10-24').disponible, false);
+  a.equal(x.espacio, 'VIP'); a.equal(x.reglas.adelanto, 50000);
   const h = c.manejar('horas', { sede: 'ELCARMEN', personas: '12', fecha: '2026-10-22' }, d);
+  // Los días disponibles traen las mismas horas que la consulta de horas; los demás, ninguna.
+  a.equal(JSON.stringify(x.dias.find((z) => z.fecha === '2026-10-22').horas), JSON.stringify(h.horas));
+  a.equal(JSON.stringify(x.dias.find((z) => z.fecha === '2026-10-24').horas), '[]');
   a.equal(h.ok, true); a.equal(h.espacio, 'VIP');
   a.equal(h.horas.find((z) => z.hora === '20:00').libre, true);
   c.manejar('crear', solicitudVIP(), d);

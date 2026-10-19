@@ -130,7 +130,12 @@ function accionDias(p, deps) {
   var grupo = errorDeGrupo(personas, cfg);
   if (grupo) return { ok: false, error: grupo, dias: [] };
   var reservas = deps.hoja.leerReservas({ sede: sede, desde: mes + '-01', hasta: mes + '-31' });
-  return { ok: true, dias: diasDelMes(sede, mes, personas, reservas, deps.ahora(), cfg, deps.hoja.leerBloqueos()) };
+  return {
+    ok: true,
+    espacio: espacioPara(sede, personas, cfg),
+    dias: diasDelMes(sede, mes, personas, reservas, deps.ahora(), cfg, deps.hoja.leerBloqueos()),
+    reglas: reglasPublicas(cfg)
+  };
 }
 
 function accionHoras(p, deps) {

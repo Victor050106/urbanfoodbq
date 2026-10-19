@@ -25,6 +25,37 @@
     };
     // Cada carga de red guarda su número; si el cliente ya cambió de opción, la respuesta vieja se descarta.
     var carga = { dias: 0, horas: 0 };
+    // Meses ya pedidos (sede|personas|mes -> promesa). El Apps Script tarda unos segundos en responder,
+    // así que se piden por adelantado mientras el cliente elige sede y personas, y traen las horas de
+    // cada día. Duran poco: los cupos cambian, y al crear la reserva el servidor vuelve a revisar todo.
+    var MESES_VIGENCIA_MS = 90000;
+    var meses = {};
+    var temporizadorPrecarga = 0;
+
+    function pedirMes(sede, personas, mes) {
+        var clave = sede + '|' + personas + '|' + mes;
+        var guardado = meses[clave];
+        if (guardado && Date.now() - guardado.en < MESES_VIGENCIA_MS) return guardado.promesa;
+        var promesa = apiGet({ accion: 'dias', sede: sede, mes: mes, personas: personas }).then(function (r) {
+            if (!r.ok) delete meses[clave]; // un error no se guarda: el próximo intento vuelve a preguntar
+            return r;
+        });
+        meses[clave] = { en: Date.now(), promesa: promesa };
+        return promesa;
+    }
+
+    function olvidarMeses() { meses = {}; }
+
+    // Pide el mes actual y el siguiente sin bloquear nada; se espera un momento por si sigue cambiando personas.
+    function precargarMeses() {
+        clearTimeout(temporizadorPrecarga);
+        if (estado.personas > PERSONAS_MAX_REGULAR) return;
+        temporizadorPrecarga = setTimeout(function () {
+            pedirMes(estado.sede, estado.personas, estado.mes).then(function () {
+                if (estado.mes < mesTope) pedirMes(estado.sede, estado.personas, sumarMeses(estado.mes, 1));
+            });
+        }, 400);
+    }
     // Adelanto, horas de cancelación y mínimo VIP: los de Config llegan con las horas; antes, los de respaldo.
     var reglas = combinarReglas();
 
@@ -111,6 +142,7 @@
         estado.sede = b.getAttribute('data-sede');
         estado.fecha = ''; estado.hora = '';
         pintarSedes(); pintarPersonas();
+        precargarMeses();
     });
     $('menos').addEventListener('click', function () { cambiarPersonas(-1); });
     $('mas').addEventListener('click', function () { cambiarPersonas(1); });
@@ -118,12 +150,14 @@
         estado.personas = Math.min(PERSONAS_TOPE_UI, Math.max(PERSONAS_MIN, estado.personas + delta));
         estado.fecha = ''; estado.hora = '';
         pintarPersonas();
+        precargarMeses();
     }
     $('a2').addEventListener('click', function () { irAPaso(2); });
 
     // ---------- Paso 2: calendario ----------
 
     var diasDelMes = {}; // fecha -> disponible
+    var horasDelMes = {}; // fecha -> [{ hora, libre }], llegan con los días
 
     function pintarCalendario(cargando) {
         $('mesNombre').textContent = nombreMes(estado.mes);
@@ -143,17 +177,24 @@
 
     function cargarDias() {
         var mia = ++carga.dias;
-        diasDelMes = {};
+        diasDelMes = {}; horasDelMes = {};
         pintarCalendario(true);
-        apiGet({ accion: 'dias', sede: estado.sede, mes: estado.mes, personas: estado.personas }).then(function (r) {
+        pedirMes(estado.sede, estado.personas, estado.mes).then(function (r) {
             if (mia !== carga.dias || estado.paso !== 2) return;
             if (!r.ok) {
                 if (r.error === 'GRUPO_GRANDE' || r.error === 'PERSONAS') { irAPaso(1); }
                 mostrarError(r.error);
                 return;
             }
-            r.dias.forEach(function (d) { diasDelMes[d.fecha] = d.disponible; });
+            r.dias.forEach(function (d) {
+                diasDelMes[d.fecha] = d.disponible;
+                if (d.horas) horasDelMes[d.fecha] = d.horas;
+            });
+            if (r.espacio) estado.espacio = r.espacio;
+            if (r.reglas) aplicarReglas(r.reglas);
             pintarCalendario(false);
+            // Deja listo el mes siguiente por si el cliente avanza con la flecha.
+            if (estado.mes < mesTope) pedirMes(estado.sede, estado.personas, sumarMeses(estado.mes, 1));
         });
     }
 
@@ -176,9 +217,22 @@
 
     // ---------- Paso 3: hora ----------
 
+    function pintarHoras(horas) {
+        var libres = horas.filter(function (h) { return h.libre; }).map(function (h) { return h.hora; });
+        if (libres.indexOf(estado.hora) === -1) estado.hora = '';
+        $('horas').innerHTML = horas.map(function (h) {
+            return '<button type="button" data-hora="' + h.hora + '"' + (h.libre ? '' : ' disabled') +
+                ' aria-pressed="' + (h.hora === estado.hora) + '">' + formatoHora(h.hora) +
+                (notaMadrugada(h.hora) ? '<small class="block text-xs text-white/60">(' + notaMadrugada(h.hora) + ')</small>' : '') + '</button>';
+        }).join('');
+        $('a4').disabled = !estado.hora;
+    }
+
     function cargarHoras() {
         var mia = ++carga.horas;
         $('tituloHoras').textContent = mayuscula(formatoFechaLarga(estado.fecha)) + ' · ' + estado.personas + ' personas';
+        // Lo normal: las horas llegaron con los días y se muestran sin esperar.
+        if (horasDelMes[estado.fecha]) { pintarPersonas(); pintarHoras(horasDelMes[estado.fecha]); return; }
         $('horas').innerHTML = '<p class="nota">Buscando horas…</p>';
         $('a4').disabled = true;
         apiGet({ accion: 'horas', sede: estado.sede, fecha: estado.fecha, personas: estado.personas }).then(function (r) {
@@ -187,14 +241,7 @@
             estado.espacio = r.espacio;
             aplicarReglas(r.reglas);
             pintarPersonas();
-            var libres = r.horas.filter(function (h) { return h.libre; }).map(function (h) { return h.hora; });
-            if (libres.indexOf(estado.hora) === -1) estado.hora = '';
-            $('horas').innerHTML = r.horas.map(function (h) {
-                return '<button type="button" data-hora="' + h.hora + '"' + (h.libre ? '' : ' disabled') +
-                    ' aria-pressed="' + (h.hora === estado.hora) + '">' + formatoHora(h.hora) +
-                    (notaMadrugada(h.hora) ? '<small class="block text-xs text-white/60">(' + notaMadrugada(h.hora) + ')</small>' : '') + '</button>';
-            }).join('');
-            $('a4').disabled = !estado.hora;
+            pintarHoras(r.horas);
         });
     }
 
@@ -303,7 +350,7 @@
             }
             boton.disabled = false;
             if (r.ok) { mostrarError('INTERNO'); return; }
-            if (r.error === 'SIN_CUPO') { irAPaso(3); mostrarError('SIN_CUPO'); return; }
+            if (r.error === 'SIN_CUPO') { olvidarMeses(); delete horasDelMes[estado.fecha]; irAPaso(3); mostrarError('SIN_CUPO'); return; }
             if (r.error === 'GRUPO_GRANDE' || r.error === 'PERSONAS') { irAPaso(1); }
             mostrarError(r.error);
         });
@@ -449,6 +496,7 @@
         if (codigo) { mostrarConfirmacion(codigo); return; }
         mostrarApp();
         irAPaso(1);
+        precargarMeses();
     }
 
     iniciar();

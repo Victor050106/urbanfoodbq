@@ -99,6 +99,22 @@ function filasConfigPorDefecto() {
   });
 }
 
+// Config y Bloqueos se leen en cada consulta pero casi nunca cambian: se guardan un minuto en la
+// caché del script para no leer la hoja cada vez. Un cambio en esas pestañas tarda hasta un minuto en verse.
+var SEGUNDOS_CACHE_HOJA = 60;
+
+function conCache(clave, leer) {
+  var cache = null;
+  try { cache = CacheService.getScriptCache(); } catch (e) { /* sin caché (pruebas): se lee directo */ }
+  if (cache) {
+    var guardado = cache.get(clave);
+    if (guardado) { try { return JSON.parse(guardado); } catch (e2) { /* dañado: se vuelve a leer */ } }
+  }
+  var valor = leer();
+  if (cache) { try { cache.put(clave, JSON.stringify(valor), SEGUNDOS_CACHE_HOJA); } catch (e3) { /* muy grande: no pasa nada */ } }
+  return valor;
+}
+
 function abrirHoja() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var hojaReservas = obtenerPestana(ss, 'Reservas', COLUMNAS_RESERVA);
@@ -132,8 +148,8 @@ function abrirHoja() {
   }
 
   return {
-    leerConfig: function () { return combinarConfig(datos(hojaConfig, 2)); },
-    leerBloqueos: function () { return datos(hojaBloqueos, COLUMNAS_BLOQUEO.length).map(filaABloqueo); },
+    leerConfig: function () { return conCache('config', function () { return combinarConfig(datos(hojaConfig, 2)); }); },
+    leerBloqueos: function () { return conCache('bloqueos', function () { return datos(hojaBloqueos, COLUMNAS_BLOQUEO.length).map(filaABloqueo); }); },
     leerReservas: function (filtro) { return filtrarReservas(todas(), filtro); },
     buscarPorCodigo: function (c) { return buscarPor('codigo', c); },
     buscarPorToken: function (t) { return buscarPor('token_cancelar', t); },

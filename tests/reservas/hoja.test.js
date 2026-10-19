@@ -72,3 +72,16 @@ test('filas a agregar cuando la hoja se llena', () => {
   a.equal(c.filasAAgregar(1001, 1000), 200);
   a.equal(c.filasAAgregar(2, 1), 200);
 });
+
+test('caché de Config y Bloqueos: lee la hoja una vez y sin CacheService lee directo', () => {
+  let lecturas = 0;
+  const leer = () => { lecturas++; return { adelanto: 50000, dias_reserva: [1, 2] }; };
+  a.equal(JSON.stringify(c.conCache('config', leer)), '{"adelanto":50000,"dias_reserva":[1,2]}');
+  a.equal(lecturas, 1);
+  const guardados = {};
+  c.CacheService = { getScriptCache: () => ({ get: (k) => guardados[k] || null, put: (k, v) => { guardados[k] = v; } }) };
+  c.conCache('config', leer); c.conCache('config', leer);
+  a.equal(lecturas, 2);
+  a.equal(JSON.stringify(c.conCache('config', leer)), '{"adelanto":50000,"dias_reserva":[1,2]}');
+  delete c.CacheService;
+});

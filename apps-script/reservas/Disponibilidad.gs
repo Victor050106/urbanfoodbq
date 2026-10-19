@@ -54,7 +54,9 @@ function diasDelMes(sede, mes, personas, reservas, ahoraMs, cfg, bloqueos) {
   for (var d = 1; d <= ultimo; d++) {
     var fecha = p[0] + '-' + pad2(p[1]) + '-' + pad2(d);
     var horas = horasDisponibles(sede, fecha, personas, reservas, ahoraMs, cfg, bloqueos);
-    dias.push({ fecha: fecha, disponible: horas.some(function (h) { return h.libre; }) });
+    var disponible = horas.some(function (h) { return h.libre; });
+    // Las horas van solo en los días disponibles: la página las muestra sin volver a preguntar.
+    dias.push({ fecha: fecha, disponible: disponible, horas: disponible ? horas : [] });
   }
   return dias;
 }
