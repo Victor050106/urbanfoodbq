@@ -16,7 +16,7 @@ test('payload del link', () => {
   a.equal(p.description, 'Reserva UF-ABC234 · El Carmen · 2026-10-22 20:00');
   a.equal(p.payer_email, 'laura@example.com');
   a.equal(p.callback_url, cfg.url_sitio + '/reservas/?codigo=UF-ABC234');
-  a.equal(p.expiration_date, ahora + 15 * 60e3); // confirmar unidad en sandbox (Task 6)
+  a.equal(p.expiration_date, (ahora + 15 * 60e3) * 1e6); // nanosegundos, confirmado en el sandbox
 });
 
 test('descripción del Hipódromo y truncado a 100', () => {

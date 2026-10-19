@@ -13,9 +13,9 @@ function armarLink(reserva, cfg, ahoraMs) {
     description: descripcion.slice(0, 100),
     payer_email: reserva.correo,
     callback_url: cfg.url_sitio + '/reservas/?codigo=' + reserva.codigo,
-    // Unidad por confirmar en el sandbox (Task 6): aquí milisegundos desde epoch.
-    // TODO sandbox: confirmar en Task 6 si Bold espera ms, segundos o nanosegundos y ajustar aquí y en bold.test.js.
-    expiration_date: ahoraMs + cfg.apartado_min * 60000
+    // Nanosegundos desde epoch: con milisegundos o segundos Bold responde 400 "expiration date must be
+    // greater than or equal to the current date" (probado en el sandbox el 19/10/2026).
+    expiration_date: (ahoraMs + cfg.apartado_min * 60000) * 1e6
   };
 }
 
@@ -41,6 +41,14 @@ function formaRespuesta(respuesta, estado) {
   });
 }
 
+// Solo el arreglo "errors" (o el texto, recortado): nunca el cuerpo completo, que puede traer el correo del pagador.
+function erroresBold(texto) {
+  var r;
+  try { r = JSON.parse(texto); } catch (e) { return String(texto || '').slice(0, 300); }
+  var errores = r && (r.errors || (r.payload && r.payload.errors));
+  return JSON.stringify(errores !== undefined ? errores : (r && r.message) || Object.keys(r || {})).slice(0, 500);
+}
+
 function clienteBold(llaveIdentidad) {
   function llamar(metodo, ruta, cuerpo) {
     var opciones = {
@@ -52,7 +60,10 @@ function clienteBold(llaveIdentidad) {
     var resp;
     try { resp = UrlFetchApp.fetch(BOLD_URL_BASE + ruta, opciones); } catch (e) { throw new Error('BOLD'); }
     var codigo = resp.getResponseCode();
-    if (codigo < 200 || codigo >= 300) throw new Error('BOLD');
+    if (codigo < 200 || codigo >= 300) {
+      console.error('Bold respondió ' + codigo + ' a ' + metodo.toUpperCase() + ' ' + ruta + ': ' + erroresBold(resp.getContentText()));
+      throw new Error('BOLD');
+    }
     try { return JSON.parse(resp.getContentText()); } catch (e2) { throw new Error('BOLD'); }
   }
   return {
