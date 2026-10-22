@@ -118,3 +118,7 @@ test('la página anticipa el mismo lugar que el servidor y dice la duración', (
   a.equal(c.maxPersonasReserva('HIPODROMO', r), 30);
   a.equal(c.textoDuracion(120), '2 horas'); a.equal(c.textoDuracion(60), '1 hora'); a.equal(c.textoDuracion(90), '90 minutos');
 });
+test('los mensajes de tamaño de grupo no traen números fijos', () => {
+  a.doesNotMatch(c.MENSAJES_ERROR.PERSONAS, /\d/);
+  a.doesNotMatch(c.MENSAJES_ERROR.GRUPO_GRANDE, /\d/);
+});

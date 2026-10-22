@@ -29,8 +29,9 @@ var MENSAJES_ERROR = {
   PARAMETROS: 'Faltan datos para continuar. Revisa el formulario.',
   ACCION: 'Algo salió mal de nuestro lado. Intenta de nuevo en un momento.',
   SEDE: 'Elige una sede.',
-  PERSONAS: 'El mínimo es de 2 personas.',
-  GRUPO_GRANDE: 'Para grupos de más de 20 personas escríbenos por WhatsApp.',
+  // Sin números: los límites salen de la hoja Config y cambian sin tocar el código.
+  PERSONAS: 'Ese grupo es muy pequeño para reservar en línea. Revisa el número de personas.',
+  GRUPO_GRANDE: 'Para un grupo de ese tamaño escríbenos por WhatsApp.',
   FECHA: 'Esa fecha no es válida. Elige otro día.',
   HORA: 'Esa hora no está disponible. Elige otra.',
   NOMBRE: 'Escribe tu nombre completo (entre 3 y 60 letras).',
