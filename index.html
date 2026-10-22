@@ -83,7 +83,6 @@
     <link rel="modulepreload" href="assets/js/nav.js">
     <link rel="modulepreload" href="assets/js/horario.js">
     <link rel="modulepreload" href="assets/js/sedes.js">
-    <link rel="modulepreload" href="assets/js/opiniones.js">
     <link rel="modulepreload" href="assets/js/novedades.js">
     <script type="application/ld+json">
     {
@@ -616,65 +615,39 @@
         </div>
     </section>
 
-    <!-- OPINIONES -->
+    <!-- OPINIONES: calificación de cada sede en Google. Las cifras se copian a mano de Google Maps
+         (última vez: 22/10/2026); actualizarlas de vez en cuando. Los enlaces abren la ficha de la sede
+         (cid de Google Maps), donde se leen las reseñas y se escribe una nueva. -->
     <section id="opiniones" class="py-24 bg-surface-container-low">
         <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
-            <div class="text-center mb-16">
+            <div class="text-center mb-12">
                 <span class="text-vibrant-orange font-body text-label-bold uppercase tracking-[0.2em] mb-4 block">Experiencias</span>
-                <h2 class="font-display text-headline-lg text-deep-black uppercase leading-none">Opiniones de Clientes</h2>
+                <h2 class="font-display text-headline-lg text-deep-black uppercase leading-none">Lo que dicen en Google</h2>
             </div>
-            <div id="reviewsGrid" class="grid md:grid-cols-3 gap-8 mb-12">
-            </div>
-            <div class="text-center">
-                <button id="openReviewModal" class="bg-deep-black text-white px-10 py-4 rounded-full font-display text-headline-md uppercase tracking-wider hover:bg-vibrant-orange transition-all shadow-hard active:translate-x-1 active:translate-y-1 active:shadow-none">
-                    Dejar un comentario
-                </button>
+            <div class="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
+                <article class="bg-white p-8 border border-deep-black/5 shadow-sm rounded-lg text-center flex flex-col items-center">
+                    <h3 class="font-display text-headline-md uppercase text-deep-black leading-none">El Carmen</h3>
+                    <p class="font-display text-display-lg-mobile text-deep-black leading-none mt-4">4,5</p>
+                    <div class="flex text-vibrant-orange mt-2" aria-hidden="true"><span class="material-symbols-outlined icon-fill">star</span><span class="material-symbols-outlined icon-fill">star</span><span class="material-symbols-outlined icon-fill">star</span><span class="material-symbols-outlined icon-fill">star</span><span class="material-symbols-outlined icon-fill">star_half</span></div>
+                    <p class="font-body text-body-md text-secondary mt-2"><span class="sr-only">4,5 de 5 estrellas, </span>117 reseñas en Google</p>
+                    <a href="https://www.google.com/maps?cid=10911055522337536008" target="_blank" rel="noopener" class="mt-6 bg-deep-black text-white px-8 py-3 rounded-full font-body text-label-bold uppercase tracking-wider inline-flex items-center gap-2 hover:bg-vibrant-orange transition-all">
+                        Ver y dejar reseñas
+                        <span class="material-symbols-outlined text-lg" aria-hidden="true">open_in_new</span>
+                    </a>
+                </article>
+                <article class="bg-white p-8 border border-deep-black/5 shadow-sm rounded-lg text-center flex flex-col items-center">
+                    <h3 class="font-display text-headline-md uppercase text-deep-black leading-none">Hipódromo</h3>
+                    <p class="font-display text-display-lg-mobile text-deep-black leading-none mt-4">4,0</p>
+                    <div class="flex text-vibrant-orange mt-2" aria-hidden="true"><span class="material-symbols-outlined icon-fill">star</span><span class="material-symbols-outlined icon-fill">star</span><span class="material-symbols-outlined icon-fill">star</span><span class="material-symbols-outlined icon-fill">star</span><span class="material-symbols-outlined">star</span></div>
+                    <p class="font-body text-body-md text-secondary mt-2"><span class="sr-only">4,0 de 5 estrellas, </span>10 reseñas en Google</p>
+                    <a href="https://www.google.com/maps?cid=8333721424828979766" target="_blank" rel="noopener" class="mt-6 bg-deep-black text-white px-8 py-3 rounded-full font-body text-label-bold uppercase tracking-wider inline-flex items-center gap-2 hover:bg-vibrant-orange transition-all">
+                        Ver y dejar reseñas
+                        <span class="material-symbols-outlined text-lg" aria-hidden="true">open_in_new</span>
+                    </a>
+                </article>
             </div>
         </div>
     </section>
-
-    <!-- COMMENT MODAL -->
-    <div id="reviewModal" class="modal-overlay fixed inset-0 z-[60] flex items-center justify-center p-4 bg-deep-black/80 hidden"
-         role="dialog" aria-modal="true" aria-labelledby="reviewModalTitle">
-        <div class="modal-panel bg-white max-w-md w-full rounded-lg overflow-x-hidden overflow-y-auto shadow-2xl relative max-h-[90svh]">
-            <button id="closeReviewModal" data-cerrar class="absolute top-3 right-3 w-11 h-11 inline-flex items-center justify-center text-deep-black hover:text-vibrant-orange" aria-label="Cerrar">
-                <span class="material-symbols-outlined">close</span>
-            </button>
-            <div class="p-8">
-                <h3 id="reviewModalTitle" class="font-display text-headline-md text-deep-black uppercase mb-6 text-center leading-none">Tu opinión nos importa</h3>
-                <form id="reviewForm" class="space-y-4">
-                    <!-- Campo trampa anti-bots: invisible para personas, los bots suelen rellenarlo. No borrar. -->
-                    <div class="honeypot" aria-hidden="true">
-                        <label for="website">Dejar en blanco</label>
-                        <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
-                    </div>
-                    <div>
-                        <label for="reviewName" class="block text-xs font-body text-label-bold uppercase mb-1 text-deep-black">Nombre</label>
-                        <input id="reviewName" name="name" required maxlength="60" autocomplete="name" class="w-full border-2 border-surface-container-highest rounded-lg p-3 focus:border-vibrant-orange outline-none transition-colors" placeholder="Tu nombre completo" type="text">
-                    </div>
-                    <fieldset>
-                        <legend class="block text-xs font-body text-label-bold uppercase mb-1 text-deep-black">Calificación</legend>
-                        <div class="flex gap-1 text-vibrant-orange" id="ratingStars" role="radiogroup" aria-label="Calificación en estrellas" data-rating="5">
-                            <button type="button" role="radio" aria-checked="false" aria-label="1 estrella"  data-star="1" class="w-11 h-11 inline-flex items-center justify-center rounded-lg cursor-pointer hover:bg-vibrant-orange/10 transition-colors"><span class="material-symbols-outlined pointer-events-none">star</span></button>
-                            <button type="button" role="radio" aria-checked="false" aria-label="2 estrellas" data-star="2" class="w-11 h-11 inline-flex items-center justify-center rounded-lg cursor-pointer hover:bg-vibrant-orange/10 transition-colors"><span class="material-symbols-outlined pointer-events-none">star</span></button>
-                            <button type="button" role="radio" aria-checked="false" aria-label="3 estrellas" data-star="3" class="w-11 h-11 inline-flex items-center justify-center rounded-lg cursor-pointer hover:bg-vibrant-orange/10 transition-colors"><span class="material-symbols-outlined pointer-events-none">star</span></button>
-                            <button type="button" role="radio" aria-checked="false" aria-label="4 estrellas" data-star="4" class="w-11 h-11 inline-flex items-center justify-center rounded-lg cursor-pointer hover:bg-vibrant-orange/10 transition-colors"><span class="material-symbols-outlined pointer-events-none">star</span></button>
-                            <button type="button" role="radio" aria-checked="true"  aria-label="5 estrellas" data-star="5" class="w-11 h-11 inline-flex items-center justify-center rounded-lg cursor-pointer hover:bg-vibrant-orange/10 transition-colors"><span class="material-symbols-outlined pointer-events-none">star</span></button>
-                        </div>
-                    </fieldset>
-                    <div>
-                        <label for="reviewComment" class="block text-xs font-body text-label-bold uppercase mb-1 text-deep-black">Comentario</label>
-                        <textarea id="reviewComment" name="comment" required maxlength="500" class="w-full border-2 border-surface-container-highest rounded-lg p-3 focus:border-vibrant-orange outline-none transition-colors" placeholder="¿Qué te pareció tu experiencia?" rows="4"></textarea>
-                    </div>
-                    <p id="reviewError" class="hidden text-sm font-body text-red-700 bg-red-50 border border-red-200 rounded-lg p-3" role="alert"></p>
-                    <button class="w-full bg-vibrant-orange text-white py-4 rounded-full font-display text-headline-md uppercase tracking-wider hover:bg-deep-black transition-all disabled:opacity-60 disabled:cursor-not-allowed" type="submit">
-                        Enviar Comentario
-                    </button>
-                    <p class="text-xs text-secondary text-center pt-1">Tu comentario se publicará luego de una breve revisión.</p>
-                </form>
-            </div>
-        </div>
-    </div>
 
     <!-- SELECTOR DE SEDE -->
     <div id="sedeModal" class="modal-overlay fixed inset-0 z-[60] flex items-center justify-center p-4 bg-deep-black/80 hidden"

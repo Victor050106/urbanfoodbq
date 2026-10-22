@@ -20,14 +20,6 @@ body {
     font-variation-settings: 'FILL' 1;
 }
 
-/* Campo trampa anti-bots: fuera de pantalla, no display:none, porque algunos
-   bots se saltan los campos ocultos. */
-.honeypot {
-    position: absolute;
-    left: -9999px;
-    top: -9999px;
-}
-
 /* Enlaces de texto sueltos: el área táctil llega a 44 px sin mover el diseño. */
 .tap {
     position: relative;

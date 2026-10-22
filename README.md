@@ -38,10 +38,10 @@ Urban Food/
 │   ├── js/               # Módulos ES nativos, uno por sección (sin build)
 │   │   ├── main.js       # Arranque: inicia cada sección y hace la única petición a la hoja
 │   │   ├── config.js     # Lo que se cambia a mano: horario, SEDES, URL del Apps Script
-│   │   ├── api.js        # getJson / postJson contra el Apps Script
+│   │   ├── api.js        # getJson contra el Apps Script de novedades
 │   │   ├── modal.js      # Abrir, cerrar, Escape y foco atrapado, compartido por los modales
 │   │   ├── fechas.js · util.js
-│   │   ├── horario.js · nav.js · sedes.js · opiniones.js · novedades.js
+│   │   ├── horario.js · nav.js · sedes.js · novedades.js
 │   │   └── reservas.js · reservas-comun.js · panel.js · cancelar.js  # Páginas de /reservas/ (scripts clásicos)
 │   ├── img/
 │   │   ├── hero-pattern.webp # Textura de doodles del hero (~128 KB)
@@ -57,7 +57,7 @@ Urban Food/
 │   └── panel/            # Panel de la cajera (no se indexa)
 ├── privacidad/           # Política de tratamiento de datos personales
 ├── apps-script/
-│   ├── Code.gs           # Backend de comentarios y novedades (Google Apps Script)
+│   ├── Code.gs           # Backend de novedades (Google Apps Script)
 │   └── reservas/         # Backend de reservas (otro proyecto, hoja "Urban Food - Reservas")
 ├── tests/
 │   ├── code-gs.test.js · e2e.js
@@ -112,41 +112,28 @@ Urban Food/
   retirarse sola. Admite video con carátula: el archivo solo se descarga al pulsar play
   (ver `docs/PASOS-NOVEDADES.md`)
 - **Reservas en línea** con adelanto pagado en Bold (ver la sección [Reservas](#reservas))
-- **Sección de opiniones** con formulario de comentarios y moderación previa (ver más abajo)
-- **Accesibilidad**: etiquetas asociadas a sus campos, calificación por estrellas manejable
-  con teclado (patrón `radiogroup` con flechas), modal con foco atrapado y devuelto, y
+- **Opiniones de Google**: una tarjeta por sede con su calificación y número de reseñas, y un
+  botón a su ficha de Google Maps para leerlas o dejar una nueva (ver más abajo)
+- **Accesibilidad**: etiquetas asociadas a sus campos, modal con foco atrapado y devuelto, y
   objetivos táctiles de 44 px
 
-## Comentarios y moderación
+## Opiniones
 
-Los comentarios que dejan los clientes se guardan en una hoja de Google Sheets a través de
-un Google Apps Script (ver `apps-script/Code.gs`). El mismo script sirve las novedades desde
-una segunda pestaña de esa hoja, y la página lo consulta una sola vez para las dos cosas.
+La sección `#opiniones` de `index.html` es HTML fijo: no consulta ninguna API, así que carga
+al instante y no tiene costo ni llaves. Las estrellas y el número de reseñas de cada sede
+se copian a mano desde Google Maps (fecha de la última copia en el comentario de la sección);
+conviene actualizarlos de vez en cuando. Los botones abren la ficha de cada sede por su `cid`
+de Google Maps.
 
-**Ningún comentario se publica automáticamente.** Cada comentario nuevo llega a la hoja con
-la columna `approved` sin marcar. Para que aparezca en la página:
+> Se descartó traer las reseñas con la API de Places: cuesta US$25 por cada 1.000 consultas
+> (1.000 gratis al mes) y Google no permite guardar las reseñas en caché, así que cada visita
+> pagaría una consulta.
 
-1. Abre la hoja de cálculo de comentarios en Google Drive.
-2. Busca la fila del comentario nuevo (los más recientes quedan al final).
-3. Marca la casilla de la columna **approved** de esa fila.
+## Novedades
 
-El comentario aparecerá en la web la próxima vez que alguien cargue la página. Si un
-comentario es spam u ofensivo, simplemente déjalo sin marcar (o borra la fila).
-
-### Protecciones incluidas
-
-- **Moderación previa obligatoria** — nada se publica sin aprobación manual.
-- **Campo trampa anti-bots (honeypot)** — un campo oculto en el formulario que las personas
-  no ven pero los bots suelen rellenar. Si llega lleno, el envío se descarta en silencio,
-  tanto en el navegador como en el servidor.
-- **Escapado de HTML** — el nombre y el comentario se escapan antes de mostrarse, para que
-  nadie pueda inyectar código en la página.
-- **Límites de longitud** — nombre máx. 60 caracteres, comentario máx. 500.
-- **Sin fórmulas en la hoja** — si un texto empieza por `=`, `+`, `-` o `@`, se guarda como
-  texto y no como fórmula de Sheets.
-
-> Después de modificar `apps-script/Code.gs` hay que volver a desplegar el script:
-> Implementar > Administrar implementaciones > (lápiz) > Versión: Nueva versión > Implementar.
+`apps-script/Code.gs` lee la pestaña "Novedades" de la hoja y la página la consulta al
+cargar. Después de modificar `Code.gs` hay que volver a desplegar el script:
+Implementar > Administrar implementaciones > (lápiz) > Versión: Nueva versión > Implementar.
 
 ## Reservas
 
@@ -196,12 +183,11 @@ npm run test:e2e   # la página completa; necesita el servidor corriendo en otra
 ```
 
 `tests/code-gs.test.js` ejecuta `apps-script/Code.gs` contra una hoja falsa en memoria:
-opiniones con fórmulas y que ya no acepte reservas. `tests/reservas/` prueba el backend de las
+qué novedades salen y que el script ya no acepte escrituras. `tests/reservas/` prueba el backend de las
 reservas en línea (cupos, estados, Bold, correos, hoja) con servicios de Google falsos.
 `tests/e2e.js` abre la página en Microsoft Edge (escritorio y celular) y revisa horario,
-selector de sede, modales, opiniones, enlaces a reservas y áreas táctiles. Los envíos
-de opiniones se simulan: nunca escriben en la hoja real. Las capturas quedan en
-`tests/shots/`.
+selector de sede, modales, tarjetas de Google, enlaces a reservas y áreas táctiles. Las capturas
+quedan en `tests/shots/`.
 
 ## Información de contacto del restaurante
 

@@ -46,11 +46,10 @@ async function setup(browser, viewport) {
   let data = null;
   try { data = r && await r.json(); } catch {}
   check('API hoja responde', !!data, r ? `status ${r.status()}, ${t1 - t0} ms desde inicio` : 'sin respuesta');
-  if (data) check('API trae reviews/novedades', Array.isArray(data.reviews) && Array.isArray(data.novedades),
-    `reviews=${data.reviews?.length} novedades=${data.novedades?.length}`);
+  if (data) check('API trae novedades', Array.isArray(data.novedades), `novedades=${data.novedades?.length}`);
   await p.waitForTimeout(500);
-  const reviewCards = await p.locator('#reviewsGrid article').count();
-  check('opiniones pintadas', data ? reviewCards === Math.min(6, data.reviews.length) : true, `${reviewCards} tarjetas`);
+  const fichas = await p.locator('#opiniones a[href^="https://www.google.com/maps?cid="]').count();
+  check('opiniones: una tarjeta de Google por sede', fichas === 2, `${fichas} enlaces`);
   check('novedades visible si hay', data ? (await p.locator('#novedades').isVisible()) === (data.novedades.length > 0) : true);
   check('reservas visible', await p.locator('#reservas').isVisible());
   check('nav con enlace Reservar', (await p.locator('[data-nav-links] a[href="reservas/"]').count()) === 2);
@@ -82,23 +81,7 @@ async function setup(browser, viewport) {
   await p.locator('#sedeModal').click({ position: { x: 5, y: 5 } });
   check('clic en fondo cierra selector', !(await p.locator('#sedeModal').isVisible()));
 
-  // Opiniones
-  await p.locator('#openReviewModal').click();
-  check('modal opiniones abre con foco en nombre', await p.evaluate(() => document.activeElement.id === 'reviewName'));
-  await p.locator('#reviewForm button[type=submit]').click();
-  const reviewErr = await p.locator('#reviewName').evaluate(e => e.validationMessage);
-  check('opiniones: valida vacio (required nativo)', reviewErr.length > 0, reviewErr);
-  await p.locator('[data-star="5"]').focus();
-  await p.keyboard.press('ArrowLeft'); await p.keyboard.press('ArrowLeft');
-  check('estrellas con teclado', (await p.locator('#ratingStars').getAttribute('data-rating')) === '3');
-  await p.fill('#reviewName', 'Prueba E2E');
-  await p.fill('#reviewComment', 'Comentario de prueba (mock, no llega a la hoja)');
-  await p.locator('#reviewForm button[type=submit]').click();
-  await p.waitForTimeout(500);
-  check('opiniones: envio mock -> pendiente visible y modal cerrado',
-    !(await p.locator('#reviewModal').isVisible()) && (await p.locator('#reviewsGrid').innerText()).includes('Pendiente de aprobación'));
-
-  check('POSTs interceptados (no tocaron la hoja)', d.posts.length === 1, d.posts.map(x => x.slice(0, 80)).join(' || '));
+  check('la portada no hace POSTs', d.posts.length === 0, d.posts.map(x => x.slice(0, 80)).join(' || '));
 
   await p.screenshot({ path: out + 'desktop-full.png', fullPage: true });
 

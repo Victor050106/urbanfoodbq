@@ -9,17 +9,3 @@ export async function getJson(query = '') {
         return null;
     }
 }
-
-export async function postJson(body) {
-    if (!SHEET_API_URL) return null;
-    try {
-        const res = await fetch(SHEET_API_URL, {
-            method: 'POST',
-            // text/plain evita preflight CORS con Apps Script
-            body: JSON.stringify(body)
-        });
-        return res.ok ? await res.json() : null;
-    } catch {
-        return null;
-    }
-}

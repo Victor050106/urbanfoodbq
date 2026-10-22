@@ -26,6 +26,6 @@ export const SEDES = {
 };
 
 // Web app de Google Apps Script (ver apps-script/Code.gs). De aquí salen las
-// opiniones aprobadas y las novedades vigentes. Las reservas usan otro Apps Script
+// novedades vigentes. Las reservas usan otro Apps Script
 // (apps-script/reservas/), con su URL en assets/js/reservas-comun.js.
 export const SHEET_API_URL = 'https://script.google.com/macros/s/AKfycbxbmTJiBV-pWqsm_qhVen_fDoe3rDWV-iuq2ccQZrf7zDI3E5XtT0rFDhOVpEd9BcKlTw/exec';
