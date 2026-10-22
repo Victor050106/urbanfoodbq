@@ -165,22 +165,40 @@ function apiBase() { return modoLocal() ? '/api' : RESERVAS_API_URL; }
 
 function apiDisponible() { return apiBase() !== ''; }
 
+// Apps Script a veces tarda medio minuto en entregar una respuesta que el script resolvió en 2 s
+// (medido el 22/10/2026). Sin límite la página se quedaba cargando para siempre.
+// Las escrituras esperan más: una respuesta tardía es mejor que un error cuando el cambio sí se hizo.
+var API_ESPERA_LECTURA_MS = 20000;
+var API_ESPERA_ESCRITURA_MS = 45000;
+
+function pedirApi(url, opciones, esperaMs) {
+  var control = typeof AbortController === 'function' ? new AbortController() : null;
+  var reloj = control ? setTimeout(function () { control.abort(); }, esperaMs) : null;
+  if (control) opciones.signal = control.signal;
+  return fetch(url, opciones).then(function (r) { return r.json(); })
+    .catch(function () { return { ok: false, error: 'RED' }; })
+    .then(function (x) { clearTimeout(reloj); return x; });
+}
+
+// Las lecturas no cambian nada: si la primera se pierde, se repite una vez.
 function apiGet(params) {
   var q = Object.keys(params).map(function (k) {
     return encodeURIComponent(k) + '=' + encodeURIComponent(params[k]);
   }).join('&');
-  return fetch(apiBase() + '?' + q).then(function (r) { return r.json(); })
-    .catch(function () { return { ok: false, error: 'RED' }; });
+  var url = apiBase() + '?' + q;
+  return pedirApi(url, {}, API_ESPERA_LECTURA_MS).then(function (r) {
+    return r.error === 'RED' ? pedirApi(url, {}, API_ESPERA_LECTURA_MS) : r;
+  });
 }
 
 // text/plain evita el preflight CORS que Apps Script no contesta.
+// Sin reintento: una escritura repetida podría hacerse dos veces. Quien llama decide si vuelve a leer.
 function apiPost(cuerpo) {
-  return fetch(apiBase(), {
+  return pedirApi(apiBase(), {
     method: 'POST',
     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
     body: JSON.stringify(cuerpo)
-  }).then(function (r) { return r.json(); })
-    .catch(function () { return { ok: false, error: 'RED' }; });
+  }, API_ESPERA_ESCRITURA_MS);
 }
 
 // ---- Política y tiempos ----

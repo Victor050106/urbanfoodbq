@@ -65,7 +65,7 @@
         show('login', false); show('vista', true); show('salir', true);
         $('tituloSede').textContent = SEDES_RESERVA[estado.sede].nombre;
         $('tituloFecha').textContent = formatoFechaLarga(fechaServicioBogota(Date.now()));
-        $('lista').innerHTML = '<p class="nota">Cargando…</p>';
+        $('lista').innerHTML = '<p class="cargando">Cargando…</p>';
         refrescar();
         detener();
         estado.temporizador = setInterval(refrescar, REFRESCO_MS);
@@ -179,7 +179,7 @@
         $('tabHoy').setAttribute('aria-pressed', String(v === 'hoy'));
         $('tabProx').setAttribute('aria-pressed', String(v === 'prox'));
         estado.reservas = [];
-        $('lista').innerHTML = '<p class="nota">Cargando…</p>';
+        $('lista').innerHTML = '<p class="cargando">Cargando…</p>';
         refrescar();
     }
 

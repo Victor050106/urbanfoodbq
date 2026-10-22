@@ -233,7 +233,7 @@
         $('tituloHoras').textContent = mayuscula(formatoFechaLarga(estado.fecha)) + ' · ' + estado.personas + ' personas';
         // Lo normal: las horas llegaron con los días y se muestran sin esperar.
         if (horasDelMes[estado.fecha]) { pintarPersonas(); pintarHoras(horasDelMes[estado.fecha]); return; }
-        $('horas').innerHTML = '<p class="nota">Buscando horas…</p>';
+        $('horas').innerHTML = '<p class="cargando">Buscando horas…</p>';
         $('a4').disabled = true;
         apiGet({ accion: 'horas', sede: estado.sede, fecha: estado.fecha, personas: estado.personas }).then(function (r) {
             if (mia !== carga.horas || estado.paso !== 3) return;
@@ -449,7 +449,7 @@
                 return;
             }
             vistaConfirmacion('<h1 class="titulo text-3xl mt-4">Estamos confirmando tu pago…</h1>' +
-                '<p class="nota">No cierres esta página. Puede tardar unos segundos.</p>');
+                '<p class="cargando">No cierres esta página. Puede tardar unos segundos.</p>');
             setTimeout(consultar, CONSULTA_CADA_MS);
         }
 
@@ -474,7 +474,8 @@
         }
 
         $('app').hidden = true;
-        vistaConfirmacion('<h1 class="titulo text-3xl mt-4">Estamos confirmando tu pago…</h1>');
+        vistaConfirmacion('<h1 class="titulo text-3xl mt-4">Estamos confirmando tu pago…</h1>' +
+            '<p class="cargando">No cierres esta página. Puede tardar unos segundos.</p>');
         consultar();
     }
 

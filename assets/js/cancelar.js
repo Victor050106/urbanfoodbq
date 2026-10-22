@@ -60,38 +60,48 @@
         b.disabled = true; $('volver').disabled = true;
         b.textContent = 'Cancelando…';
         apiPost({ accion: 'cancelar', t: token }).then(function (r) {
-            if (r.ok) {
-                // El estado final sale de la respuesta, no de lo que se mostró antes.
-                mostrar('<div class="icono" style="background:#1ABC9C">&#10003;</div><h1 class="titulo text-3xl text-center">Reserva cancelada</h1>' +
-                    '<div class="tarjeta mt-3">' + escapeHtml(textoDevolucion(r.conDevolucion)) + ' Te enviamos un correo con el detalle.</div>' +
-                    '<a class="boton boton-sec" href="../">Hacer otra reserva</a>');
-                return;
-            }
-            // Cambió mientras decidía (ya cancelada, ya pasó): se vuelve a leer para mostrar el estado real.
-            if (r.error === 'NO_CANCELABLE' || r.error === 'NO_ENCONTRADA') { cargar(); return; }
-            b.disabled = false; $('volver').disabled = false;
-            b.textContent = 'Sí, cancelar mi reserva';
-            var e = $('error');
-            e.textContent = MENSAJES_ERROR[r.error] || MENSAJES_ERROR.INTERNO;
-            e.hidden = false;
+            // El estado final sale de la respuesta, no de lo que se mostró antes.
+            if (r.ok) { cancelada(r.conDevolucion); return; }
+            // La respuesta se puede perder aunque la cancelación sí se hizo (pasó el 22/10/2026):
+            // antes de mostrar un error se vuelve a leer la reserva.
+            apiGet({ accion: 'cancelacion', t: token }).then(function (d) {
+                if (d.ok && esCancelada(d.reserva)) { reglas = combinarReglas(d.reglas); cancelada(d.reserva.estado === 'CANCELADA_CON_DEVOLUCION'); return; }
+                // Cambió mientras decidía (ya pasó, ya no existe): se muestra el estado real.
+                if ((d.ok && !d.puede) || d.error === 'NO_ENCONTRADA') { pintar(d); return; }
+                b.disabled = false; $('volver').disabled = false;
+                b.textContent = 'Sí, cancelar mi reserva';
+                var e = $('error');
+                e.textContent = MENSAJES_ERROR[r.error] || MENSAJES_ERROR.INTERNO;
+                e.hidden = false;
+            });
         });
+    }
+
+    function esCancelada(r) { return String(r.estado).indexOf('CANCELADA') === 0; }
+
+    function cancelada(conDevolucion) {
+        mostrar('<div class="icono" style="background:#1ABC9C">&#10003;</div><h1 class="titulo text-3xl text-center">Reserva cancelada</h1>' +
+            '<div class="tarjeta mt-3">' + escapeHtml(textoDevolucion(conDevolucion)) + ' Te enviamos un correo con el detalle.</div>' +
+            '<a class="boton boton-sec" href="../">Hacer otra reserva</a>');
     }
 
     function cargar() {
         if (!token) { aviso('Enlace no válido', 'Este enlace no es válido. Usa el botón del correo de tu reserva.'); return; }
-        apiGet({ accion: 'cancelacion', t: token }).then(function (d) {
-            if (!d.ok) {
-                if (d.error === 'NO_ENCONTRADA' || d.error === 'PARAMETROS') aviso('Enlace no válido', 'No encontramos esa reserva. Revisa que abriste el enlace completo del correo.');
-                else aviso('No pudimos cargar tu reserva', MENSAJES_ERROR[d.error] || MENSAJES_ERROR.INTERNO);
-                return;
-            }
-            reglas = combinarReglas(d.reglas);
-            var r = d.reserva;
-            if (d.puede) { paso1(d); return; }
-            if (String(r.estado).indexOf('CANCELADA') === 0) { aviso('Esta reserva ya estaba cancelada', 'Ya cancelaste la reserva ' + r.codigo + '. No tienes que hacer nada más.'); return; }
-            if (r.estado === 'CONFIRMADA' || r.estado === 'LLEGO' || r.estado === 'NO_LLEGO') { aviso('Esta reserva ya pasó', 'La hora de la reserva ' + r.codigo + ' ya pasó, por eso no se puede cancelar aquí.', r.sede); return; }
-            aviso('Esta reserva no se puede cancelar', 'La reserva ' + r.codigo + ' no está activa. Si tienes dudas, escríbenos por WhatsApp.', r.sede);
-        });
+        apiGet({ accion: 'cancelacion', t: token }).then(pintar);
+    }
+
+    function pintar(d) {
+        if (!d.ok) {
+            if (d.error === 'NO_ENCONTRADA' || d.error === 'PARAMETROS') aviso('Enlace no válido', 'No encontramos esa reserva. Revisa que abriste el enlace completo del correo.');
+            else aviso('No pudimos cargar tu reserva', MENSAJES_ERROR[d.error] || MENSAJES_ERROR.INTERNO);
+            return;
+        }
+        reglas = combinarReglas(d.reglas);
+        var r = d.reserva;
+        if (d.puede) { paso1(d); return; }
+        if (esCancelada(r)) { aviso('Esta reserva ya estaba cancelada', 'Ya cancelaste la reserva ' + r.codigo + '. No tienes que hacer nada más.'); return; }
+        if (r.estado === 'CONFIRMADA' || r.estado === 'LLEGO' || r.estado === 'NO_LLEGO') { aviso('Esta reserva ya pasó', 'La hora de la reserva ' + r.codigo + ' ya pasó, por eso no se puede cancelar aquí.', r.sede); return; }
+        aviso('Esta reserva no se puede cancelar', 'La reserva ' + r.codigo + ' no está activa. Si tienes dudas, escríbenos por WhatsApp.', r.sede);
     }
 
     if (!apiDisponible()) {

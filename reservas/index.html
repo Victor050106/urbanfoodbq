@@ -116,10 +116,11 @@
         /* Los títulos reciben el foco por código (lectores de pantalla); no hace falta marcarlos. */
         h1[tabindex="-1"]:focus, h2[tabindex="-1"]:focus { outline: none; }
     </style>
+    <link rel="stylesheet" href="../assets/css/reservas.css">
 </head>
 <body class="font-body">
     <header class="border-b border-white/10 bg-deep-black">
-        <div class="max-w-xl mx-auto px-4 py-3 flex items-center justify-between">
+        <div class="max-w-xl lg:max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
             <a href="../" class="flex items-center gap-3">
                 <img src="../assets/brand/logor.webp" alt="Urban Food" width="227" height="128" class="h-10 w-auto rounded">
                 <span class="titulo text-2xl text-vibrant-orange">URBAN FOOD <small class="text-sm text-white/50 font-body tracking-normal">Reservas</small></span>
@@ -128,7 +129,7 @@
         </div>
     </header>
 
-    <main class="max-w-xl mx-auto px-4 pt-4 pb-16">
+    <main class="marco max-w-xl mx-auto px-4 pt-4 pb-16">
         <!-- Sin API configurada: aviso y WhatsApp de cada sede -->
         <section id="pronto" hidden>
             <h1 class="titulo text-3xl mt-4">Reservas en línea</h1>
