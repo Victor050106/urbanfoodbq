@@ -214,19 +214,17 @@ Cada sede atiende su propio teléfono, su propio correo y su propia carta.
 | Dato | Sede El Carmen | Sede Hipódromo |
 |------|----------------|----------------|
 | Dirección | Calle 53D # 19-06, Barranquilla | Cra. 29 # 26-04, Soledad, Atlántico |
-| Teléfono / WhatsApp | +57 312 755 7694 | ⚠️ +57 300 000 0000 (provisional) |
-| Correo | urbanfoodbq@gmail.com | ⚠️ hipodromo@urbanfoodbq.com (provisional) |
+| Teléfono / WhatsApp | +57 312 755 7694 | +57 322 607 0697 |
+| Correo | urbanfoodbq@gmail.com | admihipsol@gmail.com |
 | Pedidos | [menu.fu.do/urbanfoodbq](https://menu.fu.do/urbanfoodbq) | [menu.fu.do/urbanfoodsl](https://menu.fu.do/urbanfoodsl) |
 
-> ⚠️ **El teléfono y el correo de Hipódromo son de relleno**, a la espera de los reales.
-> El número `+57 300 000 0000` no corresponde a ninguna línea activa, justamente para que
-> nadie termine llamando a un desconocido. Cuando lleguen los datos verdaderos hay que
-> cambiarlos en cuatro sitios (los cuatro están marcados con `TODO`):
+> Si cambia el teléfono o el correo de una sede, hay que cambiarlo en cinco sitios:
 >
 > 1. `index.html` — ficha de la sede en la sección **Sedes** (ahí solo va el teléfono)
 > 2. `index.html` — ficha de la sede en el **pie de página**
 > 3. `index.html` — bloque **JSON-LD** de la cabecera
 > 4. `assets/js/config.js` — objeto `SEDES` (de ahí sale el enlace de WhatsApp del selector)
+> 5. `assets/js/reservas-comun.js` — objeto `SEDES_RESERVA` (WhatsApp de las páginas de reservas)
 
 ## Licencia
 

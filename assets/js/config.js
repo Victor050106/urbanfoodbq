@@ -21,9 +21,7 @@ export const SEDES = {
     hipodromo: {
         nombre: 'Hipódromo',
         order: 'https://menu.fu.do/urbanfoodsl',
-        // TODO: numero provisional. Reemplazar por el real de Hipodromo aqui y
-        // en index.html (ficha de la sede, pie de pagina y JSON-LD).
-        phone: '573000000000'
+        phone: '573226070697'
     }
 };
 

@@ -8,7 +8,6 @@ var RESERVAS_API_URL = 'https://script.google.com/macros/s/AKfycbxivUUZIYuM9FJ0T
 var TZ_RESERVAS = 'America/Bogota';
 
 // Mismos datos que SEDES en assets/js/config.js.
-// TODO: el WhatsApp de Hipódromo es provisional; cambiarlo aquí y en config.js a la vez.
 var SEDES_RESERVA = {
   ELCARMEN: {
     nombre: 'El Carmen',
@@ -20,7 +19,7 @@ var SEDES_RESERVA = {
     nombre: 'Hipódromo',
     direccion: 'Cra. 29 # 26-04, Soledad, Atlántico',
     mapa: 'https://www.google.com/maps?q=Cra.+29+%23+26-04,+Soledad,+Atl%C3%A1ntico',
-    whatsapp: '573000000000'
+    whatsapp: '573226070697'
   }
 };
 
