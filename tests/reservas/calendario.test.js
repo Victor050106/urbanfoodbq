@@ -13,21 +13,21 @@ test('00:00 es madrugada de la misma fecha de servicio', () => {
   a.equal(c.minutosAHora(1440), '00:00');
   a.equal(c.instanteMs('2026-10-23', '00:00'), ms('2026-10-24T05:00:00Z'));
 });
-test('horas de mesa lun-jue: 16:00 a 23:30', () => {
-  const h = c.horasDelDia('2026-10-22', 'MESA', cfg);
+test('horas lun-jue: 16:00 a 23:30', () => {
+  const h = c.horasDelDia('2026-10-22', cfg);
   a.equal(h[0], '16:00'); a.equal(h.at(-1), '23:30'); a.equal(h.length, 16);
 });
-test('viernes mesa termina 00:00, VIP termina 22:00; lun VIP termina 21:30', () => {
-  a.equal(c.horasDelDia('2026-10-23', 'MESA', cfg).at(-1), '00:00');
-  a.equal(c.horasDelDia('2026-10-23', 'VIP', cfg).at(-1), '22:00');
-  a.equal(c.horasDelDia('2026-10-19', 'VIP', cfg).at(-1), '21:30');
+test('la última hora es 1 h antes del cierre: viernes 00:00, sábado 01:00', () => {
+  a.equal(c.horasDelDia('2026-10-23', cfg).at(-1), '00:00');
+  a.equal(c.horasDelDia('2026-10-24', cfg).at(-1), '01:00');
 });
 test('fechas habilitadas', () => {
   const ahora = ms('2026-10-17T17:00:00Z');
-  a.equal(c.fechaHabilitada('2026-10-23', 'ELCARMEN', ahora, cfg, []), true);   // viernes
+  a.equal(c.fechaHabilitada('2026-10-22', 'ELCARMEN', ahora, cfg, []), true);   // jueves
+  a.equal(c.fechaHabilitada('2026-10-23', 'ELCARMEN', ahora, cfg, []), false);  // viernes
   a.equal(c.fechaHabilitada('2026-10-24', 'ELCARMEN', ahora, cfg, []), false);  // sábado
   a.equal(c.fechaHabilitada('2026-10-16', 'ELCARMEN', ahora, cfg, []), false);  // pasado
-  a.equal(c.fechaHabilitada('2027-01-15', 'ELCARMEN', ahora, cfg, []), true);   // < 3 meses
+  a.equal(c.fechaHabilitada('2027-01-14', 'ELCARMEN', ahora, cfg, []), true);   // < 3 meses (jueves)
   a.equal(c.fechaHabilitada('2027-01-18', 'ELCARMEN', ahora, cfg, []), false);  // > 3 meses
   a.equal(c.fechaHabilitada('2026-10-24', 'HIPODROMO', ahora, cfg,
     [{ fecha: '2026-10-24', sede: 'HIPODROMO', tipo: 'ABRIR' }]), true);

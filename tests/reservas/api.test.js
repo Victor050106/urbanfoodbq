@@ -14,12 +14,12 @@ c.console = { log() {}, warn() {}, error: (...x) => registrados.push(x.join(' ')
 
 function solicitud(sobre) {
   return Object.assign({
-    sede: 'ELCARMEN', personas: 4, fecha: '2026-10-22', hora: '20:00', nombre: 'Laura Gómez',
+    sede: 'ELCARMEN', personas: 8, fecha: '2026-10-22', hora: '20:00', nombre: 'Laura Gómez',
     tipo_doc: 'CC', documento: '1.234.567.890', correo: 'laura@example.com', celular: '300 123 4567',
     comentario: '', acepta_datos: true, acepta_politica: true, website: ''
   }, sobre);
 }
-const solicitudVIP = (sobre) => solicitud(Object.assign({ personas: 12 }, sobre));
+const solicitudGrande = (sobre) => solicitud(Object.assign({ personas: 12 }, sobre));
 const fila = (d, codigo) => d.hoja.reservas.find((r) => r.codigo === codigo);
 
 function confirmada(d, sobre) {
@@ -31,11 +31,11 @@ function confirmada(d, sobre) {
 
 test('crear aparta cupo y devuelve el link de Bold', () => {
   const d = falsos();
-  const x = c.manejar('crear', solicitudVIP(), d);
+  const x = c.manejar('crear', solicitudGrande(), d);
   a.equal(x.ok, true); a.match(x.codigo, /^UF-/); a.equal(x.url_pago, 'https://checkout.bold.co/falso');
   a.equal(d.hoja.reservas[0].estado, 'PENDIENTE_PAGO');
   const r = d.hoja.reservas[0];
-  a.equal(r.espacio, 'VIP'); a.equal(r.documento, '1234567890'); a.equal(r.celular, '3001234567');
+  a.equal(r.espacio, 'MESA'); a.equal(r.documento, '1234567890'); a.equal(r.celular, '3001234567');
   a.equal(r.bold_link, 'LNK_FALSO_1'); a.equal(r.bold_url, 'https://checkout.bold.co/falso');
   a.equal(r.token_cancelar, 'token-1');
   a.equal(d.bold.creados[0].reference, x.codigo);
@@ -43,8 +43,8 @@ test('crear aparta cupo y devuelve el link de Bold', () => {
 });
 test('el segundo cliente no puede tomar el mismo bloque VIP', () => {
   const d = falsos();
-  c.manejar('crear', solicitudVIP(), d);
-  a.equal(c.manejar('crear', solicitudVIP({ hora: '20:30' }), d).error, 'SIN_CUPO');
+  c.manejar('crear', solicitudGrande(), d);
+  a.equal(c.manejar('crear', solicitudGrande({ hora: '20:30' }), d).error, 'SIN_CUPO');
   a.equal(d.hoja.reservas.length, 1);
 });
 test('crear valida la solicitud y el cupo de mesas', () => {
@@ -52,31 +52,33 @@ test('crear valida la solicitud y el cupo de mesas', () => {
   a.equal(c.manejar('crear', solicitud({ correo: 'no-es-correo' }), d).error, 'CORREO');
   a.equal(c.manejar('crear', solicitud({ personas: 25 }), d).error, 'GRUPO_GRANDE');
   a.equal(c.manejar('crear', solicitud({ fecha: '2026-10-24' }), d).error, 'SIN_CUPO'); // sábado: no se reserva
-  // Tope de mesas El Carmen 20 personas: 9 + 9 caben, 4 más no.
-  a.equal(c.manejar('crear', solicitud({ personas: 9 }), d).ok, true);
-  a.equal(c.manejar('crear', solicitud({ personas: 9, hora: '21:00' }), d).ok, true);
-  a.equal(c.manejar('crear', solicitud({ personas: 4, hora: '22:00' }), d).error, 'SIN_CUPO');
+  a.equal(c.manejar('crear', solicitud({ personas: 5 }), d).error, 'PERSONAS');
+  // El Carmen: 2 reservas al día, separadas al menos 3 h; una tercera no entra.
+  a.equal(c.manejar('crear', solicitud({ hora: '17:00' }), d).ok, true);
+  a.equal(c.manejar('crear', solicitud({ hora: '19:30' }), d).error, 'SIN_CUPO');
+  a.equal(c.manejar('crear', solicitud({ hora: '20:00' }), d).ok, true);
+  a.equal(c.manejar('crear', solicitud({ hora: '23:30' }), d).error, 'SIN_CUPO');
   a.equal(d.hoja.reservas.length, 2);
 });
 test('trampa anti-bots no escribe nada', () => {
   const d = falsos();
-  a.equal(c.manejar('crear', solicitudVIP({ website: 'x' }), d).ok, true);
+  a.equal(c.manejar('crear', solicitudGrande({ website: 'x' }), d).ok, true);
   a.equal(d.hoja.reservas.length, 0);
   a.equal(d.bold.creados.length, 0);
 });
 test('Bold caído libera el cupo', () => {
   const d = falsos({ boldFalla: true });
-  a.equal(c.manejar('crear', solicitudVIP(), d).error, 'BOLD');
+  a.equal(c.manejar('crear', solicitudGrande(), d).error, 'BOLD');
   a.equal(d.hoja.reservas[0].estado, 'RECHAZADA');
   // Sin link de Bold nunca se consulta.
   c.manejar('estado', { codigo: d.hoja.reservas[0].codigo }, d);
   a.equal(d.bold.consultas.length, 0);
   // El bloque quedó libre para otro cliente.
   d.bold.crearLink = () => ({ id: 'LNK_OTRO', url: 'https://checkout.bold.co/otro' });
-  a.equal(c.manejar('crear', solicitudVIP(), d).ok, true);
+  a.equal(c.manejar('crear', solicitudGrande(), d).ok, true);
 });
 test('estado PAID confirma y envía la confirmación una sola vez', () => {
-  const d = falsos(); const { codigo } = c.manejar('crear', solicitudVIP(), d);
+  const d = falsos(); const { codigo } = c.manejar('crear', solicitudGrande(), d);
   d.bold.estado = 'PAID';
   a.equal(c.manejar('estado', { codigo }, d).reserva.estado, 'CONFIRMADA');
   c.manejar('estado', { codigo }, d);
@@ -94,9 +96,9 @@ test('estado: código inexistente o vacío', () => {
 });
 test('pago tardío sin cupo queda PAGO_SIN_CUPO y avisa al admin', () => {
   const d = falsos();
-  const A = c.manejar('crear', solicitudVIP(), d).codigo;
+  const A = c.manejar('crear', solicitudGrande(), d).codigo;
   d.ahoraMs += 16 * MIN; // A vence sin pagar
-  const B = c.manejar('crear', solicitudVIP(), d).codigo; // B toma el mismo bloque
+  const B = c.manejar('crear', solicitudGrande(), d).codigo; // B toma el mismo bloque
   a.ok(B);
   d.bold.estados[fila(d, A).bold_link] = 'PAID'; // A paga tarde
   a.equal(c.manejar('estado', { codigo: A }, d).reserva.estado, 'PAGO_SIN_CUPO');
@@ -109,7 +111,7 @@ test('pago tardío sin cupo queda PAGO_SIN_CUPO y avisa al admin', () => {
 });
 test('pago tardío con cupo libre confirma, incluso ya EXPIRADA (últimas 24 h)', () => {
   const d = falsos();
-  const A = c.manejar('crear', solicitudVIP(), d).codigo;
+  const A = c.manejar('crear', solicitudGrande(), d).codigo;
   d.ahoraMs += 16 * MIN;
   c.revisarPendientesCon(d);
   a.equal(fila(d, A).estado, 'EXPIRADA');
@@ -141,7 +143,7 @@ test('pago tardío de una hora que ya pasó queda PAGO_SIN_CUPO', () => {
 });
 test('EXPIRADA de hace más de 24 h no se consulta en Bold', () => {
   const d = falsos();
-  const A = c.manejar('crear', solicitudVIP(), d).codigo;
+  const A = c.manejar('crear', solicitudGrande(), d).codigo;
   d.ahoraMs += 16 * MIN;
   c.revisarPendientesCon(d);
   const antes = d.bold.consultas.length;
@@ -191,7 +193,7 @@ test('panel: clave, aislamiento por sede y marcas', () => {
   a.equal(c.manejar('panel_marcar', { token, codigo: codigoElCarmen, marca: 'LLEGO' }, d).error, 'PERMISO');
 
   const tc = c.manejar('panel_entrar', { sede: 'ELCARMEN', clave: 'c1' }, d).token;
-  c.manejar('crear', solicitud({ hora: '21:00' }), d); // pendiente: no sale en el panel
+  c.manejar('crear', solicitud({ hora: '23:00' }), d); // pendiente: no sale en el panel
   const l = c.manejar('panel_listar', { token: tc, desde: '2026-10-22', dias: '1' }, d);
   a.equal(l.ok, true); a.equal(l.sede, 'ELCARMEN'); a.equal(l.reservas.length, 1);
   const r = l.reservas[0];
@@ -236,26 +238,27 @@ test('días y horas públicas con validación de parámetros', () => {
   a.equal(x.ok, true); a.equal(x.dias.length, 31);
   a.equal(x.dias.find((z) => z.fecha === '2026-10-22').disponible, true);
   a.equal(x.dias.find((z) => z.fecha === '2026-10-24').disponible, false);
-  a.equal(x.espacio, 'VIP'); a.equal(x.reglas.adelanto, 50000);
+  a.equal(x.espacio, 'MESA'); a.equal(x.reglas.adelanto, 50000);
   const h = c.manejar('horas', { sede: 'ELCARMEN', personas: '12', fecha: '2026-10-22' }, d);
   // Los días disponibles traen las mismas horas que la consulta de horas; los demás, ninguna.
   a.equal(JSON.stringify(x.dias.find((z) => z.fecha === '2026-10-22').horas), JSON.stringify(h.horas));
   a.equal(JSON.stringify(x.dias.find((z) => z.fecha === '2026-10-24').horas), '[]');
-  a.equal(h.ok, true); a.equal(h.espacio, 'VIP');
+  a.equal(h.ok, true); a.equal(h.espacio, 'MESA');
   a.equal(h.horas.find((z) => z.hora === '20:00').libre, true);
-  c.manejar('crear', solicitudVIP(), d);
+  c.manejar('crear', solicitudGrande(), d);
   const h2 = c.manejar('horas', { sede: 'ELCARMEN', personas: '12', fecha: '2026-10-22' }, d);
   a.equal(h2.horas.find((z) => z.hora === '20:00').libre, false);
-  a.equal(c.manejar('horas', { sede: 'ELCARMEN', personas: '4', fecha: '2026-10-22' }, d).espacio, 'MESA');
+  a.equal(c.manejar('horas', { sede: 'HIPODROMO', personas: '8', fecha: '2026-10-22' }, d).espacio, 'PISO1');
+  a.equal(c.manejar('horas', { sede: 'HIPODROMO', personas: '25', fecha: '2026-10-22' }, d).espacio, 'PISO2');
 
   const g = c.manejar('horas', { sede: 'ELCARMEN', personas: '25', fecha: '2026-10-22' }, d);
   a.equal(g.ok, false); a.equal(g.error, 'GRUPO_GRANDE'); a.equal(g.espacio, null);
   a.equal(c.manejar('horas', { sede: 'ELCARMEN', personas: '1', fecha: '2026-10-22' }, d).error, 'PERSONAS');
   a.equal(c.manejar('dias', { sede: 'ELCARMEN', personas: '25', mes: '2026-10' }, d).error, 'GRUPO_GRANDE');
 
-  a.equal(c.manejar('dias', { sede: 'ELCARMEN', personas: '4', mes: '2026-1' }, d).error, 'PARAMETROS');
-  a.equal(c.manejar('dias', { sede: 'OTRA', personas: '4', mes: '2026-10' }, d).error, 'PARAMETROS');
-  a.equal(c.manejar('horas', { sede: 'ELCARMEN', personas: '4', fecha: '2026-10-2' }, d).error, 'PARAMETROS');
+  a.equal(c.manejar('dias', { sede: 'ELCARMEN', personas: '8', mes: '2026-1' }, d).error, 'PARAMETROS');
+  a.equal(c.manejar('dias', { sede: 'OTRA', personas: '8', mes: '2026-10' }, d).error, 'PARAMETROS');
+  a.equal(c.manejar('horas', { sede: 'ELCARMEN', personas: '8', fecha: '2026-10-2' }, d).error, 'PARAMETROS');
   a.equal(c.manejar('horas', { sede: 'ELCARMEN', personas: 'cuatro', fecha: '2026-10-22' }, d).error, 'PARAMETROS');
   a.equal(c.manejar('horas', { sede: 'ELCARMEN', personas: '4.5', fecha: '2026-10-22' }, d).error, 'PARAMETROS');
 });
@@ -266,12 +269,12 @@ test('acción desconocida y errores internos', () => {
   a.equal(c.manejar('constructor', {}, d).error, 'ACCION');
   d.hoja.leerConfig = () => { throw new Error('Sheets no responde'); };
   const n = registrados.length;
-  a.deepEqual(plano(c.manejar('horas', { sede: 'ELCARMEN', personas: '4', fecha: '2026-10-22' }, d)), { ok: false, error: 'INTERNO' });
+  a.deepEqual(plano(c.manejar('horas', { sede: 'ELCARMEN', personas: '8', fecha: '2026-10-22' }, d)), { ok: false, error: 'INTERNO' });
   a.ok(registrados.length > n);
 });
 test('Bold sin respuesta al consultar: la reserva sigue igual', () => {
   const d = falsos();
-  const { codigo } = c.manejar('crear', solicitudVIP(), d);
+  const { codigo } = c.manejar('crear', solicitudGrande(), d);
   d.bold.consultarLink = () => { throw new Error('BOLD'); };
   const x = c.manejar('estado', { codigo }, d);
   a.equal(x.ok, true); a.equal(x.reserva.estado, 'PENDIENTE_PAGO');
@@ -299,7 +302,7 @@ test('revisarPendientes vence lo no pagado y confirma lo pagado', () => {
 test('revisarPendientes: una reserva que falla no detiene las demás', () => {
   const d = falsos();
   const A = c.manejar('crear', solicitud(), d).codigo;
-  const B = c.manejar('crear', solicitud({ hora: '21:00' }), d).codigo;
+  const B = c.manejar('crear', solicitud({ hora: '23:00' }), d).codigo;
   const linkA = fila(d, A).bold_link;
   d.bold.estados[fila(d, B).bold_link] = 'PAID';
   const original = d.bold.consultarLink;
@@ -319,7 +322,7 @@ test('doGet/doPost: JSON, método correcto y fallos', () => {
   a.deepEqual(leer(c.doPost({ postData: { contents: '{roto' } })), { ok: false, error: 'PARAMETROS' });
   a.deepEqual(leer(c.doPost({ postData: { contents: 'null' } })), { ok: false, error: 'PARAMETROS' });
   // Sin servicios de Google (PropertiesService no existe en Node) armar deps falla: INTERNO.
-  a.deepEqual(leer(c.doGet({ parameter: { accion: 'dias', sede: 'ELCARMEN', personas: '4', mes: '2026-10' } })), { ok: false, error: 'INTERNO' });
+  a.deepEqual(leer(c.doGet({ parameter: { accion: 'dias', sede: 'ELCARMEN', personas: '8', mes: '2026-10' } })), { ok: false, error: 'INTERNO' });
 });
 test('hmac en hex minúsculas y disparador instalado una sola vez', () => {
   a.equal(c.bytesAHex([0, 15, -1, 127, -128, 10]), '000fff7f800a');
@@ -339,34 +342,35 @@ test('hmac en hex minúsculas y disparador instalado una sola vez', () => {
 
 test('crear con codigo_previo devuelve el mismo apartado vigente sin crear otro', () => {
   const d = falsos();
-  const x = c.manejar('crear', solicitudVIP(), d);
-  const y = c.manejar('crear', solicitudVIP({ codigo_previo: x.codigo, correo: ' LAURA@example.com ' }), d);
+  const x = c.manejar('crear', solicitudGrande(), d);
+  const y = c.manejar('crear', solicitudGrande({ codigo_previo: x.codigo, correo: ' LAURA@example.com ' }), d);
   a.deepEqual(plano(y), { ok: true, codigo: x.codigo, url_pago: x.url_pago });
   a.equal(d.hoja.reservas.length, 1);
   a.equal(d.bold.creados.length, 1);
 });
 test('codigo_previo que no coincide sigue el flujo normal', () => {
   const d = falsos();
-  const x = c.manejar('crear', solicitudVIP(), d);
-  // Otro correo: no es su apartado, el bloque VIP sigue ocupado.
-  a.equal(c.manejar('crear', solicitudVIP({ codigo_previo: x.codigo, correo: 'otra@example.com' }), d).error, 'SIN_CUPO');
-  // Otra hora de mesa: se crea una reserva nueva.
-  const m = c.manejar('crear', solicitud({ codigo_previo: x.codigo, hora: '21:00' }), d);
+  const x = c.manejar('crear', solicitudGrande(), d);
+  // Otro correo: no es su apartado, la hora sigue ocupada.
+  a.equal(c.manejar('crear', solicitudGrande({ codigo_previo: x.codigo, correo: 'otra@example.com' }), d).error, 'SIN_CUPO');
+  // Otra hora (3 h después): se crea una reserva nueva.
+  const m = c.manejar('crear', solicitud({ codigo_previo: x.codigo, hora: '23:00' }), d);
   a.equal(m.ok, true); a.notEqual(m.codigo, x.codigo);
   a.equal(d.hoja.reservas.length, 2);
   // Apartado vencido: no se reutiliza; el bloque quedó libre y se crea otro.
   d.ahoraMs += 16 * MIN;
-  const v = c.manejar('crear', solicitudVIP({ codigo_previo: x.codigo }), d);
+  const v = c.manejar('crear', solicitudGrande({ codigo_previo: x.codigo }), d);
   a.equal(v.ok, true); a.notEqual(v.codigo, x.codigo);
   // Código inexistente: flujo normal.
-  a.equal(c.manejar('crear', solicitud({ codigo_previo: 'UF-NOEXIS', hora: '22:00', personas: 2 }), d).ok, true);
+  a.equal(c.manejar('crear', solicitud({ codigo_previo: 'UF-NOEXIS', hora: '17:00' }), d).ok, true);
 });
 test('codigo_previo sin link de Bold guardado no se reutiliza', () => {
   const d = falsos();
   const x = c.manejar('crear', solicitud(), d);
   fila(d, x.codigo).bold_url = '';
+  // No se le devuelve el mismo apartado: se intenta crear otro, que choca con el primero.
   const y = c.manejar('crear', solicitud({ codigo_previo: x.codigo }), d);
-  a.equal(y.ok, true); a.notEqual(y.codigo, x.codigo);
+  a.notEqual(y.codigo, x.codigo); a.equal(y.error, 'SIN_CUPO');
 });
 test('panel: 5 claves malas en 10 minutos bloquean la sede; un acierto reinicia', () => {
   const d = falsos();
@@ -390,9 +394,10 @@ test('panel: fallos espaciados más de 10 minutos no bloquean', () => {
   a.equal(c.manejar('panel_entrar', { sede: 'ELCARMEN', clave: 'c1' }, d).ok, true);
 });
 test('horas, estado, cancelacion y panel_listar incluyen las reglas de Config', () => {
-  const d = falsos({ config: [['adelanto', '60000'], ['cancelacion_horas', '48'], ['vip_min', '12']] });
-  const reglas = { adelanto: 60000, cancelacion_horas: 48, vip_min: 12 };
-  a.deepEqual(plano(c.manejar('horas', { sede: 'ELCARMEN', personas: '4', fecha: '2026-10-22' }, d).reglas), reglas);
+  const d = falsos({ config: [['adelanto', '60000'], ['cancelacion_horas', '48'], ['duracion_min', '90']] });
+  const reglas = { adelanto: 60000, cancelacion_horas: 48, duracion_min: 90, grupo_min: 6, max_elcarmen: 20,
+    piso1_max_hipodromo: 16, piso2_max_hipodromo: 30 };
+  a.deepEqual(plano(c.manejar('horas', { sede: 'ELCARMEN', personas: '8', fecha: '2026-10-22' }, d).reglas), reglas);
   const codigo = confirmada(d);
   a.deepEqual(plano(c.manejar('estado', { codigo }, d).reglas), reglas);
   a.deepEqual(plano(c.manejar('cancelacion', { t: fila(d, codigo).token_cancelar }, d).reglas), reglas);
@@ -453,4 +458,18 @@ test('Bold EXPIRED o CANCELLED deja la reserva cerrada y no se vuelve a consulta
   c.revisarPendientesCon(d);
   a.equal(d.bold.consultas.length, m);
   a.equal(d.buzon.length, 0);
+});
+test('Hipódromo: una reserva por piso al día, el piso sale del tamaño y el correo lo dice', () => {
+  const d = falsos();
+  const hip = (sobre) => solicitud(Object.assign({ sede: 'HIPODROMO' }, sobre));
+  const p1 = c.manejar('crear', hip({ personas: 10, hora: '18:00' }), d);
+  a.equal(p1.ok, true); a.equal(fila(d, p1.codigo).espacio, 'PISO1');
+  a.equal(c.manejar('crear', hip({ personas: 16, hora: '22:00' }), d).error, 'SIN_CUPO'); // piso 1 ya tomado
+  const p2 = c.manejar('crear', hip({ personas: 25, hora: '18:00' }), d);
+  a.equal(p2.ok, true); a.equal(fila(d, p2.codigo).espacio, 'PISO2');
+  a.equal(c.manejar('crear', hip({ personas: 31 }), d).error, 'GRUPO_GRANDE');
+  d.bold.estados[fila(d, p1.codigo).bold_link] = 'PAID';
+  c.manejar('estado', { codigo: p1.codigo }, d);
+  const conf = d.buzon.find((m) => /confirmada/.test(m.asunto));
+  a.ok(conf.html.includes('Primer piso')); a.ok(conf.html.includes('por 2 horas'));
 });

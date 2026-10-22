@@ -107,7 +107,7 @@
         var h = '<article class="res ' + clase + '" data-codigo="' + escapeHtml(r.codigo) + '">' +
             '<div class="flex items-center justify-between gap-3"><span class="hora">' + escapeHtml(formatoHora(r.hora)) +
             (notaMadrugada(r.hora) ? ' <small class="text-lg font-body text-white/70">(' + notaMadrugada(r.hora) + ')</small>' : '') + '</span>' +
-            '<span class="etq ' + (r.espacio === 'VIP' ? 'vip' : '') + '">' + (r.espacio === 'VIP' ? 'VIP' : 'Mesa') + '</span></div>' +
+            '<span class="etq ' + (r.espacio === 'MESA' ? '' : 'vip') + '">' + escapeHtml(NOMBRE_ESPACIO[r.espacio] || r.espacio) + '</span></div>' +
             '<div class="nombre mt-1">' + escapeHtml(r.nombre) + ' · ' + escapeHtml(r.personas) + ' personas</div>' +
             '<div class="dato text-white/80">' + escapeHtml(r.tipo_doc) + ' ' + escapeHtml(r.documento) + ' · Cel. ' + escapeHtml(r.celular) + '</div>' +
             '<div class="dato text-white/60">Código ' + escapeHtml(r.codigo) + '</div>';

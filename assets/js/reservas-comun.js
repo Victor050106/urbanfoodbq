@@ -133,12 +133,12 @@ function aBasicoCalendario(fecha, minutos) {
   return d.getUTCFullYear() + dos(d.getUTCMonth() + 1) + dos(d.getUTCDate()) + 'T' + dos(d.getUTCHours()) + dos(d.getUTCMinutes()) + '00';
 }
 
-// Evento de Google Calendar: 3 h en el salón VIP, 2 h en mesa. Una hora antes de las 16:00
+// Evento de Google Calendar por lo que dura la reserva (duracion_min de Config). Una hora antes de las 16:00
 // es madrugada de la noche siguiente (misma regla que el servidor).
-function enlaceCalendario(r) {
+function enlaceCalendario(r, duracionMin) {
   var p = r.hora.split(':').map(Number);
   var inicio = p[0] * 60 + p[1] + (p[0] < 16 ? 1440 : 0);
-  var fin = inicio + (r.espacio === 'VIP' ? 180 : 120);
+  var fin = inicio + (duracionMin || REGLAS_POR_DEFECTO.duracion_min);
   var sede = SEDES_RESERVA[r.sede] || { nombre: r.sede, direccion: '' };
   var q = [
     ['action', 'TEMPLATE'],
@@ -204,7 +204,28 @@ function apiPost(cuerpo) {
 // ---- Política y tiempos ----
 
 // Valores de respaldo mientras llega la respuesta del API, que trae las reglas reales de la hoja Config.
-var REGLAS_POR_DEFECTO = { adelanto: 50000, cancelacion_horas: 24, vip_min: 10 };
+var REGLAS_POR_DEFECTO = {
+  adelanto: 50000, cancelacion_horas: 24, duracion_min: 120,
+  grupo_min: 6, max_elcarmen: 20, piso1_max_hipodromo: 16, piso2_max_hipodromo: 30
+};
+
+var NOMBRE_ESPACIO = { MESA: 'Mesa', PISO1: 'Primer piso', PISO2: 'Segundo piso', VIP: 'Salón VIP' };
+
+// Misma regla que espacioPara de Disponibilidad.gs: el servidor decide, aquí solo se anticipa para mostrarlo.
+function maxPersonasReserva(sede, reglas) {
+  return sede === 'ELCARMEN' ? reglas.max_elcarmen : reglas.piso2_max_hipodromo;
+}
+
+function espacioReserva(sede, personas, reglas) {
+  if (personas < reglas.grupo_min || personas > maxPersonasReserva(sede, reglas)) return '';
+  if (sede === 'ELCARMEN') return 'MESA';
+  return personas <= reglas.piso1_max_hipodromo ? 'PISO1' : 'PISO2';
+}
+
+// 120 -> "2 horas" (igual que textoDuracion de Correos.gs)
+function textoDuracion(min) {
+  return min % 60 === 0 ? (min / 60) + (min === 60 ? ' hora' : ' horas') : min + ' minutos';
+}
 
 function combinarReglas(r) {
   var out = {};

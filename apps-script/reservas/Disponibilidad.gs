@@ -12,15 +12,24 @@ function ocupaCupo(reserva, ahoraMs) {
   return true;
 }
 
-// 'VIP' | 'MESA' | null (grupo fuera de rango). El VIP solo existe en El Carmen.
-function espacioPara(sede, personas, cfg) {
-  if (personas < cfg.grupo_min || personas > cfg.grupo_max) return null;
-  if (sede === 'ELCARMEN' && personas >= cfg.vip_min && personas <= cfg.vip_max) return 'VIP';
-  return 'MESA';
+function maxPersonas(sede, cfg) {
+  return sede === 'ELCARMEN' ? cfg.max_elcarmen : cfg.piso2_max_hipodromo;
 }
 
-function topeMesas(sede, cfg) {
-  return sede === 'ELCARMEN' ? cfg.tope_mesas_elcarmen : cfg.tope_hipodromo;
+// 'MESA' (El Carmen), 'PISO1' | 'PISO2' (Hipódromo, por tamaño del grupo) o null (grupo fuera de rango).
+function espacioPara(sede, personas, cfg) {
+  if (personas < cfg.grupo_min || personas > maxPersonas(sede, cfg)) return null;
+  if (sede === 'ELCARMEN') return 'MESA';
+  return personas <= cfg.piso1_max_hipodromo ? 'PISO1' : 'PISO2';
+}
+
+// El Carmen: hasta reservas_dia_elcarmen reservas en el día, cada una a separacion_elcarmen_min o más
+// de las otras. Hipódromo: una reserva por piso al día, a cualquier hora.
+function cabeReserva(sede, espacio, hora, activas, cfg) {
+  if (sede === 'HIPODROMO') return !activas.some(function (r) { return r.espacio === espacio; });
+  if (activas.length >= cfg.reservas_dia_elcarmen) return false;
+  var s = horaAMinutos(hora);
+  return activas.every(function (r) { return Math.abs(s - horaAMinutos(r.hora)) >= cfg.separacion_elcarmen_min; });
 }
 
 function horasDisponibles(sede, fecha, personas, reservas, ahoraMs, cfg, bloqueos) {
@@ -28,22 +37,11 @@ function horasDisponibles(sede, fecha, personas, reservas, ahoraMs, cfg, bloqueo
   if (!espacio) return [];
   if (!fechaHabilitada(fecha, sede, ahoraMs, cfg, bloqueos)) return [];
   var activas = (reservas || []).filter(function (r) {
-    return r.sede === sede && r.espacio === espacio && r.fecha === fecha && ocupaCupo(r, ahoraMs);
+    return r.sede === sede && r.fecha === fecha && ocupaCupo(r, ahoraMs);
   });
-  var ocupadas = 0;
-  if (espacio === 'MESA') {
-    activas.forEach(function (r) { ocupadas += Number(r.personas) || 0; });
-  }
-  var cabeMesa = espacio !== 'MESA' || ocupadas + personas <= topeMesas(sede, cfg);
-  var choque = cfg.vip_bloque_min + cfg.vip_limpieza_min;
   var minimo = ahoraMs + cfg.min_horas * 3600000;
-  return horasDelDia(fecha, espacio, cfg).map(function (hora) {
-    var libre = cabeMesa && instanteMs(fecha, hora) >= minimo;
-    if (libre && espacio === 'VIP') {
-      var s = horaAMinutos(hora);
-      libre = !activas.some(function (r) { return Math.abs(s - horaAMinutos(r.hora)) < choque; });
-    }
-    return { hora: hora, libre: libre };
+  return horasDelDia(fecha, cfg).map(function (hora) {
+    return { hora: hora, libre: instanteMs(fecha, hora) >= minimo && cabeReserva(sede, espacio, hora, activas, cfg) };
   });
 }
 
@@ -72,14 +70,14 @@ function validarSolicitud(datos, cfg) {
 
   var personas = typeof d.personas === 'number' ? d.personas : Number(textoLimpio(d.personas));
   if (!isFinite(personas) || personas !== Math.floor(personas) || personas < cfg.grupo_min) return falla('PERSONAS');
-  if (personas > cfg.grupo_max) return falla('GRUPO_GRANDE');
+  if (personas > maxPersonas(sede, cfg)) return falla('GRUPO_GRANDE');
   var espacio = espacioPara(sede, personas, cfg);
 
   var fecha = textoLimpio(d.fecha);
   if (!/^\d{4}-\d{2}-\d{2}$/.test(fecha) || normalizarFecha(new Date(fecha + 'T12:00:00Z')) !== fecha) return falla('FECHA');
 
   var hora = textoLimpio(d.hora);
-  if (!/^\d{2}:\d{2}$/.test(hora) || horasDelDia(fecha, espacio, cfg).indexOf(hora) === -1) return falla('HORA');
+  if (!/^\d{2}:\d{2}$/.test(hora) || horasDelDia(fecha, cfg).indexOf(hora) === -1) return falla('HORA');
 
   var nombre = textoLimpio(d.nombre).replace(/\s+/g, ' ');
   if (nombre.length < 3 || nombre.length > 60) return falla('NOMBRE');

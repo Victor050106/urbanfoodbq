@@ -20,13 +20,13 @@ test('cuadrícula que empieza en lunes no lleva relleno', () => {
   const g = c.cuadriculaMes('2026-06'); // 1-jun-2026 es lunes
   a.equal(g[0], '2026-06-01'); a.equal(g.length, 30);
 });
-test('enlace de calendario VIP dura 3 h y la madrugada pasa al día siguiente', () => {
-  const u = new URL(c.enlaceCalendario({ codigo: 'UF-A', sede: 'ELCARMEN', espacio: 'VIP', fecha: '2026-10-23', hora: '22:00' }));
+test('enlace de calendario dura lo que diga Config y la madrugada pasa al día siguiente', () => {
+  const u = new URL(c.enlaceCalendario({ codigo: 'UF-A', sede: 'ELCARMEN', espacio: 'MESA', fecha: '2026-10-23', hora: '22:00' }, 180));
   a.equal(u.searchParams.get('dates'), '20261023T220000/20261024T010000');
   a.equal(u.searchParams.get('ctz'), 'America/Bogota');
 });
-test('enlace de calendario de mesa dura 2 h y una hora de madrugada cae en el día siguiente', () => {
-  const u = new URL(c.enlaceCalendario({ codigo: 'UF-B', sede: 'HIPODROMO', espacio: 'MESA', fecha: '2026-10-23', hora: '00:30' }));
+test('enlace de calendario: 2 h por defecto y una hora de madrugada cae en el día siguiente', () => {
+  const u = new URL(c.enlaceCalendario({ codigo: 'UF-B', sede: 'HIPODROMO', espacio: 'PISO1', fecha: '2026-10-23', hora: '00:30' }));
   a.equal(u.searchParams.get('dates'), '20261024T003000/20261024T023000');
 });
 test('escapeHtml neutraliza etiquetas y comillas', () => {
@@ -86,8 +86,9 @@ test('etiqueta de hora de servicio: 00:00 del viernes es la noche del viernes al
   a.equal(c.notaMadrugada('16:00'), '');
 });
 test('reglas del servidor con respaldo y política construida con ellas', () => {
-  a.deepEqual(JSON.parse(JSON.stringify(c.combinarReglas())), { adelanto: 50000, cancelacion_horas: 24, vip_min: 10 });
-  a.deepEqual(JSON.parse(JSON.stringify(c.combinarReglas({ adelanto: 60000, vip_min: 'x' }))), { adelanto: 60000, cancelacion_horas: 24, vip_min: 10 });
+  const def = { adelanto: 50000, cancelacion_horas: 24, duracion_min: 120, grupo_min: 6, max_elcarmen: 20, piso1_max_hipodromo: 16, piso2_max_hipodromo: 30 };
+  a.deepEqual(JSON.parse(JSON.stringify(c.combinarReglas())), def);
+  a.deepEqual(JSON.parse(JSON.stringify(c.combinarReglas({ adelanto: 60000, grupo_min: 'x' }))), { ...def, adelanto: 60000 });
   a.equal(c.textoPolitica(c.combinarReglas({ adelanto: 60000, cancelacion_horas: 48 })),
     'El adelanto de $60.000 se descuenta de tu cuenta. Si cancelas con 48 horas o más de anticipación te lo devolvemos. Si cancelas después o no llegas, no se devuelve.');
 });
@@ -106,4 +107,14 @@ test('firma del apartado: mismos datos, misma firma; el correo no distingue may�
 });
 test('bloqueo del panel tiene mensaje', () => {
   a.equal(c.MENSAJES_ERROR.BLOQUEADO, 'Demasiados intentos. Espera unos minutos.');
+});
+test('la página anticipa el mismo lugar que el servidor y dice la duración', () => {
+  const r = c.combinarReglas();
+  a.equal(c.espacioReserva('ELCARMEN', 6, r), 'MESA');
+  a.equal(c.espacioReserva('ELCARMEN', 21, r), '');
+  a.equal(c.espacioReserva('HIPODROMO', 16, r), 'PISO1');
+  a.equal(c.espacioReserva('HIPODROMO', 17, r), 'PISO2');
+  a.equal(c.espacioReserva('HIPODROMO', 5, r), '');
+  a.equal(c.maxPersonasReserva('HIPODROMO', r), 30);
+  a.equal(c.textoDuracion(120), '2 horas'); a.equal(c.textoDuracion(60), '1 hora'); a.equal(c.textoDuracion(90), '90 minutos');
 });

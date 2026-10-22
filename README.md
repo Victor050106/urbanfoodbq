@@ -138,7 +138,7 @@ Implementar > Administrar implementaciones > (lápiz) > Versión: Nueva versión
 
 ## Reservas
 
-Los clientes reservan mesa o el salón VIP desde `/reservas/`. El camino es: enlace
+Los grupos de 6 personas o más reservan desde `/reservas/`, de lunes a jueves. El Carmen recibe hasta 2 reservas por día con 3 h o más entre una y otra; el Hipódromo, una por piso (primer piso hasta 16 personas, segundo hasta 30). Al cliente se le dice que la reserva es por 2 horas. El camino es: enlace
 "Reservar" del sitio, página de reservas (sede, día, hora, datos), pago del adelanto en
 Bold y confirmación con un código de reserva. Si cancelan con 24 horas o más de anticipación
 se devuelve el adelanto.

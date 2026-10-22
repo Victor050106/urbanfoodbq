@@ -4,9 +4,7 @@
 (function () {
     'use strict';
 
-    var PERSONAS_MIN = 2;
-    var PERSONAS_MAX_REGULAR = 20; // arriba de esto se atiende por WhatsApp
-    var PERSONAS_TOPE_UI = 60;
+    var PERSONAS_TOPE_UI = 60; // arriba del máximo de la sede se atiende por WhatsApp
     var MESES_ADELANTE = 3;
     var PASOS = 5;
     var CONSULTA_CADA_MS = 4000;
@@ -20,7 +18,7 @@
     var mesTope = sumarMeses(mesActual, MESES_ADELANTE);
 
     var estado = {
-        sede: 'ELCARMEN', personas: 2, mes: mesActual, fecha: '', hora: '', espacio: '',
+        sede: 'ELCARMEN', personas: REGLAS_POR_DEFECTO.grupo_min, mes: mesActual, fecha: '', hora: '', espacio: '',
         datos: {}, paso: 1
     };
     // Cada carga de red guarda su número; si el cliente ya cambió de opción, la respuesta vieja se descarta.
@@ -49,14 +47,14 @@
     // Pide el mes actual y el siguiente sin bloquear nada; se espera un momento por si sigue cambiando personas.
     function precargarMeses() {
         clearTimeout(temporizadorPrecarga);
-        if (estado.personas > PERSONAS_MAX_REGULAR) return;
+        if (estado.personas > maxPersonasReserva(estado.sede, reglas)) return;
         temporizadorPrecarga = setTimeout(function () {
             pedirMes(estado.sede, estado.personas, estado.mes).then(function () {
                 if (estado.mes < mesTope) pedirMes(estado.sede, estado.personas, sumarMeses(estado.mes, 1));
             });
         }, 400);
     }
-    // Adelanto, horas de cancelación y mínimo VIP: los de Config llegan con las horas; antes, los de respaldo.
+    // Adelanto, cancelación, duración y límites de grupo: los de Config llegan con los días; antes, los de respaldo.
     var reglas = combinarReglas();
 
     function mayuscula(t) { return t.charAt(0).toUpperCase() + t.slice(1); }
@@ -101,8 +99,7 @@
     // ---------- Paso 1: sede y personas ----------
 
     function etiquetaEspacio() {
-        if (estado.sede === 'HIPODROMO') return 'Mesa';
-        return estado.personas >= reglas.vip_min ? 'Salón VIP' : 'Mesa en el salón';
+        return NOMBRE_ESPACIO[espacioReserva(estado.sede, estado.personas, reglas)] || '';
     }
 
     function aplicarReglas(r) {
@@ -120,16 +117,17 @@
     }
 
     function pintarPersonas() {
-        var grande = estado.personas > PERSONAS_MAX_REGULAR;
+        var max = maxPersonasReserva(estado.sede, reglas);
+        var grande = estado.personas > max;
         $('personas').textContent = estado.personas;
-        $('menos').disabled = estado.personas <= PERSONAS_MIN;
+        $('menos').disabled = estado.personas <= reglas.grupo_min;
         $('mas').disabled = estado.personas >= PERSONAS_TOPE_UI;
-        $('espacio').textContent = grande ? '' : 'Espacio: ' + etiquetaEspacio();
+        $('espacio').textContent = grande ? '' : 'Lugar: ' + etiquetaEspacio() + ' · la reserva es por ' + textoDuracion(reglas.duracion_min);
         $('a2').hidden = grande;
         var tarjeta = $('grupo');
         tarjeta.hidden = !grande;
         if (grande) {
-            tarjeta.innerHTML = '<b>Grupos de más de ' + PERSONAS_MAX_REGULAR + ' personas</b><br>' +
+            tarjeta.innerHTML = '<b>Grupos de más de ' + max + ' personas</b><br>' +
                 'Los atendemos directamente por WhatsApp para preparar todo a tu medida.' +
                 botonWhatsApp(estado.sede, 'Hola Urban Food, quiero reservar para ' + estado.personas + ' personas',
                     'Escribir a ' + SEDES_RESERVA[estado.sede].nombre + ' por WhatsApp');
@@ -147,7 +145,7 @@
     $('menos').addEventListener('click', function () { cambiarPersonas(-1); });
     $('mas').addEventListener('click', function () { cambiarPersonas(1); });
     function cambiarPersonas(delta) {
-        estado.personas = Math.min(PERSONAS_TOPE_UI, Math.max(PERSONAS_MIN, estado.personas + delta));
+        estado.personas = Math.min(PERSONAS_TOPE_UI, Math.max(reglas.grupo_min, estado.personas + delta));
         estado.fecha = ''; estado.hora = '';
         pintarPersonas();
         precargarMeses();
@@ -297,7 +295,7 @@
     function pintarResumen() {
         var sede = SEDES_RESERVA[estado.sede];
         $('resumen').innerHTML =
-            escapeHtml(sede.nombre) + ' · ' + escapeHtml(etiquetaEspacio()) + '<br>' +
+            escapeHtml(sede.nombre) + ' · ' + escapeHtml(etiquetaEspacio()) + ' · por ' + escapeHtml(textoDuracion(reglas.duracion_min)) + '<br>' +
             '<b>' + escapeHtml(mayuscula(formatoFechaLarga(estado.fecha))) + ', ' + escapeHtml(etiquetaHoraServicio(estado.fecha, estado.hora)) + '</b><br>' +
             estado.personas + ' personas · ' + escapeHtml(estado.datos.nombre) + '<br>' +
             'Adelanto: <b>' + formatoPesos(reglas.adelanto) + '</b> <span style="color:#9a9a9a">(se descuenta de tu cuenta)</span>';
@@ -373,7 +371,7 @@
         return '<div class="tarjeta mt-3">' + escapeHtml(sede.nombre) + ' · ' + escapeHtml(sede.direccion) + '<br>' +
             '<b>' + escapeHtml(mayuscula(formatoFechaLarga(r.fecha))) + ' · ' + escapeHtml(etiquetaHoraServicio(r.fecha, r.hora)) + ' · ' +
             escapeHtml(r.personas) + ' personas</b><br>' +
-            (r.espacio === 'VIP' ? 'Salón VIP<br>' : '') +
+            escapeHtml(NOMBRE_ESPACIO[r.espacio] || '') + ' · por ' + escapeHtml(textoDuracion(reglas.duracion_min)) + '<br>' +
             'A nombre de ' + escapeHtml(r.nombre_corto) + '</div>';
     }
 
@@ -416,7 +414,7 @@
                     '<div class="codigo">' + escapeHtml(r.codigo) + '</div>' +
                     resumenReserva(r) +
                     '<p class="nota">Te enviamos este resumen a tu correo. Muestra el código al llegar.</p>' +
-                    '<a class="boton boton-sec" target="_blank" rel="noopener" href="' + escapeHtml(enlaceCalendario(r)) + '">Agregar a mi calendario</a>' +
+                    '<a class="boton boton-sec" target="_blank" rel="noopener" href="' + escapeHtml(enlaceCalendario(r, reglas.duracion_min)) + '">Agregar a mi calendario</a>' +
                     '<a class="boton boton-sec" target="_blank" rel="noopener" href="' + escapeHtml(sede.mapa) + '">Cómo llegar</a>');
             } else if (r.estado === 'RECHAZADA' || r.estado === 'EXPIRADA') {
                 var texto = r.estado === 'RECHAZADA' ? 'No se pudo completar tu pago.' : 'El tiempo para pagar se agotó y liberamos el horario.';
@@ -458,7 +456,7 @@
 
         function consultar() {
             apiGet({ accion: 'estado', codigo: codigo }).then(function (r) {
-                if (r.ok) { pintar(r.reserva); return; }
+                if (r.ok) { reglas = combinarReglas(r.reglas); pintar(r.reserva); return; }
                 if (r.error === 'NO_ENCONTRADA') {
                     vistaConfirmacion('<h1 class="titulo text-3xl mt-4">No encontramos esa reserva</h1>' +
                         '<a class="boton boton-sec" href="./">Hacer una reserva</a>');

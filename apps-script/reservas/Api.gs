@@ -16,8 +16,13 @@ var VENTANA_FALLOS_MS = 10 * 60000;
 function fallo(error) { return { ok: false, error: error }; }
 
 // Lo que las páginas muestran al cliente y a la cajera; sale de Config, igual que lo que cobra Bold.
+// También los límites de grupo y la duración, para que la página no los tenga escritos aparte.
 function reglasPublicas(cfg) {
-  return { adelanto: cfg.adelanto, cancelacion_horas: cfg.cancelacion_horas, vip_min: cfg.vip_min };
+  return {
+    adelanto: cfg.adelanto, cancelacion_horas: cfg.cancelacion_horas, duracion_min: cfg.duracion_min,
+    grupo_min: cfg.grupo_min, max_elcarmen: cfg.max_elcarmen,
+    piso1_max_hipodromo: cfg.piso1_max_hipodromo, piso2_max_hipodromo: cfg.piso2_max_hipodromo
+  };
 }
 
 function esSede(s) { return s === 'ELCARMEN' || s === 'HIPODROMO'; }
@@ -33,9 +38,9 @@ function leerEntero(v) {
   return isFinite(n) && n === Math.floor(n) ? n : NaN;
 }
 
-function errorDeGrupo(personas, cfg) {
+function errorDeGrupo(sede, personas, cfg) {
   if (personas < cfg.grupo_min) return 'PERSONAS';
-  if (personas > cfg.grupo_max) return 'GRUPO_GRANDE';
+  if (personas > maxPersonas(sede, cfg)) return 'GRUPO_GRANDE';
   return '';
 }
 
@@ -126,7 +131,7 @@ function accionDias(p, deps) {
   var sede = textoLimpio(p.sede), mes = textoLimpio(p.mes), personas = leerEntero(p.personas);
   if (!esSede(sede) || !/^\d{4}-(0[1-9]|1[0-2])$/.test(mes) || isNaN(personas)) return fallo('PARAMETROS');
   var cfg = deps.hoja.leerConfig();
-  var grupo = errorDeGrupo(personas, cfg);
+  var grupo = errorDeGrupo(sede, personas, cfg);
   if (grupo) return { ok: false, error: grupo, dias: [] };
   var reservas = deps.hoja.leerReservas({ sede: sede, desde: mes + '-01', hasta: mes + '-31' });
   return {
@@ -142,7 +147,7 @@ function accionHoras(p, deps) {
   if (!esSede(sede) || !esFechaTexto(fecha) || isNaN(personas)) return fallo('PARAMETROS');
   var cfg = deps.hoja.leerConfig();
   // Fuera de rango la página muestra la tarjeta de WhatsApp.
-  var grupo = errorDeGrupo(personas, cfg);
+  var grupo = errorDeGrupo(sede, personas, cfg);
   if (grupo) return { ok: false, error: grupo, espacio: null, horas: [] };
   var reservas = deps.hoja.leerReservas({ sede: sede, desde: fecha, hasta: fecha });
   return {

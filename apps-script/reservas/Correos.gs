@@ -29,6 +29,13 @@ function politicaDe(reserva, cfg) {
 
 function nombreSede(sede) { return NOMBRE_SEDE[sede] || sede; }
 
+var NOMBRE_ESPACIO = { MESA: 'Mesa', PISO1: 'Primer piso', PISO2: 'Segundo piso', VIP: 'Salón VIP' };
+
+// 120 -> "2 horas"; 90 -> "90 minutos"
+function textoDuracion(min) {
+  return min % 60 === 0 ? (min / 60) + (min === 60 ? ' hora' : ' horas') : min + ' minutos';
+}
+
 function envolver(titulo, cuerpo) {
   return '<div style="font-family:Arial,Helvetica,sans-serif;max-width:520px;margin:0 auto;padding:24px;background:#111;color:#f2f2f2">' +
     '<h2 style="margin:0 0 16px;color:#FF6B00">' + escaparHtml(titulo) + '</h2>' + cuerpo +
@@ -43,7 +50,8 @@ function detalleReserva(r) {
     ['Sede', nombreSede(r.sede)],
     ['Fecha', fechaLarga(r.fecha)],
     ['Hora', etiquetaHoraServicio(r.fecha, r.hora)],
-    ['Personas', r.personas]
+    ['Personas', r.personas],
+    ['Lugar', NOMBRE_ESPACIO[r.espacio] || r.espacio]
   ];
   return '<table style="border-collapse:collapse;margin:0 0 16px">' + filas.map(function (f) {
     return '<tr><td style="padding:4px 12px 4px 0;color:#999">' + f[0] + '</td><td style="padding:4px 0"><strong>' +
@@ -59,7 +67,8 @@ function correoConfirmacion(reserva, cfg) {
   var url = enlaceCancelar(reserva, cfg);
   var cuerpo = parrafo('Hola ' + escaparHtml(reserva.nombre) + ', tu reserva está confirmada.') +
     detalleReserva(reserva) +
-    parrafo('Te esperamos en ' + escaparHtml(DIRECCION_SEDE[reserva.sede] || '') + '.') +
+    parrafo('Te esperamos en ' + escaparHtml(DIRECCION_SEDE[reserva.sede] || '') + '. Tu reserva es por ' +
+      escaparHtml(textoDuracion(cfg.duracion_min)) + ' desde la hora reservada.') +
     parrafo(escaparHtml(politicaDe(reserva, cfg))) +
     parrafo('Si necesitas cancelar: <a style="color:#1ABC9C" href="' + escaparHtml(url) + '">cancelar mi reserva</a>');
   return { asunto: 'Reserva confirmada ' + reserva.codigo + ' - Urban Food', html: envolver('Reserva confirmada', cuerpo) };

@@ -89,9 +89,9 @@ function normalizarHora(valor) {
 }
 
 // Horas de inicio posibles: desde la apertura hasta (cierre - margen), en pasos de intervalo_min.
-function horasDelDia(fecha, espacio, cfg) {
+function horasDelDia(fecha, cfg) {
   var h = HORARIO[diaSemana(fecha)];
-  var margen = espacio === 'VIP' ? cfg.vip_ultima_antes_cierre_min : cfg.mesa_ultima_antes_cierre_min;
+  var margen = cfg.mesa_ultima_antes_cierre_min;
   var paso = cfg.intervalo_min;
   var ultima = Math.floor((h.cierra - margen - h.abre) / paso) * paso + h.abre;
   var horas = [];

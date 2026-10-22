@@ -26,7 +26,7 @@
     function resumen(r) {
         var sede = SEDES_RESERVA[r.sede] || { nombre: r.sede };
         return '<div class="tarjeta mt-3">' +
-            '<b>' + escapeHtml(sede.nombre) + '</b> · ' + (r.espacio === 'VIP' ? 'Salón VIP' : 'Mesa') + '<br>' +
+            '<b>' + escapeHtml(sede.nombre) + '</b> · ' + escapeHtml(NOMBRE_ESPACIO[r.espacio] || r.espacio) + '<br>' +
             escapeHtml(formatoFechaLarga(r.fecha)) + ' · ' + escapeHtml(etiquetaHoraServicio(r.fecha, r.hora)) + '<br>' +
             escapeHtml(r.personas) + ' personas · a nombre de ' + escapeHtml(r.nombre_corto) + '<br>' +
             'Código <b>' + escapeHtml(r.codigo) + '</b></div>';

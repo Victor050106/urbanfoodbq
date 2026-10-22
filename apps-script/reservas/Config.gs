@@ -3,20 +3,21 @@
 
 var CONFIG_POR_DEFECTO = {
   adelanto: 50000,
-  dias_reserva: [1, 2, 3, 4, 5],        // lunes a viernes (0 = domingo)
-  vip_min: 10,
-  vip_max: 20,
-  vip_bloque_min: 180,
-  vip_limpieza_min: 30,
-  tope_mesas_elcarmen: 20,              // personas por noche
-  tope_hipodromo: 30,
+  dias_reserva: [1, 2, 3, 4],           // lunes a jueves (0 = domingo): viernes y fin de semana no se reserva
+  grupo_min: 6,                          // personas mínimas en las dos sedes
+  // El Carmen: hasta 2 reservas por día, con al menos 3 h entre una y otra.
+  max_elcarmen: 20,
+  reservas_dia_elcarmen: 2,
+  separacion_elcarmen_min: 180,
+  // Hipódromo: una reserva por piso al día; el piso sale del tamaño del grupo.
+  piso1_max_hipodromo: 16,
+  piso2_max_hipodromo: 30,
+  // Lo que se le dice al cliente que dura su reserva (la separación real de El Carmen es mayor).
+  duracion_min: 120,
   intervalo_min: 30,
-  mesa_ultima_antes_cierre_min: 60,
-  vip_ultima_antes_cierre_min: 180,
+  mesa_ultima_antes_cierre_min: 60,     // última hora de reserva, minutos antes del cierre
   max_meses: 3,
   min_horas: 2,
-  grupo_min: 2,
-  grupo_max: 20,
   apartado_min: 15,
   cancelacion_horas: 24,
   // Vacío a propósito: el dueño lo llena en la hoja Config. Sin correo no se envía, pero nada falla.
