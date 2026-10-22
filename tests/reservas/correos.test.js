@@ -30,6 +30,9 @@ test('cancelación al cliente: con y sin devolución, escapado', () => {
   a.ok(con.html.includes('devol'));
   a.ok(con.html.includes('$50.000'));
   a.ok(!con.html.includes('<i>x</i>'));
+  // Bold no reembolsa Nequi ni PSE: el correo no puede prometer una devolución automática.
+  a.ok(!/medio de pago que usaste|tarjeta/.test(con.html));
+  a.ok(con.html.includes('Te escribiremos para coordinar la devolución'));
   const sin = c.correoCancelacion(base({ estado: 'CANCELADA_SIN_DEVOLUCION', devolucion: 'NO' }), cfg);
   a.ok(sin.html.includes('no se devuelve'));
 });
@@ -51,6 +54,7 @@ test('avisos al administrador', () => {
   a.ok(d.html.includes('LNK_TEST123'));
   a.ok(d.html.includes('$50.000'));
   a.ok(!d.html.includes('<u>Z</u>'));
+  a.ok(d.html.includes('Nequi, PSE o transferencia'));
   const p = c.correoAdminPagoSinCupo(base({ estado: 'PAGO_SIN_CUPO', devolucion: 'PENDIENTE' }));
   a.match(p.asunto, /UF-ABC234/);
   a.ok(p.html.includes('laura@example.com'));

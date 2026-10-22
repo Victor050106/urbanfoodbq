@@ -148,10 +148,6 @@ comentario es spam u ofensivo, simplemente déjalo sin marcar (o borra la fila).
 > Después de modificar `apps-script/Code.gs` hay que volver a desplegar el script:
 > Implementar > Administrar implementaciones > (lápiz) > Versión: Nueva versión > Implementar.
 
-> `Code.gs` todavía tiene el backend de las reservas para grupos (pestaña `Reservas` de la hoja
-> de comentarios). La página ya no lo usa; se puede quitar cuando las reservas en línea estén
-> funcionando y no queden reservas de grupo pendientes.
-
 ## Reservas
 
 Los clientes reservan mesa o el salón VIP desde `/reservas/`. El camino es: enlace
@@ -200,7 +196,7 @@ npm run test:e2e   # la página completa; necesita el servidor corriendo en otra
 ```
 
 `tests/code-gs.test.js` ejecuta `apps-script/Code.gs` contra una hoja falsa en memoria:
-reservas de grupo y opiniones con fórmulas. `tests/reservas/` prueba el backend de las
+opiniones con fórmulas y que ya no acepte reservas. `tests/reservas/` prueba el backend de las
 reservas en línea (cupos, estados, Bold, correos, hoja) con servicios de Google falsos.
 `tests/e2e.js` abre la página en Microsoft Edge (escritorio y celular) y revisa horario,
 selector de sede, modales, opiniones, enlaces a reservas y áreas táctiles. Los envíos

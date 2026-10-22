@@ -63,7 +63,7 @@ function correoConfirmacion(reserva, cfg) {
 function correoCancelacion(reserva, cfg) {
   var conDevolucion = reserva.estado === 'CANCELADA_CON_DEVOLUCION';
   var aviso = conDevolucion
-    ? 'Cancelaste con tiempo, así que te devolvemos el adelanto de ' + formatoPesos(cfg.adelanto) + '. La devolución se procesa a la tarjeta o medio de pago que usaste.'
+    ? 'Cancelaste con tiempo, así que te devolvemos el adelanto de ' + formatoPesos(cfg.adelanto) + '. Te escribiremos para coordinar la devolución.'
     : 'Por la anticipación con que cancelaste, el adelanto de ' + formatoPesos(cfg.adelanto) + ' no se devuelve.';
   var cuerpo = parrafo('Hola ' + escaparHtml(reserva.nombre) + ', tu reserva fue cancelada.') +
     detalleReserva(reserva) + parrafo(escaparHtml(aviso)) + parrafo(escaparHtml(textoPolitica(cfg)));
@@ -89,7 +89,9 @@ function correoSedeCancelada(reserva) {
 }
 
 function correoAdminDevolucion(reserva, cfg) {
-  var cuerpo = parrafo('Hay que devolver el adelanto de ' + formatoPesos(cfg.adelanto) + ' desde el panel de Bold.') +
+  // Bold solo anula o reembolsa pagos con tarjeta; Nequi, PSE y transferencias se devuelven a mano.
+  var cuerpo = parrafo('Hay que devolver el adelanto de ' + formatoPesos(cfg.adelanto) + '. Si pagó con tarjeta, desde el panel de Bold; ' +
+    'si pagó con Nequi, PSE o transferencia, Bold no lo devuelve: hay que transferirle y avisarle.') +
     detalleReserva(reserva) + datosCliente(reserva) +
     parrafo('Link de pago Bold: ' + escaparHtml(reserva.bold_link));
   return { asunto: 'Devolución pendiente ' + reserva.codigo, html: envolver('Devolución pendiente', cuerpo) };
