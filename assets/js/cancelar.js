@@ -32,14 +32,15 @@
             'Código <b>' + escapeHtml(r.codigo) + '</b></div>';
     }
 
-    function textoDevolucion(con) {
-        return con ? 'Te devolveremos los ' + formatoPesos(reglas.adelanto) + '.'
+    // El monto es el que pagó esta reserva (llega con ella), no el adelanto actual de Config.
+    function textoDevolucion(con, adelanto) {
+        return con ? 'Te devolveremos los ' + formatoPesos(adelanto || reglas.adelanto) + '.'
             : 'Como faltan menos de ' + reglas.cancelacion_horas + ' horas, el adelanto no se devuelve.';
     }
 
     function paso1(d) {
         mostrar('<h1 class="titulo text-3xl mt-4">Cancelar reserva</h1>' + resumen(d.reserva) +
-            '<p class="tarjeta mt-3">' + escapeHtml(textoDevolucion(d.conDevolucion)) + '</p>' +
+            '<p class="tarjeta mt-3">' + escapeHtml(textoDevolucion(d.conDevolucion, d.reserva.adelanto)) + '</p>' +
             '<button type="button" class="boton" id="cancelar">Cancelar reserva</button>' +
             '<a class="boton boton-sec" href="../">Mantener mi reserva</a>');
         $('cancelar').addEventListener('click', function () { paso2(d); });
@@ -47,25 +48,25 @@
 
     function paso2(d) {
         mostrar('<h1 class="titulo text-3xl mt-4">¿Seguro que quieres cancelar?</h1>' + resumen(d.reserva) +
-            '<p class="tarjeta mt-3">' + escapeHtml(textoDevolucion(d.conDevolucion)) + '</p>' +
+            '<p class="tarjeta mt-3">' + escapeHtml(textoDevolucion(d.conDevolucion, d.reserva.adelanto)) + '</p>' +
             '<div id="error" class="error" role="alert" hidden></div>' +
             '<button type="button" class="boton" id="confirmar">Sí, cancelar mi reserva</button>' +
             '<button type="button" class="boton boton-sec" id="volver">No, volver</button>');
         $('volver').addEventListener('click', function () { paso1(d); });
-        $('confirmar').addEventListener('click', function () { enviar(); });
+        $('confirmar').addEventListener('click', function () { enviar(d.reserva.adelanto); });
     }
 
-    function enviar() {
+    function enviar(adelanto) {
         var b = $('confirmar');
         b.disabled = true; $('volver').disabled = true;
         b.textContent = 'Cancelando…';
         apiPost({ accion: 'cancelar', t: token }).then(function (r) {
             // El estado final sale de la respuesta, no de lo que se mostró antes.
-            if (r.ok) { cancelada(r.conDevolucion); return; }
+            if (r.ok) { cancelada(r.conDevolucion, adelanto); return; }
             // La respuesta se puede perder aunque la cancelación sí se hizo (pasó el 22/10/2026):
             // antes de mostrar un error se vuelve a leer la reserva.
             apiGet({ accion: 'cancelacion', t: token }).then(function (d) {
-                if (d.ok && esCancelada(d.reserva)) { reglas = combinarReglas(d.reglas); cancelada(d.reserva.estado === 'CANCELADA_CON_DEVOLUCION'); return; }
+                if (d.ok && esCancelada(d.reserva)) { reglas = combinarReglas(d.reglas); cancelada(d.reserva.estado === 'CANCELADA_CON_DEVOLUCION', d.reserva.adelanto); return; }
                 // Cambió mientras decidía (ya pasó, ya no existe): se muestra el estado real.
                 if ((d.ok && !d.puede) || d.error === 'NO_ENCONTRADA') { pintar(d); return; }
                 b.disabled = false; $('volver').disabled = false;
@@ -79,9 +80,9 @@
 
     function esCancelada(r) { return String(r.estado).indexOf('CANCELADA') === 0; }
 
-    function cancelada(conDevolucion) {
+    function cancelada(conDevolucion, adelanto) {
         mostrar('<div class="icono" style="background:#1ABC9C">&#10003;</div><h1 class="titulo text-3xl text-center">Reserva cancelada</h1>' +
-            '<div class="tarjeta mt-3">' + escapeHtml(textoDevolucion(conDevolucion)) + ' Te enviamos un correo con el detalle.</div>' +
+            '<div class="tarjeta mt-3">' + escapeHtml(textoDevolucion(conDevolucion, adelanto)) + ' Te enviamos un correo con el detalle.</div>' +
             '<a class="boton boton-sec" href="../">Hacer otra reserva</a>');
     }
 

@@ -2,7 +2,7 @@ const test = require('node:test');
 const a = require('node:assert/strict');
 const { cargar, ahora, base } = require('./cargar');
 
-const c = cargar('apps-script/reservas/Config.gs', 'apps-script/reservas/Calendario.gs', 'apps-script/reservas/Bold.gs');
+const c = cargar('apps-script/reservas/Config.gs', 'apps-script/reservas/Calendario.gs', 'apps-script/reservas/Ciclo.gs', 'apps-script/reservas/Bold.gs');
 const cfg = c.combinarConfig([]);
 const registrados = [];
 c.console = { log() {}, warn() {}, error: (...x) => registrados.push(x.join(' ')) };

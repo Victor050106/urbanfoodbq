@@ -75,17 +75,17 @@ test('Bold caído libera el cupo', () => {
   d.bold.crearLink = () => ({ id: 'LNK_OTRO', url: 'https://checkout.bold.co/otro' });
   a.equal(c.manejar('crear', solicitudVIP(), d).ok, true);
 });
-test('estado PAID confirma y envía dos correos una sola vez', () => {
+test('estado PAID confirma y envía la confirmación una sola vez', () => {
   const d = falsos(); const { codigo } = c.manejar('crear', solicitudVIP(), d);
   d.bold.estado = 'PAID';
   a.equal(c.manejar('estado', { codigo }, d).reserva.estado, 'CONFIRMADA');
   c.manejar('estado', { codigo }, d);
-  a.equal(d.buzon.length, 2);
+  a.equal(d.buzon.length, 1);
   a.equal(c.manejar('estado', { codigo }, d).reserva.documento, undefined);
-  a.deepEqual(d.buzon.map((m) => m.para).sort(), [CORREOS.correo_elcarmen, 'laura@example.com'].sort());
+  a.deepEqual(d.buzon.map((m) => m.para), ['laura@example.com']); // la sede lo ve en el panel, sin correo
   a.equal(d.bold.consultas.length, 1); // ya confirmada, no se vuelve a preguntar a Bold
   const pub = plano(c.manejar('estado', { codigo }, d).reserva);
-  a.deepEqual(Object.keys(pub).sort(), ['codigo', 'espacio', 'estado', 'fecha', 'hora', 'nombre_corto', 'personas', 'sede']);
+  a.deepEqual(Object.keys(pub).sort(), ['adelanto', 'codigo', 'espacio', 'estado', 'fecha', 'hora', 'nombre_corto', 'personas', 'sede']);
 });
 test('estado: código inexistente o vacío', () => {
   const d = falsos();
@@ -115,7 +115,7 @@ test('pago tardío con cupo libre confirma, incluso ya EXPIRADA (últimas 24 h)'
   a.equal(fila(d, A).estado, 'EXPIRADA');
   d.bold.estado = 'PAID';
   a.equal(c.manejar('estado', { codigo: A }, d).reserva.estado, 'CONFIRMADA');
-  a.equal(d.buzon.length, 2);
+  a.equal(d.buzon.length, 1);
 });
 test('pago tardío a menos de 2 h de la hora, con el espacio libre, confirma', () => {
   // Jueves 22-oct 17:50 en Bogotá: reserva a las 20:00 (2 h 10 min antes), paga a las 18:06 ya vencida.
@@ -128,7 +128,7 @@ test('pago tardío a menos de 2 h de la hora, con el espacio libre, confirma', (
   d.bold.estado = 'PAID';
   a.equal(c.manejar('estado', { codigo: A }, d).reserva.estado, 'CONFIRMADA');
   a.equal(fila(d, A).devolucion, 'NO');
-  a.equal(d.buzon.length, 2);
+  a.equal(d.buzon.length, 1);
 });
 test('pago tardío de una hora que ya pasó queda PAGO_SIN_CUPO', () => {
   const d = falsos({ ahora: Date.parse('2026-10-22T22:50:00Z') });
@@ -155,7 +155,7 @@ test('cancelación con token', () => {
   const d = falsos();
   const codigo = confirmada(d);
   const t = fila(d, codigo).token_cancelar;
-  a.equal(d.buzon.length, 2);
+  a.equal(d.buzon.length, 1);
   const v = c.manejar('cancelacion', { t }, d);
   a.equal(v.ok, true); a.equal(v.puede, true); a.equal(v.conDevolucion, true);
   a.equal(v.reserva.codigo, codigo); a.equal(v.reserva.documento, undefined); a.equal(v.reserva.token_cancelar, undefined);
@@ -163,13 +163,13 @@ test('cancelación con token', () => {
   a.equal(x.ok, true); a.equal(x.conDevolucion, true);
   a.equal(fila(d, codigo).estado, 'CANCELADA_CON_DEVOLUCION');
   a.equal(fila(d, codigo).devolucion, 'PENDIENTE');
-  const nuevos = d.buzon.slice(2);
-  a.deepEqual(nuevos.map((m) => m.para), ['laura@example.com', CORREOS.correo_elcarmen, CORREOS.correo_admin]);
-  a.match(nuevos[2].asunto, /Devolución pendiente/);
+  const nuevos = d.buzon.slice(1);
+  a.deepEqual(nuevos.map((m) => m.para), ['laura@example.com', CORREOS.correo_admin]);
+  a.match(nuevos[1].asunto, /Devolución pendiente/);
   // Ya cancelada: no se puede de nuevo y no hay más correos.
   a.equal(c.manejar('cancelar', { t }, d).error, 'NO_CANCELABLE');
   a.equal(c.manejar('cancelacion', { t }, d).puede, false);
-  a.equal(d.buzon.length, 5);
+  a.equal(d.buzon.length, 3);
   a.equal(c.manejar('cancelar', { t: 'otro' }, d).error, 'NO_ENCONTRADA');
   a.equal(c.manejar('cancelar', {}, d).error, 'PARAMETROS');
 });
@@ -180,7 +180,7 @@ test('cancelación con menos de 24 h: sin devolución ni correo al admin', () =>
   const x = c.manejar('cancelar', { t: fila(d, codigo).token_cancelar }, d);
   a.equal(x.conDevolucion, false);
   a.equal(fila(d, codigo).estado, 'CANCELADA_SIN_DEVOLUCION');
-  a.deepEqual(d.buzon.slice(2).map((m) => m.para), ['laura@example.com', CORREOS.correo_elcarmen]);
+  a.deepEqual(d.buzon.slice(1).map((m) => m.para), ['laura@example.com']);
 });
 test('panel: clave, aislamiento por sede y marcas', () => {
   const d = falsos(); // props: CLAVE_ELCARMEN='c1', CLAVE_HIPODROMO='h1'
@@ -288,12 +288,12 @@ test('revisarPendientes vence lo no pagado y confirma lo pagado', () => {
   a.equal(fila(d, B).estado, 'EXPIRADA');
   // La vencida se consulta dos veces antes de liberar el cupo.
   a.equal(d.bold.consultas.filter((x) => x === linkB).length, 2);
-  a.equal(d.buzon.length, 2);
+  a.equal(d.buzon.length, 1);
   a.ok(d.buzon.some((m) => m.para === 'laura@example.com' && /confirmada/.test(m.asunto)));
   // Segunda pasada: nada nuevo, y la confirmada no se vuelve a consultar.
   const consultasA = d.bold.consultas.filter((x) => x === linkA).length;
   c.revisarPendientesCon(d);
-  a.equal(d.buzon.length, 2);
+  a.equal(d.buzon.length, 1);
   a.equal(d.bold.consultas.filter((x) => x === linkA).length, consultasA);
 });
 test('revisarPendientes: una reserva que falla no detiene las demás', () => {
@@ -407,6 +407,28 @@ test('los correos usan el adelanto y las horas de Config', () => {
   c.manejar('cancelar', { t: fila(d, codigo).token_cancelar }, d);
   const admin = d.buzon.find((m) => m.para === CORREOS.correo_admin);
   a.ok(admin.html.includes('$60.000')); a.ok(!admin.html.includes('$50.000'));
+});
+// Caso real del 22/10/2026: la prueba pagó $1.000 y después el adelanto volvió a $50.000.
+// La cajera descuenta en fu.do lo que dice el panel: tiene que ser lo pagado.
+test('si el adelanto cambia en Config, la reserva ya pagada conserva el suyo', () => {
+  const d = falsos({ config: [['adelanto', '1000']] });
+  const codigo = confirmada(d);
+  a.equal(d.bold.creados[0].amount.total_amount, 1000);
+  a.equal(fila(d, codigo).adelanto, 1000);
+  const leerConfig = d.hoja.leerConfig;
+  d.hoja.leerConfig = () => Object.assign(leerConfig(), { adelanto: 50000 });
+
+  const tc = c.manejar('panel_entrar', { sede: 'ELCARMEN', clave: 'c1' }, d).token;
+  a.equal(c.manejar('panel_listar', { token: tc, desde: '2026-10-22' }, d).reservas[0].adelanto, 1000);
+  a.equal(c.manejar('panel_marcar', { token: tc, codigo, marca: 'DESCUENTO' }, d).reserva.adelanto, 1000);
+  const t = fila(d, codigo).token_cancelar;
+  a.equal(c.manejar('cancelacion', { t }, d).reserva.adelanto, 1000);
+  c.manejar('cancelar', { t }, d);
+  const admin = d.buzon.find((m) => m.para === CORREOS.correo_admin);
+  a.ok(admin.html.includes('$1.000')); a.ok(!admin.html.includes('$50.000'));
+  // Una reserva nueva sí cobra el valor nuevo.
+  c.manejar('crear', solicitud({ hora: '21:00' }), d);
+  a.equal(d.bold.creados[1].amount.total_amount, 50000);
 });
 test('Bold EXPIRED o CANCELLED deja la reserva cerrada y no se vuelve a consultar', () => {
   const d = falsos();

@@ -116,7 +116,7 @@
             h += '<div class="dato mt-2 font-semibold">Cancelada' + (r.estado === 'CANCELADA_CON_DEVOLUCION' ? ' (con devolución)' : ' (sin devolución)') + '</div></article>';
             return h;
         }
-        h += '<div class="dato mt-2 text-fresh-teal font-semibold">Adelanto pagado ' + escapeHtml(formatoPesos(estado.reglas.adelanto)) + '</div>' +
+        h += '<div class="dato mt-2 text-fresh-teal font-semibold">Adelanto pagado ' + escapeHtml(formatoPesos(r.adelanto || estado.reglas.adelanto)) + '</div>' +
             '<div class="acciones">' +
             '<button type="button" class="llego" data-marca="LLEGO" aria-pressed="' + (r.estado === 'LLEGO') + '">Llegó</button>' +
             '<button type="button" class="no" data-marca="NO_LLEGO" aria-pressed="' + (r.estado === 'NO_LLEGO') + '">No llegó</button>' +

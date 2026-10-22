@@ -8,7 +8,7 @@ function armarLink(reserva, cfg, ahoraMs) {
     ' · ' + reserva.fecha + ' ' + reserva.hora;
   return {
     amount_type: 'CLOSE',
-    amount: { currency: 'COP', total_amount: cfg.adelanto, tip_amount: 0 },
+    amount: { currency: 'COP', total_amount: adelantoDe(reserva, cfg), tip_amount: 0 },
     reference: reserva.codigo,
     description: descripcion.slice(0, 100),
     payer_email: reserva.correo,

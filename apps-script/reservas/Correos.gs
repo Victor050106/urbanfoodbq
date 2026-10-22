@@ -22,6 +22,11 @@ function textoPolitica(cfg) {
     cfg.cancelacion_horas + ' horas o más de anticipación te lo devolvemos. Si cancelas después o no llegas, no se devuelve.';
 }
 
+// La política de una reserva ya pagada, con lo que pagó y no con el adelanto actual de Config.
+function politicaDe(reserva, cfg) {
+  return textoPolitica({ adelanto: adelantoDe(reserva, cfg), cancelacion_horas: cfg.cancelacion_horas });
+}
+
 function nombreSede(sede) { return NOMBRE_SEDE[sede] || sede; }
 
 function envolver(titulo, cuerpo) {
@@ -55,18 +60,19 @@ function correoConfirmacion(reserva, cfg) {
   var cuerpo = parrafo('Hola ' + escaparHtml(reserva.nombre) + ', tu reserva está confirmada.') +
     detalleReserva(reserva) +
     parrafo('Te esperamos en ' + escaparHtml(DIRECCION_SEDE[reserva.sede] || '') + '.') +
-    parrafo(escaparHtml(textoPolitica(cfg))) +
+    parrafo(escaparHtml(politicaDe(reserva, cfg))) +
     parrafo('Si necesitas cancelar: <a style="color:#1ABC9C" href="' + escaparHtml(url) + '">cancelar mi reserva</a>');
   return { asunto: 'Reserva confirmada ' + reserva.codigo + ' - Urban Food', html: envolver('Reserva confirmada', cuerpo) };
 }
 
 function correoCancelacion(reserva, cfg) {
   var conDevolucion = reserva.estado === 'CANCELADA_CON_DEVOLUCION';
+  var pagado = formatoPesos(adelantoDe(reserva, cfg));
   var aviso = conDevolucion
-    ? 'Cancelaste con tiempo, así que te devolvemos el adelanto de ' + formatoPesos(cfg.adelanto) + '. Te escribiremos para coordinar la devolución.'
-    : 'Por la anticipación con que cancelaste, el adelanto de ' + formatoPesos(cfg.adelanto) + ' no se devuelve.';
+    ? 'Cancelaste con tiempo, así que te devolvemos el adelanto de ' + pagado + '. Te escribiremos para coordinar la devolución.'
+    : 'Por la anticipación con que cancelaste, el adelanto de ' + pagado + ' no se devuelve.';
   var cuerpo = parrafo('Hola ' + escaparHtml(reserva.nombre) + ', tu reserva fue cancelada.') +
-    detalleReserva(reserva) + parrafo(escaparHtml(aviso)) + parrafo(escaparHtml(textoPolitica(cfg)));
+    detalleReserva(reserva) + parrafo(escaparHtml(aviso)) + parrafo(escaparHtml(politicaDe(reserva, cfg)));
   return { asunto: 'Reserva cancelada ' + reserva.codigo + ' - Urban Food', html: envolver('Reserva cancelada', cuerpo) };
 }
 
@@ -75,22 +81,9 @@ function datosCliente(r) {
     escaparHtml(r.documento) + ')<br>' + escaparHtml(r.celular) + ' · ' + escaparHtml(r.correo) + '</p>';
 }
 
-function correoSedeNueva(reserva) {
-  var cuerpo = detalleReserva(reserva) + datosCliente(reserva) +
-    parrafo('Espacio: ' + escaparHtml(reserva.espacio)) +
-    (reserva.comentario ? parrafo('Comentario: ' + escaparHtml(reserva.comentario)) : '');
-  return { asunto: 'Nueva reserva ' + reserva.codigo + ' - ' + nombreSede(reserva.sede), html: envolver('Nueva reserva', cuerpo) };
-}
-
-function correoSedeCancelada(reserva) {
-  var cuerpo = detalleReserva(reserva) + datosCliente(reserva) +
-    parrafo('Estado: ' + escaparHtml(reserva.estado));
-  return { asunto: 'Reserva cancelada ' + reserva.codigo + ' - ' + nombreSede(reserva.sede), html: envolver('Reserva cancelada', cuerpo) };
-}
-
 function correoAdminDevolucion(reserva, cfg) {
   // Bold solo anula o reembolsa pagos con tarjeta; Nequi, PSE y transferencias se devuelven a mano.
-  var cuerpo = parrafo('Hay que devolver el adelanto de ' + formatoPesos(cfg.adelanto) + '. Si pagó con tarjeta, desde el panel de Bold; ' +
+  var cuerpo = parrafo('Hay que devolver el adelanto de ' + formatoPesos(adelantoDe(reserva, cfg)) + '. Si pagó con tarjeta, desde el panel de Bold; ' +
     'si pagó con Nequi, PSE o transferencia, Bold no lo devuelve: hay que transferirle y avisarle.') +
     detalleReserva(reserva) + datosCliente(reserva) +
     parrafo('Link de pago Bold: ' + escaparHtml(reserva.bold_link));

@@ -45,8 +45,16 @@ function nuevaReserva(limpio, espacio, ahoraMs, cfg, ids) {
     devolucion: 'NO',
     descuento_aplicado: false,
     marcada_en: '',
-    notas: ''
+    notas: '',
+    adelanto: cfg.adelanto
   };
+}
+
+// Lo que pagó el cliente, que es lo que se descuenta o se devuelve, no lo que dice Config hoy:
+// si el dueño cambia el adelanto, las reservas ya pagadas no cambian. Las reservas de antes de
+// la columna "adelanto" no lo tienen y usan el valor de Config.
+function adelantoDe(reserva, cfg) {
+  return Number(reserva.adelanto) || (cfg && cfg.adelanto);
 }
 
 function sinCambio(reserva) { return { reserva: reserva, cambio: false, evento: null }; }
@@ -156,11 +164,12 @@ function verificarTokenPanel(token, ahoraMs, hmacHex) {
   return p[0];
 }
 
-function resumenPublico(reserva) {
+function resumenPublico(reserva, cfg) {
   return {
     codigo: reserva.codigo, sede: reserva.sede, espacio: reserva.espacio,
     fecha: reserva.fecha, hora: reserva.hora, personas: reserva.personas,
     nombre_corto: String(reserva.nombre || '').trim().split(/\s+/)[0],
-    estado: reserva.estado
+    estado: reserva.estado,
+    adelanto: adelantoDe(reserva, cfg)
   };
 }

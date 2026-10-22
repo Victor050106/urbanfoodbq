@@ -8,8 +8,6 @@ const { combinarConfig } = cargar('apps-script/reservas/Config.gs');
 const copia = (x) => JSON.parse(JSON.stringify(x));
 
 const CORREOS = {
-  correo_elcarmen: 'carmen@urbanfood.test',
-  correo_hipodromo: 'hipodromo@urbanfood.test',
   correo_admin: 'admin@urbanfood.test'
 };
 

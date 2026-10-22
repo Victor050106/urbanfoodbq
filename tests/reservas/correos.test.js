@@ -2,7 +2,7 @@ const test = require('node:test');
 const a = require('node:assert/strict');
 const { cargar, base } = require('./cargar');
 
-const c = cargar('apps-script/reservas/Config.gs', 'apps-script/reservas/Calendario.gs', 'apps-script/reservas/Correos.gs');
+const c = cargar('apps-script/reservas/Config.gs', 'apps-script/reservas/Calendario.gs', 'apps-script/reservas/Ciclo.gs', 'apps-script/reservas/Correos.gs');
 const cfg = c.combinarConfig([]);
 const POLITICA = 'El adelanto de $50.000 se descuenta de tu cuenta. Si cancelas con 24 horas o más de anticipación te lo devolvemos. Si cancelas después o no llegas, no se devuelve.';
 
@@ -37,15 +37,16 @@ test('cancelación al cliente: con y sin devolución, escapado', () => {
   a.ok(sin.html.includes('no se devuelve'));
 });
 
-test('avisos a la sede', () => {
-  const n = c.correoSedeNueva(base({ comentario: '<script>1</script>', personas: 4 }));
-  a.match(n.asunto, /UF-ABC234/);
-  a.ok(n.html.includes('Laura Gómez'));
-  a.ok(n.html.includes('8:00 PM'));
-  a.ok(!n.html.includes('<script>'));
-  const x = c.correoSedeCancelada(base({ estado: 'CANCELADA_CON_DEVOLUCION' }));
-  a.match(x.asunto, /UF-ABC234/);
-  a.ok(x.html.includes('jueves 22 de octubre de 2026'));
+// La reserva pagó $1.000 y después el dueño subió el adelanto a $50.000 (pasó el 22/10/2026):
+// los correos hablan de lo que pagó, no del valor actual de Config.
+test('los correos usan el adelanto que pagó la reserva, no el de Config', () => {
+  const pagada = base({ estado: 'CANCELADA_CON_DEVOLUCION', adelanto: 1000 });
+  for (const m of [c.correoConfirmacion(pagada, cfg), c.correoCancelacion(pagada, cfg), c.correoAdminDevolucion(pagada, cfg)]) {
+    a.ok(m.html.includes('$1.000'), m.asunto);
+    a.ok(!m.html.includes('$50.000'), m.asunto);
+  }
+  // Reservas de antes de la columna "adelanto": se usa el de Config.
+  a.ok(c.correoConfirmacion(base({ adelanto: '' }), cfg).html.includes('$50.000'));
 });
 
 test('avisos al administrador', () => {
@@ -73,11 +74,12 @@ test('política construida desde Config: con los valores por defecto es el texto
   a.equal(c.textoPolitica(cfg), POLITICA);
   const otra = c.combinarConfig([['adelanto', '60000'], ['cancelacion_horas', '48']]);
   a.equal(c.textoPolitica(otra), 'El adelanto de $60.000 se descuenta de tu cuenta. Si cancelas con 48 horas o más de anticipación te lo devolvemos. Si cancelas después o no llegas, no se devuelve.');
-  const m = c.correoConfirmacion(base(), otra);
+  // Sin adelanto guardado (reservas de antes de la columna) se usa el de Config.
+  const m = c.correoConfirmacion(base({ adelanto: '' }), otra);
   a.ok(m.html.includes('$60.000')); a.ok(!m.html.includes('$50.000'));
   const k = c.correoCancelacion(base({ estado: 'CANCELADA_SIN_DEVOLUCION' }), otra);
   a.ok(k.html.includes('48 horas'));
-  a.ok(c.correoAdminDevolucion(base(), otra).html.includes('$60.000'));
+  a.ok(c.correoAdminDevolucion(base({ adelanto: '' }), otra).html.includes('$60.000'));
 });
 
 test('correos: fecha larga y la hora 00:00 del viernes como madrugada', () => {
@@ -85,6 +87,6 @@ test('correos: fecha larga y la hora 00:00 del viernes como madrugada', () => {
   a.ok(m.html.includes('viernes 23 de octubre de 2026'));
   a.ok(m.html.includes('12:00 AM (noche del viernes al sábado)'));
   a.ok(!m.html.includes('2026-10-23'));
-  const n = c.correoSedeNueva(base({ fecha: '2026-10-22', hora: '20:00' }));
+  const n = c.correoConfirmacion(base({ fecha: '2026-10-22', hora: '20:00' }), cfg);
   a.ok(n.html.includes('jueves 22 de octubre de 2026')); a.ok(n.html.includes('8:00 PM'));
 });

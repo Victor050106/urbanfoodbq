@@ -42,7 +42,8 @@ function base(sobrescribir) {
     devolucion: 'NO',
     descuento_aplicado: false,
     marcada_en: '',
-    notas: 'Sin notas'
+    notas: 'Sin notas',
+    adelanto: 50000
   }, sobrescribir);
 }
 

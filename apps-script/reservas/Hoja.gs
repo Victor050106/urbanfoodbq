@@ -2,7 +2,7 @@
 
 var COLUMNAS_RESERVA = ['codigo', 'creada', 'sede', 'espacio', 'fecha', 'hora', 'personas', 'nombre',
   'tipo_doc', 'documento', 'correo', 'celular', 'comentario', 'estado', 'bold_link', 'bold_url', 'vence',
-  'pagada_en', 'token_cancelar', 'devolucion', 'descuento_aplicado', 'marcada_en', 'notas'];
+  'pagada_en', 'token_cancelar', 'devolucion', 'descuento_aplicado', 'marcada_en', 'notas', 'adelanto'];
 
 // Sheets convierte "2026-10-24" en fecha, "20:00" en hora y quita ceros a las cédulas:
 // estas columnas se guardan como texto "@" para que lo escrito sea lo leído.
@@ -22,7 +22,7 @@ function filaAReserva(fila) {
     var v = fila[i];
     if (k === 'fecha') r[k] = normalizarFecha(v);
     else if (k === 'hora') r[k] = normalizarHora(v);
-    else if (k === 'personas') r[k] = Number(v) || 0;
+    else if (k === 'personas' || k === 'adelanto') r[k] = Number(v) || 0;
     else if (k === 'descuento_aplicado') r[k] = v === true || String(v).toUpperCase() === 'TRUE';
     else r[k] = desprotegerFormula(textoCelda(v));
   });
@@ -120,6 +120,11 @@ function abrirHoja() {
   var hojaReservas = obtenerPestana(ss, 'Reservas', COLUMNAS_RESERVA);
   var hojaConfig = obtenerPestana(ss, 'Config', ['clave', 'valor'], filasConfigPorDefecto());
   var hojaBloqueos = obtenerPestana(ss, 'Bloqueos', COLUMNAS_BLOQUEO);
+  // Las columnas nuevas van al final (p. ej. "adelanto"): en una pestaña creada antes les falta el encabezado.
+  var ultimaColumna = hojaReservas.getRange(1, COLUMNAS_RESERVA.length);
+  if (ultimaColumna.getValue() !== COLUMNAS_RESERVA[COLUMNAS_RESERVA.length - 1]) {
+    hojaReservas.getRange(1, 1, 1, COLUMNAS_RESERVA.length).setValues([COLUMNAS_RESERVA]);
+  }
 
   function datos(hoja, columnas) {
     var ultima = hoja.getLastRow();

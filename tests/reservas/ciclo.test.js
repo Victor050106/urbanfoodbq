@@ -77,6 +77,7 @@ test('nueva reserva pendiente', () => {
   const n = c.nuevaReserva(lim, 'MESA', ahora, cfg, { codigo: 'UF-AAAAAA', token: 'tk' });
   a.equal(n.estado, 'PENDIENTE_PAGO'); a.equal(n.vence, new Date(ahora + 15 * 60000).toISOString());
   a.equal(n.devolucion, 'NO'); a.equal(n.descuento_aplicado, false); a.equal(n.codigo, 'UF-AAAAAA');
+  a.equal(n.adelanto, cfg.adelanto); // queda guardado lo que se le cobra
 });
 test('cancelar deja sello de tiempo en marcada_en', () => {
   const r = base({ estado: 'CONFIRMADA', fecha: '2026-10-22', hora: '20:00' });

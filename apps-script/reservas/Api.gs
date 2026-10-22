@@ -43,17 +43,17 @@ function sumarDias(fecha, n) {
   return aFechaTexto(new Date(Date.parse(fecha + 'T00:00:00Z') + n * 86400000));
 }
 
-function correoDeSede(cfg, sede) {
-  return sede === 'ELCARMEN' ? cfg.correo_elcarmen : cfg.correo_hipodromo;
-}
-
-function sinSecretos(reserva) {
+// Lo que ve la cajera: sin enlaces ni token, y con el adelanto que pagó el cliente (el que descuenta en fu.do).
+function paraPanel(reserva, cfg) {
   var r = copiarReserva(reserva);
   CAMPOS_SECRETOS.forEach(function (k) { delete r[k]; });
+  r.adelanto = adelantoDe(reserva, cfg);
   return r;
 }
 
 // Un correo que falla (cuota de MailApp) no debe deshacer ni ocultar un cambio de estado ya guardado.
+// La sede no recibe correos: ve sus reservas en el panel. Una cuenta de Gmail gratis envía a unos
+// 100 destinatarios al día, y avisar también a la sede gastaba la mitad de ese cupo.
 function avisar(deps, para, mensaje) {
   if (!para) return;
   try { deps.enviar(para, mensaje); } catch (e) { console.error('Correo no enviado a ' + para + ': ' + e); }
@@ -62,7 +62,6 @@ function avisar(deps, para, mensaje) {
 function avisarEventoPago(evento, r, deps, cfg) {
   if (evento === 'CONFIRMADA') {
     avisar(deps, r.correo, correoConfirmacion(r, cfg));
-    avisar(deps, correoDeSede(cfg, r.sede), correoSedeNueva(r));
   } else if (evento === 'PAGO_SIN_CUPO') {
     avisar(deps, cfg.correo_admin, correoAdminPagoSinCupo(r));
   }
@@ -161,7 +160,7 @@ function accionEstado(p, deps) {
   if (!r) return fallo('NO_ENCONTRADA');
   var cfg = deps.hoja.leerConfig();
   r = refrescarConBold(r, deps, cfg);
-  return { ok: true, reserva: resumenPublico(r), reglas: reglasPublicas(cfg) };
+  return { ok: true, reserva: resumenPublico(r, cfg), reglas: reglasPublicas(cfg) };
 }
 
 function accionCancelacion(p, deps) {
@@ -171,7 +170,7 @@ function accionCancelacion(p, deps) {
   if (!r) return fallo('NO_ENCONTRADA');
   var cfg = deps.hoja.leerConfig();
   var ev = evaluarCancelacion(r, deps.ahora(), cfg);
-  return { ok: true, reserva: resumenPublico(r), puede: ev.puede, conDevolucion: ev.conDevolucion, reglas: reglasPublicas(cfg) };
+  return { ok: true, reserva: resumenPublico(r, cfg), puede: ev.puede, conDevolucion: ev.conDevolucion, reglas: reglasPublicas(cfg) };
 }
 
 // Segundo "Pagar" (volvió de Bold con Atrás, o se perdió la respuesta): si su propio apartado sigue vigente
@@ -237,7 +236,6 @@ function accionCancelar(p, deps) {
   if (!r) return fallo('NO_ENCONTRADA');
   var conDevolucion = r.estado === 'CANCELADA_CON_DEVOLUCION';
   avisar(deps, r.correo, correoCancelacion(r, cfg));
-  avisar(deps, correoDeSede(cfg, r.sede), correoSedeCancelada(r));
   if (conDevolucion) avisar(deps, cfg.correo_admin, correoAdminDevolucion(r, cfg));
   return { ok: true, conDevolucion: conDevolucion };
 }
@@ -295,7 +293,7 @@ function accionPanelListar(p, deps) {
     .sort(function (x, y) {
       return x.fecha < y.fecha ? -1 : x.fecha > y.fecha ? 1 : horaAMinutos(x.hora) - horaAMinutos(y.hora);
     })
-    .map(sinSecretos);
+    .map(function (r) { return paraPanel(r, cfg); });
   return { ok: true, sede: sede, reservas: reservas, reglas: reglasPublicas(cfg) };
 }
 
@@ -305,13 +303,14 @@ function accionPanelMarcar(p, deps) {
   var codigo = textoLimpio(p.codigo);
   var marca = textoLimpio(p.marca);
   if (!codigo) return fallo('PARAMETROS');
+  var cfg = deps.hoja.leerConfig();
   return deps.bloqueo(function () {
     var r = deps.hoja.buscarPorCodigo(codigo);
     if (!r) return fallo('NO_ENCONTRADA');
     if (r.sede !== sede) return fallo('PERMISO');
     var x = marcarPanel(r, marca, deps.ahora()); // lanza NO_MARCABLE / MARCA
     if (x.cambio) deps.hoja.actualizar(x.reserva);
-    return { ok: true, reserva: sinSecretos(x.reserva) };
+    return { ok: true, reserva: paraPanel(x.reserva, cfg) };
   });
 }
 

@@ -19,9 +19,7 @@ var CONFIG_POR_DEFECTO = {
   grupo_max: 20,
   apartado_min: 15,
   cancelacion_horas: 24,
-  // Vacíos a propósito: el dueño los llena en la hoja Config. Sin correo no se envía, pero nada falla.
-  correo_elcarmen: '',
-  correo_hipodromo: '',
+  // Vacío a propósito: el dueño lo llena en la hoja Config. Sin correo no se envía, pero nada falla.
   correo_admin: '',
   url_sitio: 'https://urbanfoodbq.com'
 };

@@ -17,9 +17,9 @@ test('ida y vuelta de una reserva y celdas transformadas por Sheets', () => {
 });
 
 test('orden de columnas y campos faltantes', () => {
-  a.deepEqual(plano(c.COLUMNAS_RESERVA), ['codigo', 'creada', 'sede', 'espacio', 'fecha', 'hora', 'personas', 'nombre', 'tipo_doc', 'documento', 'correo', 'celular', 'comentario', 'estado', 'bold_link', 'bold_url', 'vence', 'pagada_en', 'token_cancelar', 'devolucion', 'descuento_aplicado', 'marcada_en', 'notas']);
+  a.deepEqual(plano(c.COLUMNAS_RESERVA), ['codigo', 'creada', 'sede', 'espacio', 'fecha', 'hora', 'personas', 'nombre', 'tipo_doc', 'documento', 'correo', 'celular', 'comentario', 'estado', 'bold_link', 'bold_url', 'vence', 'pagada_en', 'token_cancelar', 'devolucion', 'descuento_aplicado', 'marcada_en', 'notas', 'adelanto']);
   const fila = c.reservaAFila({ codigo: 'UF-X' });
-  a.equal(fila.length, 23);
+  a.equal(fila.length, 24);
   a.equal(fila[0], 'UF-X');
   a.equal(fila[1], '');
 });
