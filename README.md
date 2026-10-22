@@ -165,6 +165,15 @@ y abrir [http://localhost:3000/reservas/?api=local](http://localhost:3000/reserv
 (el puerto se cambia con la variable `PORT`). Ese mismo servidor sirve el resto del sitio, así
 que también sirve para `npm run test:e2e`.
 
+## Dirección del sitio (mientras no haya dominio)
+
+El sitio se publica en GitHub Pages: **https://victor050106.github.io/urbanfoodbq/**. El dominio
+`urbanfoodbq.com` todavía no está comprado, así que nada apunta a él: la celda `url_sitio` de la
+hoja Config (vuelta desde Bold y enlace de cancelar de los correos), las etiquetas `canonical` /
+`og:` / JSON-LD de `index.html`, `reservas/` y `privacidad/`, `robots.txt` y `sitemap.xml` usan la
+dirección de GitHub Pages. El día que se compre el dominio hay que cambiarla en todos esos sitios
+(un buscar y reemplazar) y en la celda `url_sitio`.
+
 ## Correr localmente
 
 Requiere [Node.js](https://nodejs.org) instalado.

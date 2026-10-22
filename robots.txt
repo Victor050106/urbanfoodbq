@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://urbanfoodbq.com/sitemap.xml
+Sitemap: https://victor050106.github.io/urbanfoodbq/sitemap.xml

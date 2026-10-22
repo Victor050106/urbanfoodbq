@@ -173,6 +173,8 @@
         });
         $('cal').innerHTML = html;
         $('cal').setAttribute('aria-busy', cargando ? 'true' : 'false');
+        // Mientras llegan los cupos todos los días salen apagados: sin este aviso parecía que no había ninguno.
+        $('calCargando').hidden = !cargando;
     }
 
     function cargarDias() {
@@ -182,6 +184,7 @@
         pedirMes(estado.sede, estado.personas, estado.mes).then(function (r) {
             if (mia !== carga.dias || estado.paso !== 2) return;
             if (!r.ok) {
+                $('calCargando').hidden = true;
                 if (r.error === 'GRUPO_GRANDE' || r.error === 'PERSONAS') { irAPaso(1); }
                 mostrarError(r.error);
                 return;
