@@ -25,6 +25,12 @@
     main.marco .titulo.text-3xl { font-size: 2.6rem; line-height: 1.05; }
 }
 
+/* El plugin de formularios de Tailwind pinta de blanco los campos email, tel y password, y su regla
+   se inyecta después de la nuestra: con el texto claro no se veía lo escrito (correo, celular y la
+   clave del panel). input.campo pesa más que [type='email'] y gana sin importar el orden. */
+input.campo, select.campo, textarea.campo { background-color: var(--card); color: #f3f3f3; }
+input.campo:focus, select.campo:focus, textarea.campo:focus { border-color: #FF6B00; box-shadow: none; }
+
 /* "Cargando" visible: antes era un texto gris de 12 px que parecía una página rota. */
 .cargando {
     display: flex;

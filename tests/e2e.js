@@ -97,7 +97,16 @@ async function setup(browser, viewport) {
   const waPronto = await rv.page.locator('#prontoWa a[href^="https://wa.me/"]').count();
   check('pagina de reservas carga (pronto con WhatsApp o formulario)', (pronto && waPronto === 2) || app, pronto ? `pronto, ${waPronto} WhatsApp` : 'formulario');
   check('pagina de reservas sin errores', rv.errors.length === 0, rv.errors.join(' | '));
+  // El plugin de formularios de Tailwind dejaba en blanco los campos email/tel/password con texto claro encima.
+  const fondoCampos = async (pg) => pg.$$eval('.campo', els => els.map(e => e.id + '=' + getComputedStyle(e).backgroundColor));
+  const blancos = (l) => l.filter(x => x.endsWith('rgb(255, 255, 255)'));
+  const camposReserva = await fondoCampos(rv.page);
+  check('reservas: ningun campo con fondo blanco', camposReserva.length > 0 && !blancos(camposReserva).length, blancos(camposReserva).join(' '));
   await rv.page.screenshot({ path: out + 'desktop-reservas.png' });
+  await rv.page.goto('http://localhost:3000/reservas/panel/', { waitUntil: 'load' });
+  await rv.page.waitForTimeout(500);
+  const camposPanel = await fondoCampos(rv.page);
+  check('panel: campo de clave sin fondo blanco', camposPanel.length > 0 && !blancos(camposPanel).length, blancos(camposPanel).join(' '));
   await rv.ctx.close();
 
   // Recursos pesados
