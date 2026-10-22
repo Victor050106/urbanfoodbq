@@ -22,3 +22,6 @@ _source/PersonajeUrbanFood.ai
 # Dependencias y capturas de las pruebas
 node_modules/
 tests/shots/
+
+# Bocetos y espacio de trabajo de Superpowers
+.superpowers/

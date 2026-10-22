@@ -1,0 +1,51 @@
+/* Lo que comparten las páginas de /reservas/: el marco de escritorio y el indicador de carga.
+   Cada página conserva su propio <style>; este archivo va después para poder ajustarlo. */
+
+/* En computador el formulario era una columna angosta perdida en un fondo negro vacío:
+   ahora va en una tarjeta centrada sobre la textura de la marca. */
+@media (min-width: 1024px) {
+    body {
+        background:
+            linear-gradient(rgba(15, 15, 15, .93), rgba(15, 15, 15, .93)),
+            url('../img/hero-pattern.webp') center / 560px repeat fixed,
+            #0f0f0f;
+        min-height: 100vh;
+    }
+    main.marco {
+        margin-top: 48px;
+        margin-bottom: 48px;
+        padding: 36px 44px 44px;
+        background: #141414;
+        border: 1px solid #2a2a2a;
+        border-radius: 20px;
+        box-shadow: 0 24px 60px rgba(0, 0, 0, .55);
+        font-size: 17px;
+    }
+    main.marco.max-w-xl { max-width: 40rem; }
+    main.marco .titulo.text-3xl { font-size: 2.6rem; line-height: 1.05; }
+}
+
+/* "Cargando" visible: antes era un texto gris de 12 px que parecía una página rota. */
+.cargando {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 40px 0;
+    color: #b5b5b5;
+    font-size: 15px;
+}
+.cargando::before {
+    content: '';
+    flex: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 3px solid #2c2c2c;
+    border-top-color: #FF6B00;
+    animation: girar .8s linear infinite;
+}
+@keyframes girar { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+    .cargando::before { animation-duration: 2.4s; }
+}

@@ -1,359 +1,507 @@
-import { getJson, postJson } from './api.js';
-import { SEDES, RESERVA_HORAS, RESERVA_ANTICIPACION_MS, RESERVA_MAX_DIAS } from './config.js';
-import { MESES_ES, hoyIsoBogota, isoAddDays, slotMs, fechaLarga, horaLegible } from './fechas.js';
-import { crearModal } from './modal.js';
-import { agregarEnlaceNav } from './nav.js';
-import { pad2 } from './util.js';
+// Página de reservas: maneja los pasos y el DOM. Los formatos, el calendario y la red
+// viven en reservas-comun.js (con pruebas); aquí solo se arma el recorrido del cliente.
 
-// Una reserva por sede y por dia, con minimo 24 horas de anticipacion. El dia
-// queda bloqueado apenas llega la solicitud, aunque siga pendiente.
+(function () {
+    'use strict';
 
-// Dias ocupados por sede: { carmen: ['2026-10-04'], hipodromo: [] }. Mientras
-// sea null el backend no ha respondido y la seccion sigue oculta.
-let reservasOcupadas = null;
+    var PERSONAS_MIN = 2;
+    var PERSONAS_MAX_REGULAR = 20; // arriba de esto se atiende por WhatsApp
+    var PERSONAS_TOPE_UI = 60;
+    var MESES_ADELANTE = 3;
+    var PASOS = 5;
+    var CONSULTA_CADA_MS = 4000;
+    var CONSULTA_HASTA_MS = 120000;
+    var BORRADOR = 'uf_reserva_borrador';
+    var APARTADO = 'uf_reserva_apartado';
 
-const reservasSection = document.getElementById('reservas');
-const reservaModal = document.getElementById('reservaModal');
-const reservaForm = document.getElementById('reservaForm');
-const reservaCal = document.getElementById('reservaCalendario');
-const reservaFechaTexto = document.getElementById('reservaFechaTexto');
-const reservaHora = document.getElementById('reservaHora');
-const reservaPersonas = document.getElementById('reservaPersonas');
-const reservaError = document.getElementById('reservaError');
-const reservaExito = document.getElementById('reservaExito');
-let modal = null;
+    var $ = function (id) { return document.getElementById(id); };
+    var hoy = hoyBogota();
+    var mesActual = hoy.slice(0, 7);
+    var mesTope = sumarMeses(mesActual, MESES_ADELANTE);
 
-// Lo que lleva escogido el cliente. mes = 'YYYY-MM' que muestra el calendario.
-let reserva = { sede: '', fecha: '', mes: '' };
-
-// Las 24 horas se cuentan hasta la hora de llegada, no hasta el dia: el martes
-// a las 8 PM ya no se puede reservar para el miercoles a las 5 PM.
-function horasLibres(iso) {
-    const limite = Date.now() + RESERVA_ANTICIPACION_MS;
-    return RESERVA_HORAS.filter(h => slotMs(iso, h) >= limite);
-}
-
-// 'ok' | 'ocupado' | 'fuera' (pasado, muy lejos o sin horas con 24 h de margen)
-function estadoDia(iso, sedeKey) {
-    const hoy = hoyIsoBogota();
-    if (iso <= hoy || iso > isoAddDays(hoy, RESERVA_MAX_DIAS)) return 'fuera';
-    if (!horasLibres(iso).length) return 'fuera';
-    if (reservasOcupadas?.[sedeKey]?.includes(iso)) return 'ocupado';
-    return 'ok';
-}
-
-// Celular colombiano: acepta "312 755 7694", "+57 312-755-7694", etc.
-function normalizarCelular(v) {
-    let d = String(v || '').replace(/\D/g, '');
-    if (d.length === 12 && d.startsWith('57')) d = d.slice(2);
-    return /^3\d{9}$/.test(d) ? d : '';
-}
-
-function renderCalendario(focusIso) {
-    if (!reservaCal) return;
-
-    // Si el foco estaba dentro del calendario, se devuelve al mismo sitio
-    // despues de repintar (si no, se perderia en el <body>).
-    const activo = reservaCal.contains(document.activeElement) ? document.activeElement : null;
-    const focoDia = focusIso || activo?.dataset.dia;
-    const focoNav = !focusIso && activo?.dataset.mes;
-
-    const hoy = hoyIsoBogota();
-    const primero = isoAddDays(hoy, 1);
-    const ultimo = isoAddDays(hoy, RESERVA_MAX_DIAS);
-    if (!reserva.mes) reserva.mes = (reserva.fecha || primero).slice(0, 7);
-
-    const [y, m] = reserva.mes.split('-').map(Number);
-    const diasMes = new Date(Date.UTC(y, m, 0)).getUTCDate();
-    // Semana de lunes a domingo, como el calendario de pared en Colombia.
-    const hueco = (new Date(Date.UTC(y, m - 1, 1)).getUTCDay() + 6) % 7;
-
-    const dias = Array.from({ length: diasMes }, (_, i) => {
-        const iso = `${y}-${pad2(m)}-${pad2(i + 1)}`;
-        return { iso, d: i + 1, estado: reserva.sede ? estadoDia(iso, reserva.sede) : 'fuera' };
-    });
-    // Solo un dia entra en el orden de Tab; entre dias se mueve con las flechas.
-    const libres = dias.filter(x => x.estado === 'ok');
-    const tabIso = (libres.find(x => x.iso === reserva.fecha) || libres[0])?.iso;
-
-    const celdas = dias.map(({ iso, d, estado }) => {
-        const cls = ['reserva-cal-day'];
-        if (estado === 'ocupado') cls.push('is-taken');
-        if (iso === reserva.fecha) cls.push('is-selected');
-        const nota = estado === 'ocupado' ? ', ya reservado' : estado === 'fuera' ? ', no disponible' : '';
-        return `<button type="button" class="${cls.join(' ')}" data-dia="${iso}"
-                    aria-label="${fechaLarga(iso)}${nota}" aria-pressed="${iso === reserva.fecha}"
-                    tabindex="${iso === tabIso ? 0 : -1}"${estado === 'ok' ? '' : ' disabled'}>${d}</button>`;
-    }).join('');
-
-    reservaCal.innerHTML = `
-        <div class="reserva-cal-head">
-            <button type="button" class="reserva-cal-nav" data-mes="-1" aria-label="Mes anterior"${reserva.mes > primero.slice(0, 7) ? '' : ' disabled'}>
-                <span class="material-symbols-outlined" aria-hidden="true">chevron_left</span>
-            </button>
-            <span class="reserva-cal-mes">${MESES_ES[m - 1]} ${y}</span>
-            <button type="button" class="reserva-cal-nav" data-mes="1" aria-label="Mes siguiente"${reserva.mes < ultimo.slice(0, 7) ? '' : ' disabled'}>
-                <span class="material-symbols-outlined" aria-hidden="true">chevron_right</span>
-            </button>
-        </div>
-        <div class="reserva-cal-grid">
-            ${['L', 'M', 'M', 'J', 'V', 'S', 'D'].map(x => `<span class="reserva-cal-dow" aria-hidden="true">${x}</span>`).join('')}
-            ${'<span></span>'.repeat(hueco)}
-            ${celdas}
-        </div>
-        <p class="reserva-cal-leyenda"><i aria-hidden="true"></i>Tachado: d&iacute;a ya reservado en esta sede</p>`;
-
-    if (focoDia) reservaCal.querySelector(`[data-dia="${focoDia}"]`)?.focus();
-    else if (focoNav) {
-        const nav = reservaCal.querySelector(`[data-mes="${focoNav}"]`);
-        (nav && !nav.disabled ? nav : reservaCal.querySelector('[data-mes]:not(:disabled)'))?.focus();
-    }
-}
-
-function pintarTextoFecha(aviso) {
-    if (!reservaFechaTexto) return;
-    reservaFechaTexto.textContent = aviso
-        || (!reserva.sede ? 'Elige primero la sede para ver los días libres.'
-        : !reserva.fecha ? 'Toca un día libre en el calendario.'
-        : `Elegiste el ${fechaLarga(reserva.fecha)}.`);
-}
-
-function actualizarHoras() {
-    if (!reservaHora) return;
-    const previa = reservaHora.value;
-    if (!reserva.fecha) {
-        reservaHora.innerHTML = '<option value="">Elige la fecha</option>';
-        reservaHora.disabled = true;
-        return;
-    }
-    const horas = horasLibres(reserva.fecha);
-    reservaHora.innerHTML = '<option value="">Elige la hora</option>' +
-        horas.map(h => `<option value="${h}">${horaLegible(h)}</option>`).join('');
-    reservaHora.disabled = false;
-    if (horas.includes(previa)) reservaHora.value = previa;
-}
-
-// Si el dia escogido deja de estar libre (otra persona lo tomo, o cambio la
-// sede), se suelta y se explica por que.
-function soltarFechaSiNoSirve(aviso) {
-    if (!reserva.fecha || estadoDia(reserva.fecha, reserva.sede) === 'ok') return false;
-    reserva.fecha = '';
-    actualizarHoras();
-    pintarTextoFecha(aviso);
-    return true;
-}
-
-async function fetchOcupadas() {
-    const data = await getJson('?q=reservas');
-    return data && typeof data.reservas === 'object' ? data.reservas : null;
-}
-
-export function mostrarReservas(ocupadas) {
-    if (!reservasSection || !ocupadas || typeof ocupadas !== 'object') return;
-    reservasOcupadas = ocupadas;
-    reservasSection.classList.remove('hidden');
-    agregarEnlaceNav('#reservas', 'Reservas', 'a[href="#ubicacion"]');
-}
-
-function marcarOcupada(sedeKey, iso) {
-    if (!reservasOcupadas) reservasOcupadas = {};
-    const lista = reservasOcupadas[sedeKey] || (reservasOcupadas[sedeKey] = []);
-    if (!lista.includes(iso)) lista.push(iso);
-}
-
-function showReservaError(msg) {
-    if (!reservaError) return;
-    reservaError.textContent = msg;
-    reservaError.classList.toggle('hidden', !msg);
-}
-
-function resetReserva() {
-    reservaForm?.reset();
-    reserva = { sede: '', fecha: '', mes: '' };
-    if (reservaPersonas) {
-        const sedes = Object.values(SEDES);
-        reservaPersonas.min = Math.min(...sedes.map(s => s.min));
-        reservaPersonas.max = Math.max(...sedes.map(s => s.max));
-        reservaPersonas.placeholder = `${reservaPersonas.min} a ${reservaPersonas.max}`;
-    }
-    reservaForm?.classList.remove('hidden');
-    reservaExito?.classList.add('hidden');
-    showReservaError('');
-}
-
-function openReserva() {
-    // Despues de una reserva exitosa, volver a abrir empieza de cero.
-    if (reservaExito && !reservaExito.classList.contains('hidden')) resetReserva();
-    showReservaError('');
-    renderCalendario();
-    actualizarHoras();
-    pintarTextoFecha();
-    modal.abrir(reservaForm?.querySelector('input[name="sede"]:checked') || reservaForm?.querySelector('input[name="sede"]'));
-
-    // La lista de dias ocupados puede tener rato (se cargo con la pagina): se
-    // pide de nuevo para no ofrecer un dia que alguien tomo mientras tanto.
-    fetchOcupadas().then(ocupadas => {
-        if (!ocupadas) return;
-        reservasOcupadas = ocupadas;
-        if (!modal.abierto()) return;
-        soltarFechaSiNoSirve('El día que habías elegido acaba de ser reservado. Elige otro.');
-        renderCalendario();
-    });
-}
-
-function mostrarExito(p) {
-    const sede = SEDES[p.sede];
-    const cuando = `${fechaLarga(p.fecha)} a las ${horaLegible(p.hora)}`;
-    const texto = document.getElementById('reservaExitoTexto');
-    if (texto) {
-        texto.textContent = `Apartamos el ${cuando} en la sede ${sede.nombre}, para ${p.personas} personas. ` +
-            'La sede te escribirá por WhatsApp para confirmarla.';
-    }
-    // El cliente le envia el resumen a la sede: asi el negocio lo ve en el
-    // mismo WhatsApp donde atiende, ademas del correo que manda el Apps Script.
-    const msg = '¡Hola Urban Food! Acabo de solicitar una reserva desde la página web:\n\n' +
-        `• Sede: ${sede.nombre}\n• Fecha: ${cuando}\n• Personas: ${p.personas}\n• A nombre de: ${p.nombre}` +
-        (p.nota ? `\n• Nota: ${p.nota}` : '') +
-        '\n\n¿Me la confirman, por favor?';
-    const wa = document.getElementById('reservaWhatsApp');
-    if (wa) wa.href = `https://wa.me/${sede.phone}?text=${encodeURIComponent(msg)}`;
-
-    reservaForm?.classList.add('hidden');
-    reservaExito?.classList.remove('hidden');
-    reservaExito?.focus();
-}
-
-async function enviarReserva(e) {
-    e.preventDefault();
-    const data = new FormData(reservaForm);
-
-    // Campo trampa: si viene lleno, es un bot. Fingimos éxito y no enviamos nada.
-    if ((data.get('website') || '').toString().trim()) {
-        modal.cerrar();
-        resetReserva();
-        return;
-    }
-
-    const sede = SEDES[reserva.sede];
-    const payload = {
-        tipo: 'reserva',
-        sede: reserva.sede,
-        fecha: reserva.fecha,
-        hora: (data.get('hora') || '').toString(),
-        personas: parseInt(data.get('personas'), 10),
-        nombre: (data.get('nombre') || '').toString().trim(),
-        telefono: normalizarCelular(data.get('telefono')),
-        nota: (data.get('nota') || '').toString().trim(),
-        website: ''
+    var estado = {
+        sede: 'ELCARMEN', personas: 2, mes: mesActual, fecha: '', hora: '', espacio: '',
+        datos: {}, paso: 1
     };
+    // Cada carga de red guarda su número; si el cliente ya cambió de opción, la respuesta vieja se descarta.
+    var carga = { dias: 0, horas: 0 };
+    // Meses ya pedidos (sede|personas|mes -> promesa). El Apps Script tarda unos segundos en responder,
+    // así que se piden por adelantado mientras el cliente elige sede y personas, y traen las horas de
+    // cada día. Duran poco: los cupos cambian, y al crear la reserva el servidor vuelve a revisar todo.
+    var MESES_VIGENCIA_MS = 90000;
+    var meses = {};
+    var temporizadorPrecarga = 0;
 
-    const falta =
-        !sede ? ['Elige la sede.', reservaForm.querySelector('input[name="sede"]')]
-        : !payload.fecha ? ['Elige la fecha en el calendario.', reservaCal?.querySelector('[data-dia][tabindex="0"]')]
-        : !payload.hora ? ['Elige la hora de llegada.', reservaHora]
-        : !(payload.personas >= sede.min && payload.personas <= sede.max)
-            ? [`En ${sede.nombre} se reserva para ${sede.min} a ${sede.max} personas.`, reservaPersonas]
-        : !payload.nombre ? ['Escribe el nombre de quien reserva.', document.getElementById('reservaNombre')]
-        : !payload.telefono ? ['Escribe un celular de 10 dígitos, por ejemplo 300 123 4567.', document.getElementById('reservaTelefono')]
-        : null;
-    if (falta) {
-        showReservaError(falta[0]);
-        falta[1]?.focus();
-        return;
+    function pedirMes(sede, personas, mes) {
+        var clave = sede + '|' + personas + '|' + mes;
+        var guardado = meses[clave];
+        if (guardado && Date.now() - guardado.en < MESES_VIGENCIA_MS) return guardado.promesa;
+        var promesa = apiGet({ accion: 'dias', sede: sede, mes: mes, personas: personas }).then(function (r) {
+            if (!r.ok) delete meses[clave]; // un error no se guarda: el próximo intento vuelve a preguntar
+            return r;
+        });
+        meses[clave] = { en: Date.now(), promesa: promesa };
+        return promesa;
     }
 
-    // Con el formulario abierto un buen rato, la hora escogida puede haber
-    // quedado a menos de 24 horas.
-    if (!horasLibres(payload.fecha).includes(payload.hora)) {
-        actualizarHoras();
-        soltarFechaSiNoSirve();
-        renderCalendario();
-        showReservaError('Esa hora ya quedó a menos de 24 horas. Elige otra.');
-        return;
+    function olvidarMeses() { meses = {}; }
+
+    // Pide el mes actual y el siguiente sin bloquear nada; se espera un momento por si sigue cambiando personas.
+    function precargarMeses() {
+        clearTimeout(temporizadorPrecarga);
+        if (estado.personas > PERSONAS_MAX_REGULAR) return;
+        temporizadorPrecarga = setTimeout(function () {
+            pedirMes(estado.sede, estado.personas, estado.mes).then(function () {
+                if (estado.mes < mesTope) pedirMes(estado.sede, estado.personas, sumarMeses(estado.mes, 1));
+            });
+        }, 400);
+    }
+    // Adelanto, horas de cancelación y mínimo VIP: los de Config llegan con las horas; antes, los de respaldo.
+    var reglas = combinarReglas();
+
+    function mayuscula(t) { return t.charAt(0).toUpperCase() + t.slice(1); }
+
+    function enlaceWhatsApp(sede, texto) {
+        return 'https://wa.me/' + SEDES_RESERVA[sede].whatsapp + '?text=' + encodeURIComponent(texto);
     }
 
-    const submitBtn = reservaForm.querySelector('button[type=submit]');
-    const originalText = submitBtn?.textContent;
-    if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Enviando...'; }
-    showReservaError('');
-
-    const res = await postJson(payload);
-
-    if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = originalText; }
-
-    if (!res) {
-        showReservaError('No pudimos enviar tu reserva. Revisa tu conexión e inténtalo de nuevo.');
-        return;
+    function botonWhatsApp(sede, texto, etiqueta) {
+        return '<a class="boton wa" target="_blank" rel="noopener" href="' + escapeHtml(enlaceWhatsApp(sede, texto)) + '">' +
+            escapeHtml(etiqueta) + '</a>';
     }
-    if (!res.ok) {
-        if (res.code === 'ocupado') {
-            marcarOcupada(payload.sede, payload.fecha);
-            soltarFechaSiNoSirve();
-            renderCalendario();
+
+    // ---------- Errores ----------
+
+    function mostrarError(codigo) {
+        var caja = $('error');
+        caja.textContent = MENSAJES_ERROR[codigo] || MENSAJES_ERROR.INTERNO;
+        caja.hidden = false;
+    }
+
+    function limpiarError() { $('error').hidden = true; }
+
+    // ---------- Pasos ----------
+
+    function irAPaso(n) {
+        estado.paso = n;
+        limpiarError();
+        document.querySelectorAll('[data-paso]').forEach(function (s) {
+            s.hidden = Number(s.getAttribute('data-paso')) !== n;
+        });
+        $('atras').hidden = n === 1;
+        $('progreso').textContent = 'Paso ' + n + ' de ' + PASOS;
+        var titulo = document.querySelector('[data-paso="' + n + '"] h1, [data-paso="' + n + '"] h2');
+        if (titulo) { titulo.setAttribute('tabindex', '-1'); titulo.focus({ preventScroll: true }); }
+        window.scrollTo(0, 0);
+        if (n === 2) cargarDias();
+        if (n === 3) cargarHoras();
+        if (n === 5) pintarResumen();
+    }
+
+    // ---------- Paso 1: sede y personas ----------
+
+    function etiquetaEspacio() {
+        if (estado.sede === 'HIPODROMO') return 'Mesa';
+        return estado.personas >= reglas.vip_min ? 'Salón VIP' : 'Mesa en el salón';
+    }
+
+    function aplicarReglas(r) {
+        reglas = combinarReglas(r);
+        $('textoAceptaPolitica').textContent = 'Acepto la política de la reserva: el adelanto se descuenta de mi cuenta y no se devuelve si cancelo con menos de ' +
+            reglas.cancelacion_horas + ' horas o no llego.';
+        $('aviso24').textContent = 'Faltan menos de ' + reglas.cancelacion_horas + ' horas para tu reserva: si cancelas, este adelanto no se devuelve.';
+    }
+
+    function pintarSedes() {
+        $('sedes').innerHTML = Object.keys(SEDES_RESERVA).map(function (k) {
+            return '<button type="button" class="opcion" data-sede="' + k + '" aria-pressed="' + (k === estado.sede) + '">' +
+                escapeHtml(SEDES_RESERVA[k].nombre) + '</button>';
+        }).join('');
+    }
+
+    function pintarPersonas() {
+        var grande = estado.personas > PERSONAS_MAX_REGULAR;
+        $('personas').textContent = estado.personas;
+        $('menos').disabled = estado.personas <= PERSONAS_MIN;
+        $('mas').disabled = estado.personas >= PERSONAS_TOPE_UI;
+        $('espacio').textContent = grande ? '' : 'Espacio: ' + etiquetaEspacio();
+        $('a2').hidden = grande;
+        var tarjeta = $('grupo');
+        tarjeta.hidden = !grande;
+        if (grande) {
+            tarjeta.innerHTML = '<b>Grupos de más de ' + PERSONAS_MAX_REGULAR + ' personas</b><br>' +
+                'Los atendemos directamente por WhatsApp para preparar todo a tu medida.' +
+                botonWhatsApp(estado.sede, 'Hola Urban Food, quiero reservar para ' + estado.personas + ' personas',
+                    'Escribir a ' + SEDES_RESERVA[estado.sede].nombre + ' por WhatsApp');
         }
-        showReservaError(res.error || 'No pudimos guardar tu reserva. Inténtalo de nuevo.');
-        return;
     }
 
-    marcarOcupada(payload.sede, payload.fecha);
-    mostrarExito(payload);
-}
-
-export function iniciarReservas() {
-    if (!reservaModal || !reservaForm) return;
-    modal = crearModal(reservaModal);
-
-    document.querySelectorAll('[data-open-reserva]').forEach(btn => btn.addEventListener('click', openReserva));
-
-    reservaCal?.addEventListener('click', (e) => {
-        const nav = e.target.closest('[data-mes]');
-        if (nav) {
-            const [y, m] = reserva.mes.split('-').map(Number);
-            reserva.mes = new Date(Date.UTC(y, m - 1 + Number(nav.dataset.mes), 1)).toISOString().slice(0, 7);
-            renderCalendario();
-            return;
-        }
-        const dia = e.target.closest('[data-dia]');
-        if (!dia || dia.disabled) return;
-        reserva.fecha = dia.dataset.dia;
-        renderCalendario(reserva.fecha);
-        actualizarHoras();
-        pintarTextoFecha();
+    $('sedes').addEventListener('click', function (e) {
+        var b = e.target.closest('[data-sede]');
+        if (!b) return;
+        estado.sede = b.getAttribute('data-sede');
+        estado.fecha = ''; estado.hora = '';
+        pintarSedes(); pintarPersonas();
+        precargarMeses();
     });
+    $('menos').addEventListener('click', function () { cambiarPersonas(-1); });
+    $('mas').addEventListener('click', function () { cambiarPersonas(1); });
+    function cambiarPersonas(delta) {
+        estado.personas = Math.min(PERSONAS_TOPE_UI, Math.max(PERSONAS_MIN, estado.personas + delta));
+        estado.fecha = ''; estado.hora = '';
+        pintarPersonas();
+        precargarMeses();
+    }
+    $('a2').addEventListener('click', function () { irAPaso(2); });
 
-    reservaCal?.addEventListener('keydown', (e) => {
-        const dia = e.target.closest('[data-dia]');
-        const paso = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7 }[e.key];
-        if (!dia || !paso) return;
-        e.preventDefault();
-        // Salta los dias no disponibles en la direccion de la flecha, cruzando de
-        // mes si hace falta.
-        const hoy = hoyIsoBogota();
-        const ultimo = isoAddDays(hoy, RESERVA_MAX_DIAS);
-        let iso = dia.dataset.dia;
-        while (true) {
-            iso = isoAddDays(iso, paso);
-            if (iso <= hoy || iso > ultimo) return;
-            if (estadoDia(iso, reserva.sede) === 'ok') break;
-        }
-        reserva.mes = iso.slice(0, 7);
-        renderCalendario(iso);
-    });
+    // ---------- Paso 2: calendario ----------
 
-    reservaForm.querySelectorAll('input[name="sede"]').forEach(radio => {
-        radio.addEventListener('change', () => {
-            reserva.sede = radio.value;
-            const lim = SEDES[radio.value];
-            if (reservaPersonas && lim) {
-                reservaPersonas.min = lim.min;
-                reservaPersonas.max = lim.max;
-                reservaPersonas.placeholder = `${lim.min} a ${lim.max}`;
+    var diasDelMes = {}; // fecha -> disponible
+    var horasDelMes = {}; // fecha -> [{ hora, libre }], llegan con los días
+
+    function pintarCalendario(cargando) {
+        $('mesNombre').textContent = nombreMes(estado.mes);
+        $('mesAnt').disabled = estado.mes <= mesActual;
+        $('mesSig').disabled = estado.mes >= mesTope;
+        var html = ['L', 'M', 'M', 'J', 'V', 'S', 'D'].map(function (d) { return '<span class="cab">' + d + '</span>'; }).join('');
+        cuadriculaMes(estado.mes).forEach(function (f) {
+            if (!f) { html += '<span></span>'; return; }
+            var libre = !cargando && f >= hoy && diasDelMes[f] === true;
+            html += '<button type="button" data-fecha="' + f + '"' + (libre ? '' : ' disabled') +
+                ' aria-pressed="' + (f === estado.fecha) + '" aria-label="' + escapeHtml(formatoFechaLarga(f)) + '">' +
+                Number(f.slice(8)) + '</button>';
+        });
+        $('cal').innerHTML = html;
+        $('cal').setAttribute('aria-busy', cargando ? 'true' : 'false');
+        // Mientras llegan los cupos todos los días salen apagados: sin este aviso parecía que no había ninguno.
+        $('calCargando').hidden = !cargando;
+    }
+
+    function cargarDias() {
+        var mia = ++carga.dias;
+        diasDelMes = {}; horasDelMes = {};
+        pintarCalendario(true);
+        pedirMes(estado.sede, estado.personas, estado.mes).then(function (r) {
+            if (mia !== carga.dias || estado.paso !== 2) return;
+            if (!r.ok) {
+                $('calCargando').hidden = true;
+                if (r.error === 'GRUPO_GRANDE' || r.error === 'PERSONAS') { irAPaso(1); }
+                mostrarError(r.error);
+                return;
             }
-            const soltada = soltarFechaSiNoSirve(`Ese día ya está reservado en ${lim?.nombre}. Elige otro.`);
-            renderCalendario();
-            if (!soltada) pintarTextoFecha();
+            r.dias.forEach(function (d) {
+                diasDelMes[d.fecha] = d.disponible;
+                if (d.horas) horasDelMes[d.fecha] = d.horas;
+            });
+            if (r.espacio) estado.espacio = r.espacio;
+            if (r.reglas) aplicarReglas(r.reglas);
+            pintarCalendario(false);
+            // Deja listo el mes siguiente por si el cliente avanza con la flecha.
+            if (estado.mes < mesTope) pedirMes(estado.sede, estado.personas, sumarMeses(estado.mes, 1));
+        });
+    }
+
+    $('mesAnt').addEventListener('click', function () { cambiarMes(-1); });
+    $('mesSig').addEventListener('click', function () { cambiarMes(1); });
+    function cambiarMes(n) {
+        var nuevo = sumarMeses(estado.mes, n);
+        if (nuevo < mesActual || nuevo > mesTope) return;
+        estado.mes = nuevo;
+        cargarDias();
+    }
+
+    $('cal').addEventListener('click', function (e) {
+        var b = e.target.closest('[data-fecha]');
+        if (!b || b.disabled) return;
+        if (estado.fecha !== b.getAttribute('data-fecha')) estado.hora = '';
+        estado.fecha = b.getAttribute('data-fecha');
+        irAPaso(3);
+    });
+
+    // ---------- Paso 3: hora ----------
+
+    function pintarHoras(horas) {
+        var libres = horas.filter(function (h) { return h.libre; }).map(function (h) { return h.hora; });
+        if (libres.indexOf(estado.hora) === -1) estado.hora = '';
+        $('horas').innerHTML = horas.map(function (h) {
+            return '<button type="button" data-hora="' + h.hora + '"' + (h.libre ? '' : ' disabled') +
+                ' aria-pressed="' + (h.hora === estado.hora) + '">' + formatoHora(h.hora) +
+                (notaMadrugada(h.hora) ? '<small class="block text-xs text-white/60">(' + notaMadrugada(h.hora) + ')</small>' : '') + '</button>';
+        }).join('');
+        $('a4').disabled = !estado.hora;
+    }
+
+    function cargarHoras() {
+        var mia = ++carga.horas;
+        $('tituloHoras').textContent = mayuscula(formatoFechaLarga(estado.fecha)) + ' · ' + estado.personas + ' personas';
+        // Lo normal: las horas llegaron con los días y se muestran sin esperar.
+        if (horasDelMes[estado.fecha]) { pintarPersonas(); pintarHoras(horasDelMes[estado.fecha]); return; }
+        $('horas').innerHTML = '<p class="cargando">Buscando horas…</p>';
+        $('a4').disabled = true;
+        apiGet({ accion: 'horas', sede: estado.sede, fecha: estado.fecha, personas: estado.personas }).then(function (r) {
+            if (mia !== carga.horas || estado.paso !== 3) return;
+            if (!r.ok) { $('horas').innerHTML = ''; mostrarError(r.error); return; }
+            estado.espacio = r.espacio;
+            aplicarReglas(r.reglas);
+            pintarPersonas();
+            pintarHoras(r.horas);
+        });
+    }
+
+    $('horas').addEventListener('click', function (e) {
+        var b = e.target.closest('[data-hora]');
+        if (!b || b.disabled) return;
+        estado.hora = b.getAttribute('data-hora');
+        $('horas').querySelectorAll('[data-hora]').forEach(function (x) {
+            x.setAttribute('aria-pressed', String(x === b));
+        });
+        $('a4').disabled = false;
+    });
+    $('a4').addEventListener('click', function () { if (estado.hora) irAPaso(4); });
+
+    // ---------- Paso 4: datos ----------
+
+    var CAMPOS = ['nombre', 'tipo_doc', 'documento', 'correo', 'celular', 'comentario'];
+
+    function leerDatos() {
+        var d = {};
+        CAMPOS.forEach(function (k) { d[k] = $(k).value.trim(); });
+        return d;
+    }
+
+    function llenarDatos(d) {
+        CAMPOS.forEach(function (k) { if (d && d[k] !== undefined) $(k).value = d[k]; });
+    }
+
+    // Revisión rápida para no gastar un viaje al servidor; el servidor vuelve a validar todo.
+    function errorDeDatos(d) {
+        if (d.nombre.length < 3) return 'NOMBRE';
+        if (d.documento.replace(/[.\s\-]/g, '').length < 5) return 'DOCUMENTO';
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(d.correo)) return 'CORREO';
+        if (!/^\d{10}$/.test(d.celular.replace(/[\s\-().]/g, '').replace(/^\+57/, ''))) return 'CELULAR';
+        if (!$('acepta_datos').checked || !$('acepta_politica').checked) return 'AUTORIZACION';
+        return '';
+    }
+
+    $('datos').addEventListener('submit', function (e) {
+        e.preventDefault();
+        var d = leerDatos();
+        var falla = errorDeDatos(d);
+        if (falla) { mostrarError(falla); return; }
+        estado.datos = d;
+        irAPaso(5);
+    });
+
+    // ---------- Paso 5: resumen y pago ----------
+
+    function pintarResumen() {
+        var sede = SEDES_RESERVA[estado.sede];
+        $('resumen').innerHTML =
+            escapeHtml(sede.nombre) + ' · ' + escapeHtml(etiquetaEspacio()) + '<br>' +
+            '<b>' + escapeHtml(mayuscula(formatoFechaLarga(estado.fecha))) + ', ' + escapeHtml(etiquetaHoraServicio(estado.fecha, estado.hora)) + '</b><br>' +
+            estado.personas + ' personas · ' + escapeHtml(estado.datos.nombre) + '<br>' +
+            'Adelanto: <b>' + formatoPesos(reglas.adelanto) + '</b> <span style="color:#9a9a9a">(se descuenta de tu cuenta)</span>';
+        $('politica').textContent = textoPolitica(reglas);
+        $('aviso24').hidden = instanteReserva(estado.fecha, estado.hora) - Date.now() >= reglas.cancelacion_horas * 3600000;
+        $('pagar').textContent = 'Pagar ' + formatoPesos(reglas.adelanto);
+        $('pagar').disabled = false;
+    }
+
+    function guardarBorrador() {
+        try {
+            sessionStorage.setItem(BORRADOR, JSON.stringify({
+                sede: estado.sede, personas: estado.personas, fecha: estado.fecha, hora: estado.hora, datos: estado.datos
+            }));
+        } catch (e) { /* sin almacenamiento: "Intentar de nuevo" empezará con campos vacíos */ }
+    }
+
+    function leerBorrador() {
+        try { return JSON.parse(sessionStorage.getItem(BORRADOR)) || null; } catch (e) { return null; }
+    }
+
+    // Último apartado creado en esta pestaña: { codigo, url_pago, firma }.
+    function guardarApartado(a) {
+        try { sessionStorage.setItem(APARTADO, JSON.stringify(a)); } catch (e) { /* sin almacenamiento: el servidor crea otro */ }
+    }
+
+    function leerApartado() {
+        try { return JSON.parse(sessionStorage.getItem(APARTADO)) || null; } catch (e) { return null; }
+    }
+
+    $('pagar').addEventListener('click', function () {
+        var boton = $('pagar');
+        if (boton.disabled) return;
+        boton.disabled = true; // un segundo clic no crea otra reserva
+        limpiarError();
+        var d = estado.datos;
+        guardarBorrador();
+        var firma = firmaApartado({ sede: estado.sede, fecha: estado.fecha, hora: estado.hora, personas: estado.personas, correo: d.correo });
+        var previo = leerApartado();
+        var cuerpo = {
+            accion: 'crear', sede: estado.sede, personas: estado.personas, fecha: estado.fecha, hora: estado.hora,
+            nombre: d.nombre, tipo_doc: d.tipo_doc, documento: d.documento, correo: d.correo, celular: d.celular,
+            comentario: d.comentario, acepta_datos: true, acepta_politica: true,
+            website: $('website').value
+        };
+        // Volvió de Bold con Atrás y paga lo mismo: el servidor devuelve ese apartado si sigue vigente.
+        if (previo && previo.firma === firma && previo.codigo) cuerpo.codigo_previo = previo.codigo;
+        apiPost(cuerpo).then(function (r) {
+            if (r.ok && r.url_pago) {
+                guardarApartado({ codigo: r.codigo, url_pago: r.url_pago, firma: firma });
+                window.location.href = r.url_pago;
+                return;
+            }
+            boton.disabled = false;
+            if (r.ok) { mostrarError('INTERNO'); return; }
+            if (r.error === 'SIN_CUPO') { olvidarMeses(); delete horasDelMes[estado.fecha]; irAPaso(3); mostrarError('SIN_CUPO'); return; }
+            if (r.error === 'GRUPO_GRANDE' || r.error === 'PERSONAS') { irAPaso(1); }
+            mostrarError(r.error);
         });
     });
 
-    reservaForm.addEventListener('submit', enviarReserva);
-}
+    // Al volver con Atrás desde Bold el navegador restaura la página tal cual (bfcache): el botón seguía apagado.
+    window.addEventListener('pageshow', function (e) {
+        if (e.persisted && estado.paso === 5) $('pagar').disabled = false;
+    });
+
+    $('atras').addEventListener('click', function () { if (estado.paso > 1) irAPaso(estado.paso - 1); });
+
+    // ---------- Paso 6: confirmación ----------
+
+    function resumenReserva(r) {
+        var sede = SEDES_RESERVA[r.sede] || { nombre: r.sede, direccion: '' };
+        return '<div class="tarjeta mt-3">' + escapeHtml(sede.nombre) + ' · ' + escapeHtml(sede.direccion) + '<br>' +
+            '<b>' + escapeHtml(mayuscula(formatoFechaLarga(r.fecha))) + ' · ' + escapeHtml(etiquetaHoraServicio(r.fecha, r.hora)) + ' · ' +
+            escapeHtml(r.personas) + ' personas</b><br>' +
+            (r.espacio === 'VIP' ? 'Salón VIP<br>' : '') +
+            'A nombre de ' + escapeHtml(r.nombre_corto) + '</div>';
+    }
+
+    function vistaConfirmacion(html) {
+        var c = $('confirmacion');
+        c.innerHTML = html;
+        c.hidden = false;
+        var h = c.querySelector('h1');
+        if (h) { h.setAttribute('tabindex', '-1'); h.focus({ preventScroll: true }); }
+    }
+
+    function volverAIntentar(r) {
+        var b = leerBorrador();
+        if (b) {
+            estado.sede = b.sede; estado.personas = b.personas; estado.fecha = b.fecha; estado.hora = b.hora; estado.datos = b.datos || {};
+        } else if (r) {
+            estado.sede = r.sede; estado.personas = r.personas; estado.fecha = r.fecha; estado.hora = r.hora;
+        }
+        estado.mes = estado.fecha ? estado.fecha.slice(0, 7) : mesActual;
+        if (estado.mes < mesActual || estado.mes > mesTope) estado.mes = mesActual;
+        llenarDatos(estado.datos);
+        // Quita ?codigo= pero conserva ?api=local.
+        history.replaceState(null, '', location.pathname + (modoLocal() ? '?api=local' : ''));
+        $('confirmacion').hidden = true;
+        $('confirmacion').innerHTML = '';
+        mostrarApp();
+        pintarSedes(); pintarPersonas();
+        irAPaso(1);
+    }
+
+    function mostrarConfirmacion(codigo) {
+        var inicio = Date.now();
+
+        function pintar(r) {
+            if (r.estado === 'CONFIRMADA' || r.estado === 'LLEGO') {
+                var sede = SEDES_RESERVA[r.sede];
+                vistaConfirmacion(
+                    '<div class="icono bg-fresh-teal" aria-hidden="true">✓</div>' +
+                    '<h1 class="titulo text-3xl text-center">¡Reserva confirmada!</h1>' +
+                    '<div class="codigo">' + escapeHtml(r.codigo) + '</div>' +
+                    resumenReserva(r) +
+                    '<p class="nota">Te enviamos este resumen a tu correo. Muestra el código al llegar.</p>' +
+                    '<a class="boton boton-sec" target="_blank" rel="noopener" href="' + escapeHtml(enlaceCalendario(r)) + '">Agregar a mi calendario</a>' +
+                    '<a class="boton boton-sec" target="_blank" rel="noopener" href="' + escapeHtml(sede.mapa) + '">Cómo llegar</a>');
+            } else if (r.estado === 'RECHAZADA' || r.estado === 'EXPIRADA') {
+                var texto = r.estado === 'RECHAZADA' ? 'No se pudo completar tu pago.' : 'El tiempo para pagar se agotó y liberamos el horario.';
+                vistaConfirmacion(
+                    '<h1 class="titulo text-3xl mt-4">' + escapeHtml(texto) + '</h1>' +
+                    '<p class="nota">No se hizo ningún cobro por esta reserva. Puedes intentarlo de nuevo con tus datos ya llenos.</p>' +
+                    '<button type="button" class="boton" id="reintentar">Intentar de nuevo</button>');
+                $('reintentar').addEventListener('click', function () { volverAIntentar(r); });
+            } else if (r.estado === 'PAGO_SIN_CUPO') {
+                vistaConfirmacion(
+                    '<h1 class="titulo text-3xl mt-4">Recibimos tu pago, pero el horario se ocupó</h1>' +
+                    '<p class="tarjeta mt-3">Te escribiremos para devolverte el dinero. Si quieres, reserva otro horario.</p>' +
+                    botonWhatsApp(r.sede, 'Hola Urban Food, mi reserva ' + r.codigo + ' quedó sin cupo', 'Escribirnos por WhatsApp') +
+                    '<button type="button" class="boton boton-sec" id="reintentar">Reservar otro horario</button>');
+                $('reintentar').addEventListener('click', function () { volverAIntentar(r); });
+            } else if (r.estado === 'PENDIENTE_PAGO') {
+                esperar(r);
+            } else {
+                vistaConfirmacion('<h1 class="titulo text-3xl mt-4">Esta reserva ya no está activa</h1>' + resumenReserva(r) +
+                    '<a class="boton boton-sec" href="./">Hacer una nueva reserva</a>');
+            }
+        }
+
+        function esperar(r) {
+            if (Date.now() - inicio > CONSULTA_HASTA_MS) {
+                vistaConfirmacion(
+                    '<h1 class="titulo text-3xl mt-4">Aún no vemos tu pago</h1>' +
+                    '<p class="tarjeta mt-3">Si ya pagaste, en unos minutos recibirás la confirmación en tu correo. Tu código es <b>' +
+                    escapeHtml(codigo) + '</b>.</p>' +
+                    '<button type="button" class="boton" id="revisar">Revisar de nuevo</button>' +
+                    botonWhatsApp(r.sede, 'Hola Urban Food, pagué mi reserva ' + codigo + ' y no me ha llegado la confirmación', 'Escribirnos por WhatsApp'));
+                $('revisar').addEventListener('click', function () { mostrarConfirmacion(codigo); });
+                return;
+            }
+            vistaConfirmacion('<h1 class="titulo text-3xl mt-4">Estamos confirmando tu pago…</h1>' +
+                '<p class="cargando">No cierres esta página. Puede tardar unos segundos.</p>');
+            setTimeout(consultar, CONSULTA_CADA_MS);
+        }
+
+        function consultar() {
+            apiGet({ accion: 'estado', codigo: codigo }).then(function (r) {
+                if (r.ok) { pintar(r.reserva); return; }
+                if (r.error === 'NO_ENCONTRADA') {
+                    vistaConfirmacion('<h1 class="titulo text-3xl mt-4">No encontramos esa reserva</h1>' +
+                        '<a class="boton boton-sec" href="./">Hacer una reserva</a>');
+                    return;
+                }
+                // Error de red o del servidor: se sigue intentando hasta agotar el tiempo.
+                if (Date.now() - inicio > CONSULTA_HASTA_MS) {
+                    vistaConfirmacion('<h1 class="titulo text-3xl mt-4">No pudimos revisar tu pago</h1>' +
+                        '<p class="tarjeta mt-3">' + escapeHtml(MENSAJES_ERROR[r.error] || MENSAJES_ERROR.INTERNO) + ' Tu código es <b>' + escapeHtml(codigo) + '</b>.</p>' +
+                        '<button type="button" class="boton" id="revisar">Revisar de nuevo</button>');
+                    $('revisar').addEventListener('click', function () { mostrarConfirmacion(codigo); });
+                    return;
+                }
+                setTimeout(consultar, CONSULTA_CADA_MS);
+            });
+        }
+
+        $('app').hidden = true;
+        vistaConfirmacion('<h1 class="titulo text-3xl mt-4">Estamos confirmando tu pago…</h1>' +
+            '<p class="cargando">No cierres esta página. Puede tardar unos segundos.</p>');
+        consultar();
+    }
+
+    // ---------- Arranque ----------
+
+    function mostrarApp() { $('app').hidden = false; }
+
+    function mostrarProximamente() {
+        $('pronto').hidden = false;
+        $('prontoWa').innerHTML = Object.keys(SEDES_RESERVA).map(function (k) {
+            return botonWhatsApp(k, 'Hola Urban Food, quiero hacer una reserva', 'Reservar en ' + SEDES_RESERVA[k].nombre + ' por WhatsApp');
+        }).join('');
+    }
+
+    function iniciar() {
+        if (!apiDisponible()) { mostrarProximamente(); return; }
+        var codigo = codigoDeUrl(location.search);
+        pintarSedes(); pintarPersonas();
+        if (codigo) { mostrarConfirmacion(codigo); return; }
+        mostrarApp();
+        irAPaso(1);
+        precargarMeses();
+    }
+
+    iniciar();
+})();

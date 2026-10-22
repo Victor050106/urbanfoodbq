@@ -37,11 +37,12 @@ Urban Food/
 │   ├── css/styles.css    # Estilos que complementan a Tailwind
 │   ├── js/               # Módulos ES nativos, uno por sección (sin build)
 │   │   ├── main.js       # Arranque: inicia cada sección y hace la única petición a la hoja
-│   │   ├── config.js     # Lo que se cambia a mano: horario, SEDES, URL del Apps Script, reglas de reserva
-│   │   ├── api.js        # getJson / postJson contra el Apps Script
-│   │   ├── modal.js      # Abrir, cerrar, Escape y foco atrapado, compartido por los 3 modales
+│   │   ├── config.js     # Lo que se cambia a mano: horario, SEDES, URL del Apps Script
+│   │   ├── api.js        # getJson contra el Apps Script de novedades
+│   │   ├── modal.js      # Abrir, cerrar, Escape y foco atrapado, compartido por los modales
 │   │   ├── fechas.js · util.js
-│   │   └── horario.js · nav.js · sedes.js · opiniones.js · novedades.js · reservas.js
+│   │   ├── horario.js · nav.js · sedes.js · novedades.js
+│   │   └── reservas.js · reservas-comun.js · panel.js · cancelar.js  # Páginas de /reservas/ (scripts clásicos)
 │   ├── img/
 │   │   ├── hero-pattern.webp # Textura de doodles del hero (~128 KB)
 │   │   ├── mascota.webp      # Mascota de marca con transparencia (~113 KB)
@@ -50,8 +51,17 @@ Urban Food/
 │   │   └── novedades/        # Carátulas de las novedades
 │   ├── video/                # Videos de las novedades (H.264, no se precargan)
 │   └── brand/            # logo.png, logor.png, favicon.png, faviconr.png
+├── reservas/             # Reservas en línea
+│   ├── index.html        # Página para reservar (sede, día, hora, adelanto con Bold)
+│   ├── cancelar/         # Cancelación con el enlace del correo (token), no con el código
+│   └── panel/            # Panel de la cajera (no se indexa)
+├── privacidad/           # Política de tratamiento de datos personales
 ├── apps-script/
-│   └── Code.gs           # Backend de comentarios, novedades y reservas (Google Apps Script)
+│   ├── Code.gs           # Backend de novedades (Google Apps Script)
+│   └── reservas/         # Backend de reservas (otro proyecto, hoja "Urban Food - Reservas")
+├── tests/
+│   ├── code-gs.test.js · e2e.js
+│   └── reservas/         # Pruebas del backend de reservas + servidor local con Bold simulado
 ├── docs/                 # Documentos internos, NO se suben al repo
 │   ├── PASOS-PARA-VICTOR.md
 │   ├── PASOS-NOVEDADES.md
@@ -101,48 +111,68 @@ Urban Food/
   novedad vigente la sección no aparece, y cada una puede llevar fecha de vencimiento para
   retirarse sola. Admite video con carátula: el archivo solo se descarga al pulsar play
   (ver `docs/PASOS-NOVEDADES.md`)
-- **Reservas para grupos**: una reserva por sede y por día, con mínimo 24 horas de
-  anticipación y de 10 a 20 personas (El Carmen) o de 10 a 30 (Hipódromo). El calendario
-  tacha los días ya tomados; la solicitud llega a la pestaña `Reservas` de la hoja, avisa
-  por correo a la sede y queda pendiente hasta que alguien la confirme. Al terminar, el
-  cliente puede mandarle el resumen por WhatsApp a la sede (ver `docs/PASOS-RESERVAS.md`).
-  Para que nadie bloquee el calendario con reservas falsas, no se aceptan más de 8 pendientes
-  a la vez
-- **Sección de opiniones** con formulario de comentarios y moderación previa (ver más abajo)
-- **Accesibilidad**: etiquetas asociadas a sus campos, calificación por estrellas manejable
-  con teclado (patrón `radiogroup` con flechas), modal con foco atrapado y devuelto, y
+- **Reservas en línea** con adelanto pagado en Bold (ver la sección [Reservas](#reservas))
+- **Opiniones de Google**: una tarjeta por sede con su calificación y número de reseñas, y un
+  botón a su ficha de Google Maps para leerlas o dejar una nueva (ver más abajo)
+- **Accesibilidad**: etiquetas asociadas a sus campos, modal con foco atrapado y devuelto, y
   objetivos táctiles de 44 px
 
-## Comentarios y moderación
+## Opiniones
 
-Los comentarios que dejan los clientes se guardan en una hoja de Google Sheets a través de
-un Google Apps Script (ver `apps-script/Code.gs`). El mismo script sirve las novedades desde
-una segunda pestaña de esa hoja, y la página lo consulta una sola vez para las dos cosas.
+La sección `#opiniones` de `index.html` es HTML fijo: no consulta ninguna API, así que carga
+al instante y no tiene costo ni llaves. Las estrellas y el número de reseñas de cada sede
+se copian a mano desde Google Maps (fecha de la última copia en el comentario de la sección);
+conviene actualizarlos de vez en cuando. "Dejar una reseña" usa el enlace de "Pedir reseñas" del
+Perfil de Negocio de cada sede (`g.page/r/.../review`); "Ver reseñas" abre su ficha por el `cid`
+de Google Maps.
 
-**Ningún comentario se publica automáticamente.** Cada comentario nuevo llega a la hoja con
-la columna `approved` sin marcar. Para que aparezca en la página:
+> Se descartó traer las reseñas con la API de Places: cuesta US$25 por cada 1.000 consultas
+> (1.000 gratis al mes) y Google no permite guardar las reseñas en caché, así que cada visita
+> pagaría una consulta.
 
-1. Abre la hoja de cálculo de comentarios en Google Drive.
-2. Busca la fila del comentario nuevo (los más recientes quedan al final).
-3. Marca la casilla de la columna **approved** de esa fila.
+## Novedades
 
-El comentario aparecerá en la web la próxima vez que alguien cargue la página. Si un
-comentario es spam u ofensivo, simplemente déjalo sin marcar (o borra la fila).
+`apps-script/Code.gs` lee la pestaña "Novedades" de la hoja y la página la consulta al
+cargar. Después de modificar `Code.gs` hay que volver a desplegar el script:
+Implementar > Administrar implementaciones > (lápiz) > Versión: Nueva versión > Implementar.
 
-### Protecciones incluidas
+## Reservas
 
-- **Moderación previa obligatoria** — nada se publica sin aprobación manual.
-- **Campo trampa anti-bots (honeypot)** — un campo oculto en el formulario que las personas
-  no ven pero los bots suelen rellenar. Si llega lleno, el envío se descarta en silencio,
-  tanto en el navegador como en el servidor.
-- **Escapado de HTML** — el nombre y el comentario se escapan antes de mostrarse, para que
-  nadie pueda inyectar código en la página.
-- **Límites de longitud** — nombre máx. 60 caracteres, comentario máx. 500.
-- **Sin fórmulas en la hoja** — si un texto empieza por `=`, `+`, `-` o `@`, se guarda como
-  texto y no como fórmula de Sheets.
+Los clientes reservan mesa o el salón VIP desde `/reservas/`. El camino es: enlace
+"Reservar" del sitio, página de reservas (sede, día, hora, datos), pago del adelanto en
+Bold y confirmación con un código de reserva. Si cancelan con 24 horas o más de anticipación
+se devuelve el adelanto.
 
-> Después de modificar `apps-script/Code.gs` hay que volver a desplegar el script:
-> Implementar > Administrar implementaciones > (lápiz) > Versión: Nueva versión > Implementar.
+- **Cajera:** revisa y marca las reservas del día (llegó / no llegó) en `/reservas/panel/`.
+- **Administración:** todo queda en la hoja de Google **"Urban Food - Reservas"** (reservas
+  y configuración: adelanto, días, cupos).
+- **Datos personales:** la política está en `/privacidad/`; el formulario la enlaza.
+- **Puesta en marcha:** los pasos de despliegue (Apps Script, llaves de Bold, claves de la
+  cajera) están en `docs/PASOS-RESERVAS.md`. Es un documento interno y no se sube al repo.
+  Las llaves y claves van en las Propiedades del script, nunca en el código. Mientras
+  `RESERVAS_API_URL` (en `assets/js/reservas-comun.js`) esté vacía, la página muestra
+  "disponibles muy pronto" con botones a WhatsApp.
+- Los textos de la sección naranja de la portada (`#reservas` en `index.html`) repiten el
+  adelanto y la regla de las 24 horas: si cambian en la hoja Config, cambiarlos ahí también.
+
+Para probar sin desplegar nada hay un servidor de desarrollo con Bold simulado:
+
+```bash
+node tests/reservas/servidor-local.js
+```
+
+y abrir [http://localhost:3000/reservas/?api=local](http://localhost:3000/reservas/?api=local)
+(el puerto se cambia con la variable `PORT`). Ese mismo servidor sirve el resto del sitio, así
+que también sirve para `npm run test:e2e`.
+
+## Dirección del sitio (mientras no haya dominio)
+
+El sitio se publica en GitHub Pages: **https://victor050106.github.io/urbanfoodbq/**. El dominio
+`urbanfoodbq.com` todavía no está comprado, así que nada apunta a él: la celda `url_sitio` de la
+hoja Config (vuelta desde Bold y enlace de cancelar de los correos), las etiquetas `canonical` /
+`og:` / JSON-LD de `index.html`, `reservas/` y `privacidad/`, `robots.txt` y `sitemap.xml` usan la
+dirección de GitHub Pages. El día que se compre el dominio hay que cambiarla en todos esos sitios
+(un buscar y reemplazar) y en la celda `url_sitio`.
 
 ## Correr localmente
 
@@ -158,16 +188,16 @@ Luego abre [http://localhost:3000](http://localhost:3000) en tu navegador.
 
 ```bash
 npm install
-npm test           # reglas del Apps Script, sin red ni navegador
+npm test           # reglas de los dos Apps Script, sin red ni navegador
 npm run test:e2e   # la página completa; necesita el servidor corriendo en otra terminal
 ```
 
 `tests/code-gs.test.js` ejecuta `apps-script/Code.gs` contra una hoja falsa en memoria:
-reservas válidas y rechazadas, día ocupado, tope de pendientes y opiniones con fórmulas.
+qué novedades salen y que el script ya no acepte escrituras. `tests/reservas/` prueba el backend de las
+reservas en línea (cupos, estados, Bold, correos, hoja) con servicios de Google falsos.
 `tests/e2e.js` abre la página en Microsoft Edge (escritorio y celular) y revisa horario,
-selector de sede, modales, opiniones, calendario de reservas y áreas táctiles. Los envíos
-de opiniones y reservas se simulan: nunca escriben en la hoja real. Las capturas quedan en
-`tests/shots/`.
+selector de sede, modales, tarjetas de Google, enlaces a reservas y áreas táctiles. Las capturas
+quedan en `tests/shots/`.
 
 ## Información de contacto del restaurante
 
@@ -176,19 +206,17 @@ Cada sede atiende su propio teléfono, su propio correo y su propia carta.
 | Dato | Sede El Carmen | Sede Hipódromo |
 |------|----------------|----------------|
 | Dirección | Calle 53D # 19-06, Barranquilla | Cra. 29 # 26-04, Soledad, Atlántico |
-| Teléfono / WhatsApp | +57 312 755 7694 | ⚠️ +57 300 000 0000 (provisional) |
-| Correo | urbanfoodbq@gmail.com | ⚠️ hipodromo@urbanfoodbq.com (provisional) |
+| Teléfono / WhatsApp | +57 312 755 7694 | +57 322 607 0697 |
+| Correo | urbanfoodbq@gmail.com | admihipsol@gmail.com |
 | Pedidos | [menu.fu.do/urbanfoodbq](https://menu.fu.do/urbanfoodbq) | [menu.fu.do/urbanfoodsl](https://menu.fu.do/urbanfoodsl) |
 
-> ⚠️ **El teléfono y el correo de Hipódromo son de relleno**, a la espera de los reales.
-> El número `+57 300 000 0000` no corresponde a ninguna línea activa, justamente para que
-> nadie termine llamando a un desconocido. Cuando lleguen los datos verdaderos hay que
-> cambiarlos en cuatro sitios (los cuatro están marcados con `TODO`):
+> Si cambia el teléfono o el correo de una sede, hay que cambiarlo en cinco sitios:
 >
 > 1. `index.html` — ficha de la sede en la sección **Sedes** (ahí solo va el teléfono)
 > 2. `index.html` — ficha de la sede en el **pie de página**
 > 3. `index.html` — bloque **JSON-LD** de la cabecera
 > 4. `assets/js/config.js` — objeto `SEDES` (de ahí sale el enlace de WhatsApp del selector)
+> 5. `assets/js/reservas-comun.js` — objeto `SEDES_RESERVA` (WhatsApp de las páginas de reservas)
 
 ## Licencia
 
