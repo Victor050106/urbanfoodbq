@@ -122,7 +122,8 @@ Urban Food/
 La sección `#opiniones` de `index.html` es HTML fijo: no consulta ninguna API, así que carga
 al instante y no tiene costo ni llaves. Las estrellas y el número de reseñas de cada sede
 se copian a mano desde Google Maps (fecha de la última copia en el comentario de la sección);
-conviene actualizarlos de vez en cuando. Los botones abren la ficha de cada sede por su `cid`
+conviene actualizarlos de vez en cuando. "Dejar una reseña" usa el enlace de "Pedir reseñas" del
+Perfil de Negocio de cada sede (`g.page/r/.../review`); "Ver reseñas" abre su ficha por el `cid`
 de Google Maps.
 
 > Se descartó traer las reseñas con la API de Places: cuesta US$25 por cada 1.000 consultas

@@ -50,6 +50,8 @@ async function setup(browser, viewport) {
   await p.waitForTimeout(500);
   const fichas = await p.locator('#opiniones a[href^="https://www.google.com/maps?cid="]').count();
   check('opiniones: una tarjeta de Google por sede', fichas === 2, `${fichas} enlaces`);
+  const resenar = await p.locator('#opiniones a[href^="https://g.page/r/"][href$="/review"]').count();
+  check('opiniones: boton dejar resena por sede', resenar === 2, `${resenar} enlaces`);
   check('novedades visible si hay', data ? (await p.locator('#novedades').isVisible()) === (data.novedades.length > 0) : true);
   check('reservas visible', await p.locator('#reservas').isVisible());
   check('nav con enlace Reservar', (await p.locator('[data-nav-links] a[href="reservas/"]').count()) === 2);
