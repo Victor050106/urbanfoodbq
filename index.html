@@ -27,7 +27,9 @@
     <link rel="preload" as="image" href="assets/img/mascota.webp" media="(min-width: 1024px)" fetchpriority="high">
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <!-- Solo los íconos que usa la página (icon_names, en orden alfabético): el set completo pesaba 1,1 MB y así son
+         ~8 KB. Si se agrega un ícono nuevo hay que sumarlo aquí; tests/iconos.test.js avisa si falta. -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0..1,0&icon_names=add_circle,arrow_forward,arrow_upward,call,child_care,close,delivery_dining,eco,event_available,event_busy,event_seat,fastfood,groups,layers,local_bar,local_pizza,location_on,lunch_dining,mail,menu,navigation,north_east,open_in_new,payments,rate_review,restaurant,restaurant_menu,schedule,shopping_bag,skillet,smartphone,star,star_half,storefront,tapas,timer,track_changes,verified,visibility&display=block" rel="stylesheet">
     <script>
       tailwind.config = {
         theme: {
@@ -216,17 +218,17 @@
                     <p class="font-body text-body-lg text-white/90 mb-10 max-w-xl border-l-4 border-vibrant-orange pl-6 py-1">
                         Parrilla, pizzas, perros, hamburguesas, salvajadas y mucho más. Pide a domicilio o recoge en el local con la auténtica esencia de la calle.
                     </p>
-                    <div class="flex flex-col sm:flex-row gap-4">
-                        <a href="https://menu.fu.do/urbanfoodbq" target="_blank" rel="noopener" data-sede-picker="pedido" aria-haspopup="dialog" class="bg-vibrant-orange text-deep-black px-8 py-4 rounded-full font-display text-headline-md uppercase tracking-wide hover:bg-white transition-all shadow-hard active:translate-x-1 active:translate-y-1 active:shadow-none inline-flex items-center justify-center gap-3">
+                    <div class="flex flex-col sm:flex-row sm:flex-wrap gap-4">
+                        <a href="https://menu.fu.do/urbanfoodbq" target="_blank" rel="noopener" data-sede-picker="pedido" aria-haspopup="dialog" class="bg-vibrant-orange text-deep-black px-8 py-4 rounded-full font-display text-headline-md uppercase tracking-wide hover:bg-white transition-all shadow-hard active:translate-x-1 active:translate-y-1 active:shadow-none inline-flex items-center justify-center gap-3 whitespace-nowrap">
                             Hacer Pedido
                             <span class="material-symbols-outlined">shopping_bag</span>
                         </a>
-                        <a href="#menu" data-sede-picker="carta" aria-haspopup="dialog" class="border-2 border-white text-white px-8 py-4 rounded-full font-display text-headline-md uppercase tracking-wide hover:bg-white hover:text-deep-black transition-all inline-flex items-center justify-center gap-3">
+                        <a href="#menu" data-sede-picker="carta" aria-haspopup="dialog" class="border-2 border-white text-white px-8 py-4 rounded-full font-display text-headline-md uppercase tracking-wide hover:bg-white hover:text-deep-black transition-all inline-flex items-center justify-center gap-3 whitespace-nowrap">
                             Ver Menú
                             <span class="material-symbols-outlined">restaurant_menu</span>
                         </a>
-                        <a href="reservas/" class="border-2 border-vibrant-orange text-vibrant-orange px-8 py-4 rounded-full font-display text-headline-md uppercase tracking-wide hover:bg-vibrant-orange hover:text-deep-black transition-all inline-flex items-center justify-center gap-3">
-                            Reservar Mesa
+                        <a href="reservas/" class="border-2 border-vibrant-orange text-vibrant-orange px-8 py-4 rounded-full font-display text-headline-md uppercase tracking-wide hover:bg-vibrant-orange hover:text-deep-black transition-all inline-flex items-center justify-center gap-3 whitespace-nowrap">
+                            Reservar para grupos
                             <span class="material-symbols-outlined">event_seat</span>
                         </a>
                     </div>
@@ -260,12 +262,12 @@
                 <article class="group relative aspect-square overflow-hidden bg-deep-black border border-deep-black/5 category-card fade-in flex flex-col items-center justify-center text-center p-6">
                     <span class="material-symbols-outlined text-vibrant-orange text-5xl mb-3 icon-fill">restaurant</span>
                     <h3 class="font-display text-headline-md text-white uppercase leading-none">Grill Urban</h3>
-                    <p class="font-body text-xs text-white/70 mt-2">Carnes asadas a la parrilla, pechuga, lomo de cerdo, costillas BBQ, parrilladas mixtas y nuestras famosas picadas Urban.</p>
+                    <p class="font-body text-xs text-white/70 mt-2 hidden md:block">Carnes asadas a la parrilla, pechuga, lomo de cerdo, costillas BBQ, parrilladas mixtas y nuestras famosas picadas Urban.</p>
                 </article>
                 <article class="group relative aspect-square overflow-hidden bg-vibrant-orange border border-deep-black/5 category-card fade-in flex flex-col items-center justify-center text-center p-6">
                     <span class="material-symbols-outlined text-deep-black text-5xl mb-3 icon-fill">fastfood</span>
                     <h3 class="font-display text-headline-md text-deep-black uppercase leading-none">Perros</h3>
-                    <p class="font-body text-xs text-deep-black/80 mt-2">Más de 20 variedades: desde el sencillo hasta el Perro Salvaje de 40cm, pasando por el Suizo, Cazador, Estrato 8 y más.</p>
+                    <p class="font-body text-xs text-deep-black/80 mt-2 hidden md:block">Más de 20 variedades: desde el sencillo hasta el Perro Salvaje de 40cm, pasando por el Suizo, Cazador, Estrato 8 y más.</p>
                 </article>
                 <article class="group relative aspect-square overflow-hidden bg-surface-container border border-deep-black/5 category-card fade-in">
                     <img class="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all duration-500 category-image" src="assets/img/menu/hamburguesa.jpg" alt="Hamburguesas - Urban Food" loading="lazy" decoding="async" width="800" height="800">
@@ -288,7 +290,7 @@
                 <article class="group relative aspect-square overflow-hidden bg-deep-black border border-deep-black/5 category-card fade-in flex flex-col items-center justify-center text-center p-6">
                     <span class="material-symbols-outlined text-vibrant-orange text-5xl mb-3 icon-fill">tapas</span>
                     <h3 class="font-display text-headline-md text-white uppercase leading-none">Salchipapas</h3>
-                    <p class="font-body text-xs text-white/70 mt-2">Sencilla, suiza, ranchera, especial, La Golosa gratinada... todas con nuestra chimichurri, salsa tártara y piña.</p>
+                    <p class="font-body text-xs text-white/70 mt-2 hidden md:block">Sencilla, suiza, ranchera, especial, La Golosa gratinada... todas con nuestra chimichurri, salsa tártara y piña.</p>
                 </article>
                 <article class="group relative aspect-square overflow-hidden bg-surface-container border border-deep-black/5 category-card fade-in">
                     <img class="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all duration-500 category-image" src="assets/img/menu/sandwich.jpg" alt="Sandwich - Urban Food" loading="lazy" decoding="async" width="800" height="800">
@@ -329,7 +331,7 @@
                 <article class="group relative aspect-square overflow-hidden bg-vibrant-orange border border-deep-black/5 category-card fade-in flex flex-col items-center justify-center text-center p-6">
                     <span class="material-symbols-outlined text-deep-black text-5xl mb-3 icon-fill">child_care</span>
                     <h3 class="font-display text-headline-md text-deep-black uppercase leading-none">Menú Infantil</h3>
-                    <p class="font-body text-xs text-deep-black/80 mt-2">Nuggets, mini pizzas, salchipapa mini, salchipollo y vaqueritos de carne o pechuga para los más pequeños.</p>
+                    <p class="font-body text-xs text-deep-black/80 mt-2 hidden md:block">Nuggets, mini pizzas, salchipapa mini, salchipollo y vaqueritos de carne o pechuga para los más pequeños.</p>
                 </article>
                 <article class="group relative aspect-square overflow-hidden bg-surface-container border border-deep-black/5 category-card fade-in">
                     <img class="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all duration-500 category-image" src="assets/img/menu/bebidas.jpg" alt="Bebidas y Frappés - Urban Food" loading="lazy" decoding="async" width="800" height="800">
@@ -343,7 +345,7 @@
                 <article class="group relative aspect-square overflow-hidden bg-deep-black border border-deep-black/5 category-card fade-in flex flex-col items-center justify-center text-center p-6">
                     <span class="material-symbols-outlined text-vibrant-orange text-5xl mb-3 icon-fill">add_circle</span>
                     <h3 class="font-display text-headline-md text-white uppercase leading-none">Adicionales</h3>
-                    <p class="font-body text-xs text-white/70 mt-2">Papa francesa, patacón, yuca frita, aros de cebolla, ensalada, bollo, gratinado, tocineta y salsas de la casa.</p>
+                    <p class="font-body text-xs text-white/70 mt-2 hidden md:block">Papa francesa, patacón, yuca frita, aros de cebolla, ensalada, bollo, gratinado, tocineta y salsas de la casa.</p>
                 </article>
 
             </div>
@@ -538,7 +540,7 @@
                                 <span class="material-symbols-outlined">navigation</span>
                             </a>
                             <a href="reservas/" class="border-2 border-deep-black text-deep-black px-6 py-3 font-body text-label-bold rounded-full uppercase tracking-wider inline-flex items-center gap-3 hover:bg-deep-black hover:text-white transition-all">
-                                Reservar mesa
+                                Reservar para grupos
                                 <span class="material-symbols-outlined">event_seat</span>
                             </a>
                         </div>
@@ -588,7 +590,7 @@
                                 <span class="material-symbols-outlined">navigation</span>
                             </a>
                             <a href="reservas/" class="border-2 border-deep-black text-deep-black px-6 py-3 font-body text-label-bold rounded-full uppercase tracking-wider inline-flex items-center gap-3 hover:bg-deep-black hover:text-white transition-all">
-                                Reservar mesa
+                                Reservar para grupos
                                 <span class="material-symbols-outlined">event_seat</span>
                             </a>
                         </div>
