@@ -372,12 +372,12 @@ test('codigo_previo sin link de Bold guardado no se reutiliza', () => {
   const y = c.manejar('crear', solicitud({ codigo_previo: x.codigo }), d);
   a.notEqual(y.codigo, x.codigo); a.equal(y.error, 'SIN_CUPO');
 });
-test('panel: 5 claves malas en 10 minutos bloquean la sede; un acierto reinicia', () => {
+test('panel: 30 claves malas en 10 minutos bloquean la sede; un acierto reinicia', () => {
   const d = falsos();
-  for (let i = 0; i < 4; i++) a.equal(c.manejar('panel_entrar', { sede: 'ELCARMEN', clave: 'mal' }, d).error, 'CLAVE');
-  // Un acierto antes del quinto fallo reinicia el contador.
+  for (let i = 0; i < 29; i++) a.equal(c.manejar('panel_entrar', { sede: 'ELCARMEN', clave: 'mal' }, d).error, 'CLAVE');
+  // Un acierto antes del fallo 30 reinicia el contador.
   a.equal(c.manejar('panel_entrar', { sede: 'ELCARMEN', clave: 'c1' }, d).ok, true);
-  for (let i = 0; i < 5; i++) a.equal(c.manejar('panel_entrar', { sede: 'ELCARMEN', clave: 'mal' }, d).error, 'CLAVE');
+  for (let i = 0; i < 30; i++) a.equal(c.manejar('panel_entrar', { sede: 'ELCARMEN', clave: 'mal' }, d).error, 'CLAVE');
   // Bloqueada: ni la clave buena entra, y no se compara.
   a.equal(c.manejar('panel_entrar', { sede: 'ELCARMEN', clave: 'c1' }, d).error, 'BLOQUEADO');
   // La otra sede no se afecta.
@@ -388,9 +388,9 @@ test('panel: 5 claves malas en 10 minutos bloquean la sede; un acierto reinicia'
 });
 test('panel: fallos espaciados más de 10 minutos no bloquean', () => {
   const d = falsos();
-  for (let i = 0; i < 4; i++) c.manejar('panel_entrar', { sede: 'ELCARMEN', clave: 'mal' }, d);
+  for (let i = 0; i < 29; i++) c.manejar('panel_entrar', { sede: 'ELCARMEN', clave: 'mal' }, d);
   d.ahoraMs += 11 * MIN;
-  for (let i = 0; i < 4; i++) a.equal(c.manejar('panel_entrar', { sede: 'ELCARMEN', clave: 'mal' }, d).error, 'CLAVE');
+  for (let i = 0; i < 29; i++) a.equal(c.manejar('panel_entrar', { sede: 'ELCARMEN', clave: 'mal' }, d).error, 'CLAVE');
   a.equal(c.manejar('panel_entrar', { sede: 'ELCARMEN', clave: 'c1' }, d).ok, true);
 });
 test('horas, estado, cancelacion y panel_listar incluyen las reglas de Config', () => {

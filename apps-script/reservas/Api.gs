@@ -9,8 +9,9 @@ var CAMPOS_SECRETOS = ['token_cancelar', 'bold_link', 'bold_url'];
 // Un pago puede llegar a Bold después de que marcamos EXPIRADA/RECHAZADA: se sigue preguntando un día.
 var VENTANA_PAGO_TARDIO_MS = 24 * 3600000;
 var MAX_DIAS_PANEL = 14;
-// Clave del panel: tras 5 fallos en 10 minutos la sede queda bloqueada hasta que pase la ventana.
-var MAX_FALLOS_PANEL = 5;
+// Clave del panel: tras 30 fallos en 10 minutos la sede queda bloqueada hasta que pase la ventana.
+// El contador es por sede, no por persona: con un límite bajo cualquiera dejaría a la cajera afuera.
+var MAX_FALLOS_PANEL = 30;
 var VENTANA_FALLOS_MS = 10 * 60000;
 
 function fallo(error) { return { ok: false, error: error }; }
