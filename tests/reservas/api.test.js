@@ -41,7 +41,7 @@ test('crear aparta cupo y devuelve el link de Bold', () => {
   a.equal(d.bold.creados[0].reference, x.codigo);
   a.equal(d.buzon.length, 0);
 });
-test('el segundo cliente no puede tomar el mismo bloque VIP', () => {
+test('el segundo cliente no puede tomar la misma mesa', () => {
   const d = falsos();
   c.manejar('crear', solicitudGrande(), d);
   a.equal(c.manejar('crear', solicitudGrande({ hora: '20:30' }), d).error, 'SIN_CUPO');

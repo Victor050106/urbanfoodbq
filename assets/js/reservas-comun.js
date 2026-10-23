@@ -210,7 +210,7 @@ var REGLAS_POR_DEFECTO = {
   grupo_min: 6, max_elcarmen: 20, piso1_max_hipodromo: 16, piso2_max_hipodromo: 30
 };
 
-var NOMBRE_ESPACIO = { MESA: 'Mesa', PISO1: 'Primer piso', PISO2: 'Segundo piso', VIP: 'Salón VIP' };
+var NOMBRE_ESPACIO = { MESA: 'Mesa', PISO1: 'Primer piso', PISO2: 'Segundo piso' };
 
 // Misma regla que espacioPara de Disponibilidad.gs: el servidor decide, aquí solo se anticipa para mostrarlo.
 function maxPersonasReserva(sede, reglas) {

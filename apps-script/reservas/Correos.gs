@@ -29,7 +29,7 @@ function politicaDe(reserva, cfg) {
 
 function nombreSede(sede) { return NOMBRE_SEDE[sede] || sede; }
 
-var NOMBRE_ESPACIO = { MESA: 'Mesa', PISO1: 'Primer piso', PISO2: 'Segundo piso', VIP: 'Salón VIP' };
+var NOMBRE_ESPACIO = { MESA: 'Mesa', PISO1: 'Primer piso', PISO2: 'Segundo piso' };
 
 // 120 -> "2 horas"; 90 -> "90 minutos"
 function textoDuracion(min) {
