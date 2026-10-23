@@ -17,7 +17,7 @@ joven y urbano.
 
 ## Tecnologías
 
-- HTML5 + Tailwind CSS (vía CDN, configurado en línea dentro de `index.html`)
+- HTML5 + Tailwind CSS 3, compilado a `assets/css/tailwind.css` (configuración en `tailwind.config.js`)
 - `styles.css` para lo que Tailwind no cubre (sombra dura, fundidos, estados del mapa)
 - JavaScript vanilla (sin frameworks ni build)
 - Google Fonts — `Bebas Neue`, `Inter` y `Material Symbols`
@@ -34,6 +34,7 @@ Urban Food/
 ├── robots.txt            # Indexación
 ├── sitemap.xml           # Mapa del sitio
 ├── assets/               # Todo lo que el sitio carga en el navegador
+│   ├── css/tailwind.css  # Generado con `npm run css`: no se edita a mano
 │   ├── css/styles.css    # Estilos que complementan a Tailwind
 │   ├── js/               # Módulos ES nativos, uno por sección (sin build)
 │   │   ├── main.js       # Arranque: inicia cada sección y hace la única petición a la hoja
@@ -173,6 +174,20 @@ hoja Config (vuelta desde Bold y enlace de cancelar de los correos), las etiquet
 `og:` / JSON-LD de `index.html`, `reservas/` y `privacidad/`, `robots.txt` y `sitemap.xml` usan la
 dirección de GitHub Pages. El día que se compre el dominio hay que cambiarla en todos esos sitios
 (un buscar y reemplazar) y en la celda `url_sitio`.
+
+## Estilos (Tailwind)
+
+Las clases de Tailwind no se generan en el navegador: `assets/css/tailwind.css` se compila una vez y se sube
+al repo. **Después de usar una clase nueva** en el HTML o en `assets/js/` hay que regenerarlo, o esa clase
+no tendrá estilo:
+
+```bash
+npm install   # la primera vez
+npm run css
+```
+
+Los colores, fuentes y tamaños propios (`vibrant-orange`, `font-display`, `text-headline-lg`...) están en
+`tailwind.config.js`, compartidos por todas las páginas.
 
 ## Correr localmente
 
