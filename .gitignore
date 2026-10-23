@@ -25,3 +25,6 @@ tests/shots/
 
 # Bocetos y espacio de trabajo de Superpowers
 .superpowers/
+
+# Configuración local de Claude Code: es de cada equipo, no del sitio
+.claude/
