@@ -20,9 +20,10 @@ var CONFIG_POR_DEFECTO = {
   min_horas: 2,
   apartado_min: 15,
   cancelacion_horas: 24,
-  // Vacío a propósito: el dueño lo llena en la hoja Config. Sin correo no se envía, pero nada falla.
-  correo_admin: '',
-  url_sitio: 'https://urbanfoodbq.com'
+  // Recibe los avisos de devoluciones y pagos sin cupo: nunca vacío, o nadie se entera.
+  correo_admin: 'urbanfoodbq@gmail.com',
+  // GitHub Pages mientras no se compre urbanfoodbq.com: un dominio ajeno recibiría los tokens de cancelar.
+  url_sitio: 'https://victor050106.github.io/urbanfoodbq'
 };
 
 var NOMBRE_SEDE = { ELCARMEN: 'El Carmen', HIPODROMO: 'Hipódromo' };
@@ -64,7 +65,9 @@ function combinarConfig(filas) {
       var n = Number(valor);
       if (isFinite(n)) cfg[clave] = n;
     } else {
-      cfg[clave] = String(valor === undefined || valor === null ? '' : valor).trim();
+      // Celda vacía: se queda el valor por defecto, igual que con los números.
+      var texto = String(valor === undefined || valor === null ? '' : valor).trim();
+      if (texto) cfg[clave] = texto.replace(/\/+$/, '');
     }
   });
   return cfg;

@@ -70,6 +70,16 @@ test('enviarCorreo no hace nada sin destinatario', () => {
   a.equal(llamadas, 1);
 });
 
+test('celdas de texto vacías en Config no dejan sin correo de admin ni sin dirección del sitio', () => {
+  const vacia = c.combinarConfig([['correo_admin', ''], ['url_sitio', '  ']]);
+  a.equal(vacia.correo_admin, 'urbanfoodbq@gmail.com');
+  a.equal(vacia.url_sitio, 'https://victor050106.github.io/urbanfoodbq');
+  const r = base({ token_cancelar: 'tok' });
+  a.ok(c.correoConfirmacion(r, vacia).html.includes('https://victor050106.github.io/urbanfoodbq/reservas/cancelar/?t=tok'));
+  // Con barra final en la hoja el enlace no queda con doble barra.
+  a.equal(c.combinarConfig([['url_sitio', 'https://urbanfoodbq.com/']]).url_sitio, 'https://urbanfoodbq.com');
+});
+
 test('política construida desde Config: con los valores por defecto es el texto fijo', () => {
   a.equal(c.textoPolitica(cfg), POLITICA);
   const otra = c.combinarConfig([['adelanto', '60000'], ['cancelacion_horas', '48']]);
