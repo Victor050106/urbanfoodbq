@@ -27,7 +27,7 @@
     <link rel="preload" as="image" href="assets/img/mascota.webp" media="(min-width: 1024px)" fetchpriority="high">
     <!-- Solo los íconos que usa la página (icon_names, en orden alfabético): el set completo pesaba 1,1 MB y así son
          ~8 KB. Si se agrega un ícono nuevo hay que sumarlo aquí; tests/iconos.test.js avisa si falta. -->
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0..1,0&icon_names=add_circle,arrow_forward,arrow_upward,call,child_care,close,delivery_dining,eco,event_available,event_busy,event_seat,fastfood,groups,layers,local_bar,local_pizza,location_on,lunch_dining,mail,menu,navigation,north_east,open_in_new,payments,rate_review,restaurant,restaurant_menu,schedule,shopping_bag,skillet,smartphone,star,star_half,storefront,tapas,timer,track_changes,verified,visibility&display=block" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0..1,0&icon_names=add_circle,arrow_forward,arrow_upward,call,child_care,close,delivery_dining,eco,event_seat,fastfood,groups,layers,local_bar,local_pizza,location_on,lunch_dining,mail,menu,navigation,north_east,open_in_new,rate_review,restaurant,restaurant_menu,schedule,shopping_bag,skillet,smartphone,star,star_half,storefront,tapas,timer,track_changes,verified,visibility&display=block" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/styles.css">
     <link rel="modulepreload" href="assets/js/config.js">
     <link rel="modulepreload" href="assets/js/util.js">
@@ -440,35 +440,6 @@
         </div>
     </section>
 
-    <!-- RESERVAS -->
-    <!-- Las reglas reales viven en la hoja Config de "Urban Food - Reservas": si cambian
-         el adelanto, los días o el tamaño de grupo, actualizar también estos textos. -->
-    <section id="reservas" class="py-20 bg-vibrant-orange relative overflow-hidden">
-        <div class="absolute -bottom-6 right-0 font-display text-[140px] md:text-[200px] text-deep-black/[0.07] select-none leading-none pointer-events-none" aria-hidden="true">RESERVA</div>
-        <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop relative grid lg:grid-cols-[1fr_auto] gap-10 lg:gap-16 items-center">
-            <div>
-                <span class="text-deep-black font-body text-label-bold uppercase tracking-[0.2em] mb-4 block">Reservas en l&iacute;nea</span>
-                <h2 class="font-display text-headline-lg md:text-display-lg-mobile text-deep-black uppercase leading-none mb-5">Reserva para tu grupo</h2>
-                <p class="font-body text-body-lg text-deep-black/80 max-w-2xl mb-6">Para grupos de 6 personas o m&aacute;s, de lunes a jueves. Escoge sede, d&iacute;a y hora, paga un adelanto de $50.000 y listo: te llega la confirmaci&oacute;n al correo. El adelanto se descuenta de tu cuenta, as&iacute; que no pagas de m&aacute;s.</p>
-                <ul class="flex flex-wrap gap-3 font-body text-label-bold uppercase tracking-wider text-deep-black">
-                    <li class="inline-flex items-center gap-2 bg-white/25 border-2 border-deep-black rounded-full px-4 py-2">
-                        <span class="material-symbols-outlined text-lg" aria-hidden="true">groups</span>Grupos desde 6 personas
-                    </li>
-                    <li class="inline-flex items-center gap-2 bg-white/25 border-2 border-deep-black rounded-full px-4 py-2">
-                        <span class="material-symbols-outlined text-lg" aria-hidden="true">payments</span>Adelanto descontable
-                    </li>
-                    <li class="inline-flex items-center gap-2 bg-white/25 border-2 border-deep-black rounded-full px-4 py-2">
-                        <span class="material-symbols-outlined text-lg" aria-hidden="true">event_busy</span>Cancela con 24 h y te devolvemos
-                    </li>
-                </ul>
-            </div>
-            <a href="reservas/" class="bg-deep-black text-white px-10 py-5 rounded-full font-display text-headline-md uppercase tracking-wider hover:bg-white hover:text-deep-black transition-all shadow-hard active:translate-x-1 active:translate-y-1 active:shadow-none inline-flex items-center justify-center gap-3 justify-self-start lg:justify-self-end">
-                Reservar
-                <span class="material-symbols-outlined" aria-hidden="true">event_available</span>
-            </a>
-        </div>
-    </section>
-
     <!-- UBICACIÓN -->
     <section id="ubicacion" class="py-24 bg-white">
         <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
@@ -692,10 +663,16 @@
 
     <!-- CTA FINAL -->
     <section class="py-24 bg-deep-black relative overflow-hidden">
-        <div class="cta-rayas absolute inset-0 opacity-10 pointer-events-none" aria-hidden="true"></div>
+        <!-- Fotos de producto de fondo: 4 columnas en computador, 2x2 en celular (styles.css). -->
+        <div class="cta-fotos" aria-hidden="true">
+            <img src="assets/img/cta-salvajada.webp" alt="" width="600" height="1332" loading="lazy" decoding="async">
+            <img src="assets/img/cta-sandwich.webp" alt="" width="600" height="1268" loading="lazy" decoding="async">
+            <img src="assets/img/cta-hamburguesa.webp" alt="" width="600" height="1286" loading="lazy" decoding="async">
+            <img src="assets/img/cta-pizza.webp" alt="" width="600" height="1246" loading="lazy" decoding="async">
+        </div>
         <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop text-center relative z-10">
             <h2 class="font-display text-display-lg-mobile md:text-display-lg text-white mb-6 uppercase leading-none">¿LISTO PARA ORDENAR?</h2>
-            <p class="font-body text-body-lg text-white/60 mb-12 max-w-2xl mx-auto">Haz tu pedido online y disfruta del mejor sabor urbano directamente en tu puerta o recógelo en nuestro local.</p>
+            <p class="font-body text-body-lg text-white/80 mb-12 max-w-2xl mx-auto">Haz tu pedido online y disfruta del mejor sabor urbano directamente en tu puerta o recógelo en nuestro local.</p>
             <a data-sede-picker="pedido" aria-haspopup="dialog" class="inline-flex items-center gap-3 bg-vibrant-orange text-deep-black px-12 py-5 rounded-full font-display text-headline-md uppercase tracking-wider hover:bg-white hover:text-deep-black transition-all transform hover:-translate-y-1 active:scale-95 shadow-hard" href="https://menu.fu.do/urbanfoodbq" target="_blank" rel="noopener">
                 Pedir Ahora
                 <span class="material-symbols-outlined">arrow_forward</span>

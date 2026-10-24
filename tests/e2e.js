@@ -53,9 +53,8 @@ async function setup(browser, viewport) {
   const resenar = await p.locator('#opiniones a[href^="https://g.page/r/"][href$="/review"]').count();
   check('opiniones: boton dejar resena por sede', resenar === 2, `${resenar} enlaces`);
   check('novedades visible si hay', data ? (await p.locator('#novedades').isVisible()) === (data.novedades.length > 0) : true);
-  check('reservas visible', await p.locator('#reservas').isVisible());
   check('nav con enlace Reservar', (await p.locator('[data-nav-links] a[href="reservas/"]').count()) === 2);
-  check('enlaces a /reservas/ (nav x2, hero, seccion, sedes x2)', (await p.locator('a[href="reservas/"]').count()) === 6);
+  check('enlaces a /reservas/ (nav x2, hero, franja con Urbi, sedes x2)', (await p.locator('a[href="reservas/"]').count()) === 6);
   check('pie con politica de datos', (await p.locator('footer a[href="privacidad/"]').count()) === 1);
 
   // Sedes

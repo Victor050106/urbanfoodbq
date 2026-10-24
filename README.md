@@ -153,8 +153,9 @@ se devuelve el adelanto.
   Las llaves y claves van en las Propiedades del script, nunca en el código. Mientras
   `RESERVAS_API_URL` (en `assets/js/reservas-comun.js`) esté vacía, la página muestra
   "disponibles muy pronto" con botones a WhatsApp.
-- Los textos de la sección naranja de la portada (`#reservas` en `index.html`) repiten el
-  adelanto y la regla de las 24 horas: si cambian en la hoja Config, cambiarlos ahí también.
+- La franja de reservas con Urbi de la portada (`.franja-reserva` en `index.html`, solo en
+  celular) repite el grupo mínimo y que el adelanto se descuenta: si cambian en la hoja Config,
+  cambiarlos ahí también.
 
 Para probar sin desplegar nada hay un servidor de desarrollo con Bold simulado:
 
