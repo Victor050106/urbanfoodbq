@@ -1,6 +1,16 @@
 /* Lo que comparten las páginas de /reservas/: el marco de escritorio y el indicador de carga.
    Cada página conserva su propio <style>; este archivo va después para poder ajustarlo. */
 
+/* Urbi acompaña los pasos: en celular llena el espacio vacío bajo el formulario. */
+.urbi-reserva {
+    display: block;
+    width: 120px;
+    height: auto;
+    margin: 40px auto 0;
+    opacity: .9;
+    pointer-events: none;
+}
+
 /* En computador el formulario era una columna angosta perdida en un fondo negro vacío:
    ahora va en una tarjeta centrada sobre la textura de la marca. */
 @media (min-width: 1024px) {

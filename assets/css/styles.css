@@ -77,6 +77,42 @@ summary {
     }
 }
 
+/* Urbi en celular: flota asomado por el borde derecho del hero (que tiene overflow-hidden) y el
+   texto lo rodea. El espaciador de ancho 0 lo baja una línea del título (48px), que es la más larga. */
+.hero-urbi {
+    display: flow-root;
+}
+.urbi-espacio {
+    float: right;
+    width: 0;
+    height: 48px;
+}
+.urbi-movil {
+    float: right;
+    clear: right;
+    width: 112px;
+    height: auto;
+    margin: 0 -32px 8px 8px;
+    pointer-events: none;
+    filter: drop-shadow(0 12px 12px rgb(0 0 0 / 0.35));
+}
+/* Tablet: el título ocupa 2 líneas de 80px + mb-6; Urbi queda junto al párrafo. */
+@media (min-width: 768px) {
+    .urbi-espacio { height: 184px; }
+    .urbi-movil { width: 150px; }
+}
+
+/* Burbuja de WhatsApp: solo en celular/tablet se esconde mientras se ven los botones del hero. */
+.wa-flotante {
+    transition: transform .15s, opacity .2s, visibility .2s;
+}
+@media (max-width: 1023px) {
+    .wa-flotante.wa-oculto {
+        opacity: 0;
+        visibility: hidden;
+    }
+}
+
 /* Hard urban shadow (graphic / print aesthetic) */
 .shadow-hard {
     box-shadow: 6px 6px 0px 0px #000000;

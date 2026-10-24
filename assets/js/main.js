@@ -22,4 +22,10 @@ const observer = new IntersectionObserver((entries) => {
 }, { threshold: 0.1 });
 document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 
+// En celular la burbuja de WhatsApp tapaba los botones del inicio: se esconde mientras se ven.
+const waFlotante = document.querySelector('[data-wa-flotante]');
+new IntersectionObserver(([entry]) => {
+    waFlotante.classList.toggle('wa-oculto', entry.isIntersecting);
+}).observe(document.querySelector('[data-hero-ctas]'));
+
 getJson().then(data => renderNovedades(data?.novedades));
