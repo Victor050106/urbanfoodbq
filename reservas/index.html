@@ -36,6 +36,10 @@
         .contador { display: flex; align-items: center; justify-content: space-between; background: var(--card); border-radius: 10px; padding: 6px 10px; }
         .contador button { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); font-size: 22px; background: transparent; color: #f3f3f3; }
         .contador button:disabled { opacity: .25; cursor: default; }
+        /* Más específico que [type='number'] del plugin de formularios de Tailwind, también con foco. */
+        .contador input, .contador input:focus { width: 5ch; text-align: center; font-weight: 700; background: transparent; color: #f3f3f3; border: 1px solid transparent; border-radius: 8px; padding: 4px; box-shadow: none; -moz-appearance: textfield; appearance: textfield; }
+        .contador input:focus { border-color: #FF6B00; }
+        .contador input::-webkit-inner-spin-button, .contador input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         .cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; text-align: center; font-size: 14px; }
         .cal .cab { color: var(--mute); font-size: 12px; padding: 4px 0; }
         .cal button { min-height: 44px; border-radius: 8px; background: var(--card); color: #f3f3f3; border: 1px solid transparent; }
@@ -95,10 +99,10 @@
                 <h1 class="titulo text-3xl mt-2">Reserva tu mesa</h1>
                 <span class="etiqueta">Sede</span>
                 <div class="grid grid-cols-2 gap-2" id="sedes"></div>
-                <span class="etiqueta">¿Cuántas personas?</span>
+                <label class="etiqueta" for="personas">¿Cuántas personas?</label>
                 <div class="contador">
                     <button type="button" id="menos" aria-label="Una persona menos">&minus;</button>
-                    <b id="personas" class="text-xl" aria-live="polite">2</b>
+                    <input type="number" id="personas" class="text-xl" inputmode="numeric" min="6" max="60" step="1" value="6">
                     <button type="button" id="mas" aria-label="Una persona más">+</button>
                 </div>
                 <p id="espacio" class="nota" aria-live="polite"></p>

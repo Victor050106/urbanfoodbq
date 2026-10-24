@@ -100,11 +100,6 @@ test('código de reserva en la URL aunque Bold agregue parámetros', () => {
   a.equal(c.codigoDeUrl('?codigo=nada'), '');
   a.equal(c.codigoDeUrl(''), '');
 });
-test('firma del apartado: mismos datos, misma firma; el correo no distingue mayúsculas', () => {
-  const f = c.firmaApartado({ sede: 'ELCARMEN', fecha: '2026-10-22', hora: '20:00', personas: 12, correo: ' Laura@Example.com ' });
-  a.equal(f, 'ELCARMEN|2026-10-22|20:00|12|laura@example.com');
-  a.notEqual(c.firmaApartado({ sede: 'ELCARMEN', fecha: '2026-10-22', hora: '20:30', personas: 12, correo: 'laura@example.com' }), f);
-});
 test('bloqueo del panel tiene mensaje', () => {
   a.equal(c.MENSAJES_ERROR.BLOQUEADO, 'Demasiados intentos. Espera unos minutos.');
 });

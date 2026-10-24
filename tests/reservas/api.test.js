@@ -289,8 +289,8 @@ test('revisarPendientes vence lo no pagado y confirma lo pagado', () => {
   c.revisarPendientesCon(d);
   a.equal(fila(d, A).estado, 'CONFIRMADA');
   a.equal(fila(d, B).estado, 'EXPIRADA');
-  // La vencida se consulta dos veces antes de liberar el cupo.
-  a.equal(d.bold.consultas.filter((x) => x === linkB).length, 2);
+  // La vencida se consulta una vez antes de liberar el cupo.
+  a.equal(d.bold.consultas.filter((x) => x === linkB).length, 1);
   a.equal(d.buzon.length, 1);
   a.ok(d.buzon.some((m) => m.para === 'laura@example.com' && /confirmada/.test(m.asunto)));
   // Segunda pasada: nada nuevo, y la confirmada no se vuelve a consultar.
@@ -340,36 +340,35 @@ test('hmac en hex minúsculas y disparador instalado una sola vez', () => {
 
 // ---- Revisión final ----
 
-test('crear con codigo_previo devuelve el mismo apartado vigente sin crear otro', () => {
+test('segundo crear con los mismos datos devuelve el mismo apartado vigente, aunque se perdiera la respuesta', () => {
   const d = falsos();
-  const x = c.manejar('crear', solicitudGrande(), d);
-  const y = c.manejar('crear', solicitudGrande({ codigo_previo: x.codigo, correo: ' LAURA@example.com ' }), d);
+  const x = c.manejar('crear', solicitudGrande(), d); // la página nunca recibió esta respuesta
+  const y = c.manejar('crear', solicitudGrande({ correo: ' LAURA@example.com ' }), d);
   a.deepEqual(plano(y), { ok: true, codigo: x.codigo, url_pago: x.url_pago });
   a.equal(d.hoja.reservas.length, 1);
   a.equal(d.bold.creados.length, 1);
 });
-test('codigo_previo que no coincide sigue el flujo normal', () => {
+test('crear con datos distintos no reutiliza el apartado de otro', () => {
   const d = falsos();
   const x = c.manejar('crear', solicitudGrande(), d);
-  // Otro correo: no es su apartado, la hora sigue ocupada.
-  a.equal(c.manejar('crear', solicitudGrande({ codigo_previo: x.codigo, correo: 'otra@example.com' }), d).error, 'SIN_CUPO');
+  // Otro correo u otro número de personas: no es su apartado, la hora sigue ocupada.
+  a.equal(c.manejar('crear', solicitudGrande({ correo: 'otra@example.com' }), d).error, 'SIN_CUPO');
+  a.equal(c.manejar('crear', solicitud({ personas: 10 }), d).error, 'SIN_CUPO');
   // Otra hora (3 h después): se crea una reserva nueva.
-  const m = c.manejar('crear', solicitud({ codigo_previo: x.codigo, hora: '23:00' }), d);
+  const m = c.manejar('crear', solicitud({ hora: '23:00' }), d);
   a.equal(m.ok, true); a.notEqual(m.codigo, x.codigo);
   a.equal(d.hoja.reservas.length, 2);
   // Apartado vencido: no se reutiliza; el bloque quedó libre y se crea otro.
   d.ahoraMs += 16 * MIN;
-  const v = c.manejar('crear', solicitudGrande({ codigo_previo: x.codigo }), d);
+  const v = c.manejar('crear', solicitudGrande(), d);
   a.equal(v.ok, true); a.notEqual(v.codigo, x.codigo);
-  // Código inexistente: flujo normal.
-  a.equal(c.manejar('crear', solicitud({ codigo_previo: 'UF-NOEXIS', hora: '17:00' }), d).ok, true);
 });
-test('codigo_previo sin link de Bold guardado no se reutiliza', () => {
+test('apartado sin link de Bold guardado no se reutiliza', () => {
   const d = falsos();
   const x = c.manejar('crear', solicitud(), d);
   fila(d, x.codigo).bold_url = '';
   // No se le devuelve el mismo apartado: se intenta crear otro, que choca con el primero.
-  const y = c.manejar('crear', solicitud({ codigo_previo: x.codigo }), d);
+  const y = c.manejar('crear', solicitud(), d);
   a.notEqual(y.codigo, x.codigo); a.equal(y.error, 'SIN_CUPO');
 });
 test('panel: 30 claves malas en 10 minutos bloquean la sede; un acierto reinicia', () => {

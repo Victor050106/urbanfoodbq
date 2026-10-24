@@ -10,7 +10,6 @@
     var CONSULTA_CADA_MS = 4000;
     var CONSULTA_HASTA_MS = 120000;
     var BORRADOR = 'uf_reserva_borrador';
-    var APARTADO = 'uf_reserva_apartado';
 
     var $ = function (id) { return document.getElementById(id); };
     var hoy = hoyBogota();
@@ -119,7 +118,11 @@
     function pintarPersonas() {
         var max = maxPersonasReserva(estado.sede, reglas);
         var grande = estado.personas > max;
-        $('personas').textContent = estado.personas;
+        var campo = $('personas');
+        campo.min = reglas.grupo_min;
+        campo.max = PERSONAS_TOPE_UI;
+        // Mientras escribe no se le cambia lo que va tecleando (al poner "12" pasa por "1").
+        if (document.activeElement !== campo) campo.value = estado.personas;
         $('menos').disabled = estado.personas <= reglas.grupo_min;
         $('mas').disabled = estado.personas >= PERSONAS_TOPE_UI;
         $('espacio').textContent = grande ? '' : 'Lugar: ' + etiquetaEspacio() + ' · la reserva es por ' + textoDuracion(reglas.duracion_min);
@@ -144,8 +147,21 @@
     });
     $('menos').addEventListener('click', function () { cambiarPersonas(-1); });
     $('mas').addEventListener('click', function () { cambiarPersonas(1); });
-    function cambiarPersonas(delta) {
-        estado.personas = Math.min(PERSONAS_TOPE_UI, Math.max(reglas.grupo_min, estado.personas + delta));
+    // Escrito a mano: se toma en cuanto es un número válido; al salir del campo se corrige al rango.
+    $('personas').addEventListener('input', function () {
+        var n = Number(this.value);
+        if (this.value !== '' && n === Math.floor(n) && n >= reglas.grupo_min && n <= PERSONAS_TOPE_UI) ponerPersonas(n);
+    });
+    $('personas').addEventListener('change', function () {
+        var n = Math.round(Number(this.value));
+        ponerPersonas(this.value !== '' && isFinite(n) ? n : estado.personas);
+        this.value = estado.personas;
+    });
+    function cambiarPersonas(delta) { ponerPersonas(estado.personas + delta); }
+    function ponerPersonas(n) {
+        n = Math.min(PERSONAS_TOPE_UI, Math.max(reglas.grupo_min, n));
+        if (n === estado.personas) return;
+        estado.personas = n;
         estado.fecha = ''; estado.hora = '';
         pintarPersonas();
         precargarMeses();
@@ -317,15 +333,6 @@
         try { return JSON.parse(sessionStorage.getItem(BORRADOR)) || null; } catch (e) { return null; }
     }
 
-    // Último apartado creado en esta pestaña: { codigo, url_pago, firma }.
-    function guardarApartado(a) {
-        try { sessionStorage.setItem(APARTADO, JSON.stringify(a)); } catch (e) { /* sin almacenamiento: el servidor crea otro */ }
-    }
-
-    function leerApartado() {
-        try { return JSON.parse(sessionStorage.getItem(APARTADO)) || null; } catch (e) { return null; }
-    }
-
     $('pagar').addEventListener('click', function () {
         var boton = $('pagar');
         if (boton.disabled) return;
@@ -333,19 +340,16 @@
         limpiarError();
         var d = estado.datos;
         guardarBorrador();
-        var firma = firmaApartado({ sede: estado.sede, fecha: estado.fecha, hora: estado.hora, personas: estado.personas, correo: d.correo });
-        var previo = leerApartado();
+        // Si ya hay un apartado vigente con estos mismos datos (volvió de Bold, o se perdió la respuesta),
+        // el servidor devuelve ese mismo link.
         var cuerpo = {
             accion: 'crear', sede: estado.sede, personas: estado.personas, fecha: estado.fecha, hora: estado.hora,
             nombre: d.nombre, tipo_doc: d.tipo_doc, documento: d.documento, correo: d.correo, celular: d.celular,
             comentario: d.comentario, acepta_datos: true, acepta_politica: true,
             website: $('website').value
         };
-        // Volvió de Bold con Atrás y paga lo mismo: el servidor devuelve ese apartado si sigue vigente.
-        if (previo && previo.firma === firma && previo.codigo) cuerpo.codigo_previo = previo.codigo;
         apiPost(cuerpo).then(function (r) {
             if (r.ok && r.url_pago) {
-                guardarApartado({ codigo: r.codigo, url_pago: r.url_pago, firma: firma });
                 window.location.href = r.url_pago;
                 return;
             }

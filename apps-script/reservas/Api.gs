@@ -179,8 +179,8 @@ function accionCancelacion(p, deps) {
   return { ok: true, reserva: resumenPublico(r, cfg), puede: ev.puede, conDevolucion: ev.conDevolucion, reglas: reglasPublicas(cfg) };
 }
 
-// Segundo "Pagar" (volvió de Bold con Atrás, o se perdió la respuesta): si su propio apartado sigue vigente
-// con los mismos datos, se le devuelve el mismo link en vez de crear otro que chocaría con él.
+// Segundo "Pagar" (volvió de Bold con Atrás, o se perdió la respuesta y la página no supo el código): si su
+// propio apartado sigue vigente con los mismos datos, se le devuelve el mismo link en vez de decirle "sin cupo".
 function apartadoReutilizable(r, l, ahoraMs) {
   if (!r || r.estado !== 'PENDIENTE_PAGO' || !r.bold_url) return false;
   var vence = Date.parse(r.vence);
@@ -196,14 +196,11 @@ function accionCrear(p, deps) {
   var v = validarSolicitud(p, cfg);
   if (!v.ok) return v;
   var l = v.limpio;
-  var previo = textoLimpio(p.codigo_previo);
-  if (previo) {
-    var anterior = deps.hoja.buscarPorCodigo(previo);
-    if (apartadoReutilizable(anterior, l, deps.ahora())) return { ok: true, codigo: anterior.codigo, url_pago: anterior.bold_url };
-  }
   var creada = deps.bloqueo(function () {
     // El cupo se recalcula con el bloqueo tomado: dos clientes por el mismo bloque no pasan ambos.
     var reservas = deps.hoja.leerReservas({ sede: l.sede, desde: l.fecha, hasta: l.fecha });
+    var mio = reservas.filter(function (x) { return apartadoReutilizable(x, l, deps.ahora()); })[0];
+    if (mio) return mio;
     var libre = horasDisponibles(l.sede, l.fecha, l.personas, reservas, deps.ahora(), cfg, deps.hoja.leerBloqueos())
       .some(function (h) { return h.hora === l.hora && h.libre; });
     if (!libre) return null;
@@ -212,6 +209,7 @@ function accionCrear(p, deps) {
     return r;
   });
   if (!creada) return fallo('SIN_CUPO');
+  if (creada.bold_url) return { ok: true, codigo: creada.codigo, url_pago: creada.bold_url };
   var r = copiarReserva(creada);
   var link;
   try {

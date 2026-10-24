@@ -12,12 +12,10 @@ function revisarPendientesCon(deps) {
     if (r.estado !== 'PENDIENTE_PAGO' && !debeConsultarBold(r, deps.ahora())) return;
     resumen.revisadas++;
     try {
+      // Si Bold dice que no está pagada y ya venció, se libera el cupo. Un pago que entre después
+      // se sigue consultando 24 h (pago tardío).
       var x = refrescarConBold(r, deps, cfg);
-      if (x.estado === 'PENDIENTE_PAGO' && Date.parse(x.vence) <= deps.ahora()) {
-        // Antes de liberar el cupo se pregunta otra vez: el pago pudo entrar justo al vencer.
-        x = refrescarConBold(x, deps, cfg);
-        if (x.estado === 'PENDIENTE_PAGO') vencerEnHoja(x.codigo, deps);
-      }
+      if (x.estado === 'PENDIENTE_PAGO' && Date.parse(x.vence) <= deps.ahora()) vencerEnHoja(x.codigo, deps);
     } catch (e) {
       resumen.errores++;
       console.error('Revisión de ' + r.codigo + ' falló: ' + (e && e.stack || e));

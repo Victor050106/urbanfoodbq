@@ -249,11 +249,6 @@ function codigoDeUrl(search) {
   return m ? m[0] : '';
 }
 
-// Identifica un intento de pago: un nuevo "Pagar" con la misma firma reutiliza el apartado anterior.
-function firmaApartado(d) {
-  return [d.sede, d.fecha, d.hora, d.personas, String(d.correo || '').trim().toLowerCase()].join('|');
-}
-
 // Instante real (ms) de una reserva. Bogotá es UTC-5 todo el año; una hora antes de las 16:00
 // es la madrugada del día siguiente a la fecha de servicio.
 function instanteReserva(fecha, hora) {
