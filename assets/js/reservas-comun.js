@@ -12,7 +12,7 @@ var SEDES_RESERVA = {
   ELCARMEN: {
     nombre: 'El Carmen',
     direccion: 'Calle 53D # 19-06, Barranquilla',
-    mapa: 'https://www.google.com/maps?q=Calle+53D+%23+19-06,+Barranquilla',
+    mapa: 'https://www.google.com/maps?cid=10911055522337536008',
     whatsapp: '573127557694'
   },
   HIPODROMO: {
