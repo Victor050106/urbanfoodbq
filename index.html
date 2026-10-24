@@ -166,18 +166,12 @@
                             <span data-openText></span>
                         </span>
                     </div>
-                    <div class="hero-urbi">
-                        <!-- Urbi en celular y tablet (en computador sale grande en la columna derecha).
-                             Flota a la derecha y el texto lo rodea; el espaciador lo baja a la 2.ª línea. -->
-                        <span class="urbi-espacio lg:hidden" aria-hidden="true"></span>
-                        <img src="assets/img/mascota-360.webp" alt="" width="360" height="595" class="urbi-movil lg:hidden" decoding="async">
-                        <h1 class="font-display text-display-lg-mobile md:text-display-lg text-white mb-6 uppercase leading-none">
-                            EL MEJOR SABOR <span class="text-vibrant-orange">URBANO</span> EN BARRANQUILLA
-                        </h1>
-                        <p class="font-body text-body-lg text-white/90 mb-10 max-w-xl border-l-4 border-vibrant-orange pl-6 py-1">
-                            Parrilla, pizzas, perros, hamburguesas, salvajadas y mucho más. Pide a domicilio o recoge en el local con la auténtica esencia de la calle.
-                        </p>
-                    </div>
+                    <h1 class="font-display text-display-lg-mobile md:text-display-lg text-white mb-6 uppercase leading-none">
+                        EL MEJOR SABOR <span class="text-vibrant-orange">URBANO</span> EN BARRANQUILLA
+                    </h1>
+                    <p class="font-body text-body-lg text-white/90 mb-10 max-w-xl border-l-4 border-vibrant-orange pl-6 py-1">
+                        Parrilla, pizzas, perros, hamburguesas, salvajadas y mucho más. Pide a domicilio o recoge en el local con la auténtica esencia de la calle.
+                    </p>
                     <div class="flex flex-col sm:flex-row sm:flex-wrap gap-4" data-hero-ctas>
                         <a href="https://menu.fu.do/urbanfoodbq" target="_blank" rel="noopener" data-sede-picker="pedido" aria-haspopup="dialog" class="bg-vibrant-orange text-deep-black px-8 py-4 rounded-full font-display text-headline-md uppercase tracking-wide hover:bg-white transition-all shadow-hard active:translate-x-1 active:translate-y-1 active:shadow-none inline-flex items-center justify-center gap-3 whitespace-nowrap">
                             Hacer Pedido
@@ -201,6 +195,22 @@
         <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex-col items-center gap-2 hidden md:flex" aria-hidden="true">
             <span class="text-white/60 text-xs font-body uppercase tracking-widest">Deslizar</span>
             <div class="w-px h-12 bg-gradient-to-b from-vibrant-orange to-transparent"></div>
+        </div>
+    </section>
+
+    <!-- FRANJA DE RESERVAS (celular y tablet): Urbi invita a reservar; en computador ya sale grande en el hero. -->
+    <section class="franja-reserva bg-deep-black lg:hidden" aria-labelledby="franjaReservaTitulo">
+        <div class="franja-reserva__tarjeta">
+            <div class="franja-reserva__texto">
+                <p class="franja-reserva__kicker font-body uppercase">Reservas en línea</p>
+                <h2 id="franjaReservaTitulo" class="font-display text-white uppercase leading-none">¿Vienen en <span class="text-vibrant-orange">grupo?</span></h2>
+                <p class="font-body text-white/80">Mesa para 6 o más. Eliges sede, día y hora, y el adelanto se descuenta de tu cuenta.</p>
+            </div>
+            <img src="assets/img/mascota-360.webp" alt="" width="360" height="595" class="franja-reserva__urbi" loading="lazy" decoding="async">
+            <a href="reservas/" class="franja-reserva__boton bg-vibrant-orange text-deep-black rounded-full font-display text-headline-md uppercase tracking-wide shadow-hard active:translate-x-1 active:translate-y-1 active:shadow-none inline-flex items-center justify-center gap-3">
+                Reservar mesa
+                <span class="material-symbols-outlined">event_seat</span>
+            </a>
         </div>
     </section>
 
