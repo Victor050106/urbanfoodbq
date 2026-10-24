@@ -18,7 +18,7 @@ var SEDES_RESERVA = {
   HIPODROMO: {
     nombre: 'Hipódromo',
     direccion: 'Cra. 29 # 26-04, Soledad, Atlántico',
-    mapa: 'https://www.google.com/maps?q=Cra.+29+%23+26-04,+Soledad,+Atl%C3%A1ntico',
+    mapa: 'https://www.google.com/maps?cid=8333721424828979766',
     whatsapp: '573226070697'
   }
 };
