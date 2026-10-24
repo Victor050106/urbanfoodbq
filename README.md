@@ -190,6 +190,11 @@ npm run css
 Los colores, fuentes y tamaños propios (`vibrant-orange`, `font-display`, `text-headline-lg`...) están en
 `tailwind.config.js`, compartidos por todas las páginas.
 
+**Al cambiar cualquier CSS** (`styles.css`, `reservas.css` o `tailwind.css`) sube el número de `?v=` en los
+`<link>` de todas las páginas (por ejemplo `?v=20261024` → la fecha del día). GitHub Pages deja el CSS
+10 minutos en la caché del navegador y, sin ese cambio, el HTML nuevo se ve con los estilos viejos.
+`tests/version-css.test.js` revisa que todas las páginas usen la misma versión.
+
 ## Correr localmente
 
 Requiere [Node.js](https://nodejs.org) instalado.
