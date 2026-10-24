@@ -1,3 +1,21 @@
+/* Fuentes servidas desde el sitio (licencia OFL), no desde Google Fonts: se ahorra una consulta que
+   bloqueaba el primer pintado y Google no recibe la IP de cada visitante. Solo el subconjunto latino
+   (tildes y ñ incluidas). Inter es variable: un archivo cubre del 400 al 700. */
+@font-face {
+    font-family: 'Bebas Neue';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url(../fonts/bebas-neue-latin.woff2) format('woff2');
+}
+@font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400 700;
+    font-display: swap;
+    src: url(../fonts/inter-latin.woff2) format('woff2');
+}
+
 html {
     scroll-behavior: smooth;
     scroll-padding-top: 80px;
