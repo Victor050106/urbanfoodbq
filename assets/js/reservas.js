@@ -430,7 +430,7 @@
             } else if (r.estado === 'PAGO_SIN_CUPO') {
                 vistaConfirmacion(
                     '<h1 class="titulo text-3xl mt-4">Recibimos tu pago, pero el horario se ocupó</h1>' +
-                    '<p class="tarjeta mt-3">Te escribiremos para devolverte el dinero. Si quieres, reserva otro horario.</p>' +
+                    '<p class="tarjeta mt-3">Te devolvemos el dinero en máximo ' + PLAZO_DEVOLUCION + '; te escribiremos para coordinarlo. Si quieres, reserva otro horario.</p>' +
                     botonWhatsApp(r.sede, 'Hola Urban Food, mi reserva ' + r.codigo + ' quedó sin cupo', 'Escribirnos por WhatsApp') +
                     '<button type="button" class="boton boton-sec" id="reintentar">Reservar otro horario</button>');
                 $('reintentar').addEventListener('click', function () { volverAIntentar(r); });

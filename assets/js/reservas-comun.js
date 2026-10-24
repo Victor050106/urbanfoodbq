@@ -237,10 +237,14 @@ function combinarReglas(r) {
   return out;
 }
 
+// Mismo plazo que PLAZO_DEVOLUCION en apps-script/reservas/Correos.gs y que /reservas/condiciones/.
+var PLAZO_DEVOLUCION = '5 días hábiles';
+
 function textoPolitica(reglas) {
   var r = combinarReglas(reglas);
   return 'El adelanto de ' + formatoPesos(r.adelanto) + ' se descuenta de tu cuenta. ' +
-    'Si cancelas con ' + r.cancelacion_horas + ' horas o más de anticipación te lo devolvemos. Si cancelas después o no llegas, no se devuelve.';
+    'Si cancelas con ' + r.cancelacion_horas + ' horas o más de anticipación te lo devolvemos en máximo ' + PLAZO_DEVOLUCION +
+    '. Si cancelas después o no llegas, no se devuelve.';
 }
 
 // Bold vuelve a la callback_url y puede agregarle sus propios parámetros (incluso con un segundo "?").

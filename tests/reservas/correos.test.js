@@ -4,13 +4,13 @@ const { cargar, base } = require('./cargar');
 
 const c = cargar('apps-script/reservas/Config.gs', 'apps-script/reservas/Calendario.gs', 'apps-script/reservas/Ciclo.gs', 'apps-script/reservas/Correos.gs');
 const cfg = c.combinarConfig([]);
-const POLITICA = 'El adelanto de $50.000 se descuenta de tu cuenta. Si cancelas con 24 horas o más de anticipación te lo devolvemos. Si cancelas después o no llegas, no se devuelve.';
+const POLITICA = 'El adelanto de $50.000 se descuenta de tu cuenta. Si cancelas con 24 horas o más de anticipación te lo devolvemos en máximo 5 días hábiles. Si cancelas después o no llegas, no se devuelve.';
 
 test('confirmación al cliente', () => {
   const m = c.correoConfirmacion(base({ codigo: 'UF-ABC234', token_cancelar: 'tok', nombre: '<b>Ana</b>' }), cfg);
   a.match(m.asunto, /UF-ABC234/);
   a.ok(m.html.includes('/reservas/cancelar/?t=tok'));
-  a.ok(m.html.includes('Si cancelas con 24 horas o más de anticipación te lo devolvemos'));
+  a.ok(m.html.includes('Si cancelas con 24 horas o más de anticipación te lo devolvemos en máximo 5 días hábiles'));
   a.ok(m.html.includes(POLITICA));
   a.ok(m.html.includes('Calle 53D # 19-06'));
   a.ok(m.html.includes('8:00 PM'));
@@ -83,7 +83,7 @@ test('celdas de texto vacías en Config no dejan sin correo de admin ni sin dire
 test('política construida desde Config: con los valores por defecto es el texto fijo', () => {
   a.equal(c.textoPolitica(cfg), POLITICA);
   const otra = c.combinarConfig([['adelanto', '60000'], ['cancelacion_horas', '48']]);
-  a.equal(c.textoPolitica(otra), 'El adelanto de $60.000 se descuenta de tu cuenta. Si cancelas con 48 horas o más de anticipación te lo devolvemos. Si cancelas después o no llegas, no se devuelve.');
+  a.equal(c.textoPolitica(otra), 'El adelanto de $60.000 se descuenta de tu cuenta. Si cancelas con 48 horas o más de anticipación te lo devolvemos en máximo 5 días hábiles. Si cancelas después o no llegas, no se devuelve.');
   // Sin adelanto guardado (reservas de antes de la columna) se usa el de Config.
   const m = c.correoConfirmacion(base({ adelanto: '' }), otra);
   a.ok(m.html.includes('$60.000')); a.ok(!m.html.includes('$50.000'));

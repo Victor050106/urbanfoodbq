@@ -43,7 +43,7 @@ test('instanteReserva usa Bogotá (UTC-5) y manda la madrugada al día siguiente
   a.equal(c.instanteReserva('2026-10-23', '00:00'), Date.parse('2026-10-24T05:00:00Z'));
 });
 test('política fija con el adelanto', () => {
-  a.equal(c.textoPolitica(), 'El adelanto de $50.000 se descuenta de tu cuenta. Si cancelas con 24 horas o más de anticipación te lo devolvemos. Si cancelas después o no llegas, no se devuelve.');
+  a.equal(c.textoPolitica(), 'El adelanto de $50.000 se descuenta de tu cuenta. Si cancelas con 24 horas o más de anticipación te lo devolvemos en máximo 5 días hábiles. Si cancelas después o no llegas, no se devuelve.');
 });
 
 test('todo código de error del API tiene mensaje', () => {
@@ -90,7 +90,7 @@ test('reglas del servidor con respaldo y política construida con ellas', () => 
   a.deepEqual(JSON.parse(JSON.stringify(c.combinarReglas())), def);
   a.deepEqual(JSON.parse(JSON.stringify(c.combinarReglas({ adelanto: 60000, grupo_min: 'x' }))), { ...def, adelanto: 60000 });
   a.equal(c.textoPolitica(c.combinarReglas({ adelanto: 60000, cancelacion_horas: 48 })),
-    'El adelanto de $60.000 se descuenta de tu cuenta. Si cancelas con 48 horas o más de anticipación te lo devolvemos. Si cancelas después o no llegas, no se devuelve.');
+    'El adelanto de $60.000 se descuenta de tu cuenta. Si cancelas con 48 horas o más de anticipación te lo devolvemos en máximo 5 días hábiles. Si cancelas después o no llegas, no se devuelve.');
 });
 test('código de reserva en la URL aunque Bold agregue parámetros', () => {
   a.equal(c.codigoDeUrl('?codigo=UF-ABC234'), 'UF-ABC234');

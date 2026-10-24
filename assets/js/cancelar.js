@@ -34,7 +34,7 @@
 
     // El monto es el que pagó esta reserva (llega con ella), no el adelanto actual de Config.
     function textoDevolucion(con, adelanto) {
-        return con ? 'Te devolveremos los ' + formatoPesos(adelanto || reglas.adelanto) + '.'
+        return con ? 'Te devolveremos los ' + formatoPesos(adelanto || reglas.adelanto) + ' en máximo ' + PLAZO_DEVOLUCION + '.'
             : 'Como faltan menos de ' + reglas.cancelacion_horas + ' horas, el adelanto no se devuelve.';
     }
 

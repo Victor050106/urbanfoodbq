@@ -16,10 +16,14 @@ function formatoPesos(n) {
   return '$' + String(Math.round(Number(n) || 0)).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 }
 
+// Mismo plazo que PLAZO_DEVOLUCION en assets/js/reservas-comun.js y que /reservas/condiciones/.
+var PLAZO_DEVOLUCION = '5 días hábiles';
+
 // Con los valores por defecto da el texto fijo de la política; Bold cobra cfg.adelanto, así que el texto sale de ahí.
 function textoPolitica(cfg) {
   return 'El adelanto de ' + formatoPesos(cfg.adelanto) + ' se descuenta de tu cuenta. Si cancelas con ' +
-    cfg.cancelacion_horas + ' horas o más de anticipación te lo devolvemos. Si cancelas después o no llegas, no se devuelve.';
+    cfg.cancelacion_horas + ' horas o más de anticipación te lo devolvemos en máximo ' + PLAZO_DEVOLUCION +
+    '. Si cancelas después o no llegas, no se devuelve.';
 }
 
 // La política de una reserva ya pagada, con lo que pagó y no con el adelanto actual de Config.
@@ -78,7 +82,7 @@ function correoCancelacion(reserva, cfg) {
   var conDevolucion = reserva.estado === 'CANCELADA_CON_DEVOLUCION';
   var pagado = formatoPesos(adelantoDe(reserva, cfg));
   var aviso = conDevolucion
-    ? 'Cancelaste con tiempo, así que te devolvemos el adelanto de ' + pagado + '. Te escribiremos para coordinar la devolución.'
+    ? 'Cancelaste con tiempo, así que te devolvemos el adelanto de ' + pagado + ' en máximo ' + PLAZO_DEVOLUCION + '. Te escribiremos para coordinar la devolución.'
     : 'Por la anticipación con que cancelaste, el adelanto de ' + pagado + ' no se devuelve.';
   var cuerpo = parrafo('Hola ' + escaparHtml(reserva.nombre) + ', tu reserva fue cancelada.') +
     detalleReserva(reserva) + parrafo(escaparHtml(aviso)) + parrafo(escaparHtml(politicaDe(reserva, cfg)));
