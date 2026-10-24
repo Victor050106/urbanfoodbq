@@ -13,7 +13,7 @@ function waLink(sede) {
 const SEDE_PICKER_COPY = {
     pedido: {
         title: '¿En qué sede quieres pedir?',
-        hint: 'Cada sede tiene su propia carta y su propio domicilio.',
+        hint: 'Cada sede tiene su propia carta. Por ahora el domicilio es solo desde El Carmen.',
         href: sede => sede.order,
         foot: 'Se abre la carta de fu.do en una pestaña nueva.'
     },
