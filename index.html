@@ -27,8 +27,8 @@
     <link rel="preload" as="image" href="assets/img/mascota.webp" media="(min-width: 1024px)" fetchpriority="high">
     <!-- Solo los íconos que usa la página (icon_names, en orden alfabético): el set completo pesaba 1,1 MB y así son
          ~8 KB. Si se agrega un ícono nuevo hay que sumarlo aquí; tests/iconos.test.js avisa si falta. -->
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0..1,0&icon_names=add_circle,arrow_forward,arrow_upward,cake,call,child_care,close,credit_card,delivery_dining,eco,event_seat,fastfood,groups,layers,local_bar,local_pizza,location_on,lunch_dining,mail,menu,navigation,north_east,open_in_new,payments,qr_code_2,rate_review,restaurant,restaurant_menu,schedule,shopping_bag,skillet,smartphone,star,star_half,storefront,tapas,timer,track_changes,verified,visibility&display=block" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/styles.css?v=2026110301">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0..1,0&icon_names=add_circle,arrow_forward,arrow_upward,cake,call,child_care,close,credit_card,delivery_dining,eco,event_busy,fastfood,groups,layers,local_bar,local_pizza,location_on,lunch_dining,mail,menu,navigation,north_east,open_in_new,payments,qr_code_2,rate_review,restaurant,restaurant_menu,schedule,shopping_bag,skillet,smartphone,star,star_half,storefront,tapas,timer,track_changes,verified,visibility&display=block" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/styles.css?v=2026110302">
     <link rel="modulepreload" href="assets/js/config.js">
     <link rel="modulepreload" href="assets/js/util.js">
     <link rel="modulepreload" href="assets/js/fechas.js">
@@ -55,7 +55,7 @@
           "telephone": "+573127557694",
           "email": "urbanfoodbq@gmail.com",
           "hasMenu": "https://menu.fu.do/urbanfoodbq",
-          "acceptsReservations": true,
+          "acceptsReservations": false,
           "address": {
             "@type": "PostalAddress",
             "streetAddress": "Calle 53D # 19-06",
@@ -85,7 +85,7 @@
           "telephone": "+573226070697",
           "email": "admihipsol@gmail.com",
           "hasMenu": "https://menu.fu.do/urbanfoodsl",
-          "acceptsReservations": true,
+          "acceptsReservations": false,
           "address": {
             "@type": "PostalAddress",
             "streetAddress": "Cra. 29 # 26-04",
@@ -104,7 +104,7 @@
     }
     </script>
     <!-- Generado con `npm run css`: va al final del head para ganarle a styles.css, como hacía el CDN. -->
-    <link rel="stylesheet" href="assets/css/tailwind.css?v=2026110301">
+    <link rel="stylesheet" href="assets/css/tailwind.css?v=2026110302">
 </head>
 <body class="bg-background text-on-background font-body selection:bg-vibrant-orange selection:text-white">
     <svg hidden><symbol id="i-wa" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></symbol></svg>
@@ -122,7 +122,7 @@
                 <a href="#horarios" class="font-body text-label-bold uppercase tracking-wider text-white/80 hover:text-vibrant-orange transition-colors">Horarios</a>
                 <a href="#ubicacion" class="font-body text-label-bold uppercase tracking-wider text-white/80 hover:text-vibrant-orange transition-colors">Sedes</a>
                 <a href="#opiniones" class="font-body text-label-bold uppercase tracking-wider text-white/80 hover:text-vibrant-orange transition-colors">Opiniones</a>
-                <a href="reservas/" class="font-body text-label-bold uppercase tracking-wider text-white/80 hover:text-vibrant-orange transition-colors">Reservar</a>
+                <a href="#empleo" class="font-body text-label-bold uppercase tracking-wider text-white/80 hover:text-vibrant-orange transition-colors">Empleo</a>
             </div>
             <div class="flex items-center gap-3">
                 <a href="https://menu.fu.do/urbanfoodbq" target="_blank" rel="noopener" data-sede-picker="pedido" aria-haspopup="dialog" class="hidden sm:inline-block bg-vibrant-orange text-deep-black px-5 py-2.5 rounded-full font-body text-label-bold uppercase tracking-wider hover:bg-white hover:text-deep-black transition-colors active:scale-95">
@@ -142,7 +142,7 @@
                 <a href="#horarios" class="font-body text-label-bold uppercase tracking-wider text-white py-3">Horarios</a>
                 <a href="#ubicacion" class="font-body text-label-bold uppercase tracking-wider text-white py-3">Sedes</a>
                 <a href="#opiniones" class="font-body text-label-bold uppercase tracking-wider text-white py-3">Opiniones</a>
-                <a href="reservas/" class="font-body text-label-bold uppercase tracking-wider text-white py-3">Reservar</a>
+                <a href="#empleo" class="font-body text-label-bold uppercase tracking-wider text-white py-3">Trabaja con nosotros</a>
                 <a href="https://menu.fu.do/urbanfoodbq" target="_blank" rel="noopener" data-sede-picker="pedido" aria-haspopup="dialog" class="bg-vibrant-orange text-deep-black px-5 py-3 rounded-full font-body text-label-bold uppercase tracking-wider text-center">Pedir Ahora</a>
             </div>
         </div>
@@ -170,7 +170,7 @@
                         EL MEJOR SABOR <span class="text-vibrant-orange">URBANO</span> EN BARRANQUILLA
                     </h1>
                     <p class="font-body text-body-lg text-white/90 mb-10 max-w-xl border-l-4 border-vibrant-orange pl-6 py-1">
-                        Parrilla, pizzas, perros, hamburguesas, salvajadas y mucho más. Pide a domicilio o recoge en el local con la auténtica esencia de la calle.
+                        Parrilla, pizzas, perros, hamburguesas, salvajadas y mucho más. Domicilios y pedidos para recoger desde El Carmen; en Hipódromo te esperamos para comer en el local.
                     </p>
                     <div class="flex flex-col sm:flex-row sm:flex-wrap gap-4" data-hero-ctas>
                         <a href="https://menu.fu.do/urbanfoodbq" target="_blank" rel="noopener" data-sede-picker="pedido" aria-haspopup="dialog" class="bg-vibrant-orange text-deep-black px-8 py-4 rounded-full font-display text-headline-md uppercase tracking-wide hover:bg-white transition-all shadow-hard active:translate-x-1 active:translate-y-1 active:shadow-none inline-flex items-center justify-center gap-3 whitespace-nowrap">
@@ -180,11 +180,6 @@
                         <a href="#menu" data-sede-picker="carta" aria-haspopup="dialog" class="border-2 border-white text-white px-8 py-4 rounded-full font-display text-headline-md uppercase tracking-wide hover:bg-white hover:text-deep-black transition-all inline-flex items-center justify-center gap-3 whitespace-nowrap">
                             Ver Menú
                             <span class="material-symbols-outlined">restaurant_menu</span>
-                        </a>
-                        <a href="reservas/" class="border-2 border-vibrant-orange text-vibrant-orange px-8 py-4 rounded-full font-display text-headline-md uppercase tracking-wide hover:bg-vibrant-orange hover:text-deep-black transition-all hidden lg:inline-flex items-center justify-center gap-3 whitespace-nowrap">
-                            <!-- En celular y tablet no sale: la franja de reservas con Urbi va justo debajo. -->
-                            Reservar para grupos
-                            <span class="material-symbols-outlined">event_seat</span>
                         </a>
                     </div>
                 </div>
@@ -199,19 +194,15 @@
         </div>
     </section>
 
-    <!-- FRANJA DE RESERVAS (celular y tablet): Urbi invita a reservar; en computador ya sale grande en el hero. -->
+    <!-- FRANJA DE RESERVAS (celular y tablet): por ahora avisa que no hay reservas. En computador el aviso va en #horarios. -->
     <section class="franja-reserva bg-deep-black lg:hidden" aria-labelledby="franjaReservaTitulo">
         <div class="franja-reserva__tarjeta">
             <div class="franja-reserva__texto">
-                <p class="franja-reserva__kicker font-body uppercase">Reservas en línea</p>
-                <h2 id="franjaReservaTitulo" class="font-display text-white uppercase leading-none">¿Vienen en <span class="text-vibrant-orange">grupo?</span></h2>
-                <p class="font-body text-white/80">Mesa para 6 o más. Eliges sede, día y hora, y el adelanto se descuenta de tu cuenta.</p>
+                <p class="franja-reserva__kicker font-body uppercase">Reservas</p>
+                <h2 id="franjaReservaTitulo" class="font-display text-white uppercase leading-none">Muy <span class="text-vibrant-orange">pronto</span></h2>
+                <p class="font-body text-white/80">Por ahora no recibimos reservas. Ven directo a cualquiera de nuestras sedes: atendemos por orden de llegada.</p>
             </div>
             <img src="assets/img/mascota-360.webp" alt="" width="360" height="595" class="franja-reserva__urbi" loading="lazy" decoding="async">
-            <a href="reservas/" class="franja-reserva__boton bg-vibrant-orange text-deep-black rounded-full font-display text-headline-md uppercase tracking-wide shadow-hard active:translate-x-1 active:translate-y-1 active:shadow-none inline-flex items-center justify-center gap-3">
-                Reservar mesa
-                <span class="material-symbols-outlined">event_seat</span>
-            </a>
         </div>
     </section>
 
@@ -409,20 +400,21 @@
             <div class="lg:w-1/2 relative w-full">
                 <div class="absolute -top-12 -left-2 md:-left-12 font-display text-[120px] text-white/5 select-none leading-none pointer-events-none">OPEN</div>
                 <span class="text-vibrant-orange font-body text-label-bold uppercase tracking-[0.2em] mb-4 block relative">Horarios de Atención</span>
-                <h2 class="font-display text-headline-lg mb-8 uppercase leading-none relative">¿Cuándo nos visitas?</h2>
+                <h2 class="font-display text-headline-lg mb-3 uppercase leading-none relative">¿Cuándo nos visitas?</h2>
+                <p class="font-body text-body-md text-white/60 mb-8 relative">El mismo horario en El Carmen y en Hipódromo.</p>
                 <div id="scheduleList" class="space-y-3 font-body text-body-md text-white/80 relative">
                 </div>
             </div>
             <div class="lg:w-1/2 grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
                 <div class="bg-white/5 p-8 border-l-4 border-vibrant-orange backdrop-blur-md fade-in">
-                    <span class="material-symbols-outlined text-vibrant-orange text-4xl mb-4 icon-fill">timer</span>
-                    <h3 class="font-display text-headline-md uppercase mb-2 leading-none">Servicio Rápido</h3>
-                    <p class="text-white/60 text-sm">Tu comida urbana lista en tiempo récord, caliente y deliciosa.</p>
+                    <span class="material-symbols-outlined text-vibrant-orange text-4xl mb-4 icon-fill">event_busy</span>
+                    <h3 class="font-display text-headline-md uppercase mb-2 leading-none">Sin reservas por ahora</h3>
+                    <p class="text-white/60 text-sm">Todavía no recibimos reservas. Ven directo: atendemos por orden de llegada en las dos sedes.</p>
                 </div>
                 <div class="bg-white/5 p-8 border-l-4 border-white/20 backdrop-blur-md sm:translate-y-8 fade-in">
                     <span class="material-symbols-outlined text-white text-4xl mb-4 icon-fill">delivery_dining</span>
                     <h3 class="font-display text-headline-md uppercase mb-2 leading-none">Domicilio</h3>
-                    <p class="text-white/60 text-sm">Desde la sede El Carmen llegamos a gran parte de Barranquilla. En Hipódromo, por ahora, solo para recoger o comer en el local.</p>
+                    <p class="text-white/60 text-sm">Domicilios y pedidos para recoger, solo desde El Carmen. En Hipódromo, por ahora, solo atendemos para comer en el local.</p>
                 </div>
             </div>
         </div>
@@ -539,10 +531,6 @@
                                 Obtener Direcciones
                                 <span class="material-symbols-outlined">navigation</span>
                             </a>
-                            <a href="reservas/" class="border-2 border-deep-black text-deep-black px-6 py-3 font-body text-label-bold rounded-full uppercase tracking-wider inline-flex items-center gap-3 hover:bg-deep-black hover:text-white transition-all">
-                                Reservar para grupos
-                                <span class="material-symbols-outlined">event_seat</span>
-                            </a>
                         </div>
                     </div>
 
@@ -571,9 +559,9 @@
                                 <span class="material-symbols-outlined text-vibrant-orange">smartphone</span>
                             </div>
                             <div>
-                                <h3 class="font-display text-headline-md uppercase text-deep-black mb-1 leading-none">Pedidos Online</h3>
+                                <h3 class="font-display text-headline-md uppercase text-deep-black mb-1 leading-none">Carta</h3>
                                 <a class="tap font-body text-body-md text-secondary hover:text-vibrant-orange transition-colors" href="https://menu.fu.do/urbanfoodsl" target="_blank" rel="noopener">menu.fu.do/urbanfoodsl</a>
-                                <p class="font-body text-body-md text-secondary">Por ahora sin domicilio: pide para recoger en el local.</p>
+                                <p class="font-body text-body-md text-deep-black font-bold">Por ahora no hacemos domicilios ni pedidos para recoger: solo atendemos para comer en el local.</p>
                             </div>
                         </div>
                         <div class="flex gap-5">
@@ -589,10 +577,6 @@
                             <a href="https://www.google.com/maps?cid=8333721424828979766" target="_blank" rel="noopener" class="bg-deep-black text-white px-6 py-3 font-body text-label-bold rounded-full uppercase tracking-wider inline-flex items-center gap-3 hover:bg-vibrant-orange hover:text-deep-black transition-all">
                                 Obtener Direcciones
                                 <span class="material-symbols-outlined">navigation</span>
-                            </a>
-                            <a href="reservas/" class="border-2 border-deep-black text-deep-black px-6 py-3 font-body text-label-bold rounded-full uppercase tracking-wider inline-flex items-center gap-3 hover:bg-deep-black hover:text-white transition-all">
-                                Reservar para grupos
-                                <span class="material-symbols-outlined">event_seat</span>
                             </a>
                         </div>
                     </div>
@@ -664,6 +648,33 @@
         </div>
     </section>
 
+    <!-- TRABAJA CON NOSOTROS: cada sede recibe hojas de vida en su propio correo. -->
+    <section id="empleo" class="py-24 bg-white">
+        <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop">
+            <div class="mb-12">
+                <span class="text-primary font-body text-label-bold uppercase tracking-[0.2em] mb-2 block">&Uacute;nete al equipo</span>
+                <h2 class="font-display text-headline-lg text-deep-black uppercase leading-none mb-4">Trabaja con nosotros</h2>
+                <p class="font-body text-body-md text-secondary max-w-2xl">Env&iacute;a tu hoja de vida al correo de la sede donde te gustar&iacute;a trabajar.</p>
+            </div>
+            <div class="grid md:grid-cols-2 gap-gutter-mobile md:gap-gutter-desktop">
+                <a href="mailto:talentohumanoufbq@gmail.com?subject=Hoja%20de%20vida%20-%20Sede%20El%20Carmen" class="group flex items-center gap-4 bg-white border-2 border-deep-black rounded-2xl p-6 md:p-8 shadow-hard hover:bg-deep-black transition-colors fade-in">
+                    <span class="w-12 h-12 shrink-0 bg-vibrant-orange rounded-2xl flex items-center justify-center"><span class="material-symbols-outlined text-deep-black icon-fill" aria-hidden="true">mail</span></span>
+                    <span class="min-w-0">
+                        <span class="block font-display text-headline-md uppercase leading-none text-deep-black group-hover:text-white transition-colors mb-1">Sede El Carmen</span>
+                        <span class="block font-body text-body-md text-secondary group-hover:text-white/70 transition-colors break-all">talentohumanoufbq@gmail.com</span>
+                    </span>
+                </a>
+                <a href="mailto:talentohumanoufsoledad@gmail.com?subject=Hoja%20de%20vida%20-%20Sede%20Hip%C3%B3dromo" class="group flex items-center gap-4 bg-white border-2 border-deep-black rounded-2xl p-6 md:p-8 shadow-hard hover:bg-deep-black transition-colors fade-in">
+                    <span class="w-12 h-12 shrink-0 bg-fresh-teal rounded-2xl flex items-center justify-center"><span class="material-symbols-outlined text-deep-black icon-fill" aria-hidden="true">mail</span></span>
+                    <span class="min-w-0">
+                        <span class="block font-display text-headline-md uppercase leading-none text-deep-black group-hover:text-white transition-colors mb-1">Sede Hip&oacute;dromo</span>
+                        <span class="block font-body text-body-md text-secondary group-hover:text-white/70 transition-colors break-all">talentohumanoufsoledad@gmail.com</span>
+                    </span>
+                </a>
+            </div>
+        </div>
+    </section>
+
     <!-- SELECTOR DE SEDE -->
     <div id="sedeModal" class="modal-overlay fixed inset-0 z-[60] flex items-center justify-center p-4 bg-deep-black/80 hidden"
          role="dialog" aria-modal="true" aria-labelledby="sedeModalTitle">
@@ -673,7 +684,7 @@
             </button>
             <div class="p-8">
                 <h3 id="sedeModalTitle" class="font-display text-headline-md text-deep-black uppercase mb-2 text-center leading-none">&iquest;En qu&eacute; sede quieres pedir?</h3>
-                <p id="sedeModalHint" class="font-body text-body-md text-secondary text-center mb-7">Cada sede tiene su propia carta. Por ahora el domicilio es solo desde El Carmen.</p>
+                <p id="sedeModalHint" class="font-body text-body-md text-secondary text-center mb-7">Domicilios y pedidos para recoger: solo El Carmen. Hipódromo, por ahora, solo para comer en el local.</p>
                 <div class="space-y-4">
                     <a data-sede-link="carmen" href="https://menu.fu.do/urbanfoodbq" target="_blank" rel="noopener"
                        class="group flex items-center gap-4 border-2 border-deep-black rounded-2xl p-5 hover:bg-deep-black transition-colors">
@@ -693,7 +704,7 @@
                         </span>
                         <span class="min-w-0">
                             <span class="block font-display text-headline-md uppercase leading-none text-deep-black group-hover:text-white transition-colors">Sede Hip&oacute;dromo</span>
-                            <span class="block font-body text-body-md text-secondary group-hover:text-white/70 transition-colors">Cra. 29 # 26-04 &middot; Soledad &middot; solo para recoger</span>
+                            <span class="block font-body text-body-md text-secondary group-hover:text-white/70 transition-colors">Cra. 29 # 26-04 &middot; Soledad &middot; solo para comer en el local</span>
                         </span>
                         <span class="material-symbols-outlined ml-auto text-deep-black group-hover:text-vibrant-orange transition-colors" aria-hidden="true">arrow_forward</span>
                     </a>
@@ -714,7 +725,7 @@
         </div>
         <div class="max-w-container-max mx-auto px-margin-mobile md:px-margin-desktop text-center relative z-10">
             <h2 class="font-display text-display-lg-mobile md:text-display-lg text-white mb-6 uppercase leading-none">¿LISTO PARA ORDENAR?</h2>
-            <p class="font-body text-body-lg text-white/80 mb-12 max-w-2xl mx-auto">Haz tu pedido online y disfruta del mejor sabor urbano directamente en tu puerta o recógelo en nuestro local.</p>
+            <p class="font-body text-body-lg text-white/80 mb-12 max-w-2xl mx-auto">Pide online a la sede El Carmen y recíbelo en tu puerta o recógelo en el local. En Hipódromo te esperamos para comer allá.</p>
             <a data-sede-picker="pedido" aria-haspopup="dialog" class="inline-flex items-center gap-3 bg-vibrant-orange text-deep-black px-12 py-5 rounded-full font-display text-headline-md uppercase tracking-wider hover:bg-white hover:text-deep-black transition-all transform hover:-translate-y-1 active:scale-95 shadow-hard" href="https://menu.fu.do/urbanfoodbq" target="_blank" rel="noopener">
                 Pedir Ahora
                 <span class="material-symbols-outlined">arrow_forward</span>
@@ -766,6 +777,7 @@
                         <li><a class="block py-2.5 text-white/60 hover:text-vibrant-orange transition-colors" href="#horarios">Horarios</a></li>
                         <li><a class="block py-2.5 text-white/60 hover:text-vibrant-orange transition-colors" href="#ubicacion">Sedes</a></li>
                         <li><a class="block py-2.5 text-white/60 hover:text-vibrant-orange transition-colors" href="#opiniones">Opiniones</a></li>
+                        <li><a class="block py-2.5 text-white/60 hover:text-vibrant-orange transition-colors" href="#empleo">Trabaja con nosotros</a></li>
                     </ul>
                 </div>
 
@@ -843,7 +855,6 @@
             <div class="mt-16 pt-6 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
                 <p class="font-body text-label-sm uppercase tracking-wider text-white/60 text-center sm:text-left">&copy; <span data-year>2026</span> Urban Food Bq S.A.S. &middot; NIT 902024141-6. Todos los derechos reservados.</p>
                 <a class="tap inline-flex items-center gap-2 font-body text-label-sm uppercase tracking-wider text-white/60 hover:text-vibrant-orange transition-colors py-2.5" href="privacidad/">Política de datos</a>
-                <a class="tap inline-flex items-center gap-2 font-body text-label-sm uppercase tracking-wider text-white/60 hover:text-vibrant-orange transition-colors py-2.5" href="reservas/condiciones/">Condiciones de reserva</a>
                 <a class="inline-flex items-center gap-2 font-body text-label-sm uppercase tracking-wider text-white/60 hover:text-vibrant-orange transition-colors py-2.5" href="#inicio">
                     Volver arriba
                     <span class="material-symbols-outlined text-base" aria-hidden="true">arrow_upward</span>

@@ -16,12 +16,14 @@ export const SEDES = {
     carmen: {
         nombre: 'El Carmen',
         order: 'https://menu.fu.do/urbanfoodbq',
-        phone: '573127557694'
+        phone: '573127557694',
+        pedidos: true
     },
     hipodromo: {
         nombre: 'Hipódromo',
         order: 'https://menu.fu.do/urbanfoodsl',
-        phone: '573226070697'
+        phone: '573226070697',
+        pedidos: false // por ahora sin domicilio ni para recoger
     }
 };
 

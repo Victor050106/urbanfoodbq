@@ -1,10 +1,10 @@
 import { SEDES } from './config.js';
 import { crearModal } from './modal.js';
 
-const WA_TEXT = encodeURIComponent('¡Hola Urban Food! Quiero hacer un pedido.');
-
+// Hipódromo no toma pedidos (ni domicilio ni para recoger): su WhatsApp no abre con "quiero hacer un pedido".
 function waLink(sede) {
-    return `https://wa.me/${sede.phone}?text=${WA_TEXT}`;
+    const texto = sede.pedidos ? '¡Hola Urban Food! Quiero hacer un pedido.' : '¡Hola Urban Food! Quiero información.';
+    return `https://wa.me/${sede.phone}?text=${encodeURIComponent(texto)}`;
 }
 
 // Los botones de "pedir" y "ver carta" son <a> con el link de El Carmen dentro:
@@ -13,7 +13,7 @@ function waLink(sede) {
 const SEDE_PICKER_COPY = {
     pedido: {
         title: '¿En qué sede quieres pedir?',
-        hint: 'Cada sede tiene su propia carta. Por ahora el domicilio es solo desde El Carmen.',
+        hint: 'Domicilios y pedidos para recoger: solo El Carmen. Hipódromo, por ahora, solo para comer en el local.',
         href: sede => sede.order,
         foot: 'Se abre la carta de fu.do en una pestaña nueva.'
     },

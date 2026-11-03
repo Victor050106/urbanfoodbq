@@ -3,7 +3,9 @@
 
 // URL del despliegue "/exec" del Apps Script de reservas (proyecto "Urban Food Reservas" de la hoja
 // "Urban Food - Reservas"). Si se deja vacía, la página avisa que las reservas llegan pronto y ofrece WhatsApp.
-var RESERVAS_API_URL = 'https://script.google.com/macros/s/AKfycbxivUUZIYuM9FJ0TvJWLc8hcAOmspxMkb_KSXWw1WKFRh3OG_BNxAKMeKFvqDnPg1Co/exec';
+// Apagada mientras no se activan las reservas. Para activarlas, volver a poner:
+// 'https://script.google.com/macros/s/AKfycbxivUUZIYuM9FJ0TvJWLc8hcAOmspxMkb_KSXWw1WKFRh3OG_BNxAKMeKFvqDnPg1Co/exec'
+var RESERVAS_API_URL = '';
 
 var TZ_RESERVAS = 'America/Bogota';
 

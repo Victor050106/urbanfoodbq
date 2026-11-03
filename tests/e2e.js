@@ -53,8 +53,10 @@ async function setup(browser, viewport) {
   const resenar = await p.locator('#opiniones a[href^="https://g.page/r/"][href$="/review"]').count();
   check('opiniones: boton dejar resena por sede', resenar === 2, `${resenar} enlaces`);
   check('novedades visible si hay', data ? (await p.locator('#novedades').isVisible()) === (data.novedades.length > 0) : true);
-  check('nav con enlace Reservar', (await p.locator('[data-nav-links] a[href="reservas/"]').count()) === 2);
-  check('enlaces a /reservas/ (nav x2, hero, franja con Urbi, sedes x2)', (await p.locator('a[href="reservas/"]').count()) === 6);
+  // Reservas apagadas por ahora: la portada no enlaza a /reservas/ y trae Trabaja con nosotros.
+  check('sin enlaces a /reservas/', (await p.locator('a[href^="reservas/"]').count()) === 0);
+  check('nav con enlace a empleo', (await p.locator('[data-nav-links] a[href="#empleo"]').count()) === 2);
+  check('empleo: un correo por sede', (await p.locator('#empleo a[href^="mailto:talentohumano"]').count()) === 2);
   check('pie con politica de datos', (await p.locator('footer a[href="privacidad/"]').count()) === 1);
 
   // Sedes
